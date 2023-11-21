@@ -18,8 +18,8 @@ which ingests the public data into the **first** staging table "**stg_monthly_ai
 | Column         | Data Type          |
 |----------------|--------------------|
 | index          | bigint             |
-| Date           | text               |
-| Hour (UTC)     | bigint             |
+| date           | date               |
+| hour_utc       | bigint             |
 | FAFFD          | double precision   |
 | FALIF          | double precision   |
 | FALJI          | double precision   |

@@ -54,6 +54,9 @@ def load_and_ingest(save_locally):
             # Get response object for link
             response = requests.get(download_link)
             df = pd.read_csv(download_link)
+            df['Date'] = pd.to_datetime(df['Date']).dt.date
+            df.rename(columns={'Date':'date'})
+            df.rename(columns={'Hour (UTC)':'hours_utc'}, inplace=True)
             df['last_updated'] = datetime.datetime.now()
             df['donwnload_link'] = download_link
             df['src_filename'] = filename
