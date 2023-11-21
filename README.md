@@ -12,7 +12,7 @@
 
 ## 1. Staging Layer:
 ### 0. Web Scraping:
-To download the monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, the Data Loader is /Python/Data_Loader.py File.
+To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, the Data Loader is /Python/Data_Loader.py File.
 which ingests the public data into the **first** staging table "**stg_monthly_air_data**."
 
 | Column         | Data Type          |
