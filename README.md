@@ -83,3 +83,21 @@ which ingests the public data into the **first** staging table "**stg_monthly_fo
 |   last_updated    | timestamp |
 |  donwnload_link   |   text    |
 |   src_filename    |   text    |
+
+
+### 2. Traffic Volume:
+Using the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, the function _load_traffic_volumes(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
+which ingests the traffic volume data into the **first** staging table "**stg_traffic_volume**" with the option to locally save the CSV file to _'./Data/traffic_volume.csv'_.
+
+|      Column       |    Data Type     |
+|:-----------------:|:----------------:|
+|        _id        |      bigint      |
+|    location_id    |      bigint      |
+|     location      |       text       |
+|        lng        | double precision |
+|        lat        | double precision |
+|  centreline_type  | double precision |
+|   centreline_id   | double precision |
+|        px         | double precision |
+| latest_count_date |       text       |
+|   last_updated    |    timestamp     |
