@@ -6,7 +6,12 @@ import datetime
 import psycopg2 as pg
 import sqlalchemy
 import os
-import io
+from rpy2 import robjects as ro
+import rpy2.robjects.packages as rpackages
+from rpy2.robjects.packages import importr, data
+from rpy2.robjects import pandas2ri
+
+
 warnings.filterwarnings("ignore")
 
 # To write temp files into the Parent ./Data/ Folder to
@@ -112,16 +117,43 @@ def load_monthly_forecasts(save_locally):
     print("All CSV files downloaded")
 
 
+def load_traffic_volumes(save_locally):
+    utils = rpackages.importr('utils')
+    utils.chooseCRANmirror(ind=1)
+
+    utils.install_packages('opendatatoronto')
+    utils.install_packages('dplyr')
+    ro.r('''
+        library(opendatatoronto)
+        library(dplyr)
+        package <- show_package("traffic-volumes-at-intersections-for-all-modes")
+        resources <- list_package_resources("traffic-volumes-at-intersections-for-all-modes")
+        datastore_resources <- filter(resources, tolower(format) %in% c('csv'))
+        df_r <- filter(datastore_resources, row_number()==1) %>% get_resource()
+        print(summary(df_r))
+        write.csv(df_r, '/Users/amr/PycharmProjects/ggr473/Data/traffic_volume.csv', row.names = FALSE)
+        ''')
+    df = pd.read_csv('/Users/amr/PycharmProjects/ggr473/Data/traffic_volume.csv', parse_dates=True)
+    df['last_updated'] = datetime.datetime.now()
+    df.to_sql(name='stg_traffic_volume', con=sqlalchemy_engine, if_exists='append', schema='stage')
+    if save_locally == False:
+        os.remove('/Users/amr/PycharmProjects/ggr473/Data/traffic_volume.csv')
 
 # to execute loading the monthly data into staging layer
-load_monthly_data(save_locally=False)
+#load_monthly_data(save_locally=False)
 ## OR to save the CSV files locally to ./Data/XXXXX.CSV  ##
 #load_and_ingest(save_locally=True)
 
 # to execute loading the monthly forecasts into the staging layer
-load_monthly_forecasts(save_locally=False)
+#load_monthly_forecasts(save_locally=False)
 ## OR to save the CSV files locally to ./Data/Forecasts_XXXXX.CSV  ##
 #load_monthly_forecasts(save_locally=True)
+
+# to execute loading the traffic volume dataset into the staging layer
+load_traffic_volumes(save_locally=False)
+## OR to save the CSV files locally to ./Data/traffic_volume.CSV  ##
+#load_traffic_volumes(save_locally=True)
+
 
 
 
