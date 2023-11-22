@@ -15,4 +15,6 @@ resources <- list_package_resources("traffic-volumes-at-intersections-for-all-mo
 datastore_resources <- filter(resources, tolower(format) %in% c('csv'))
 df <- filter(datastore_resources, row_number()==1) %>% get_resource()
 df['last_updated'] <- Sys.time()
-dbWriteTable(conn = connec, name = 'public.stage.stage_traffic_volume', value = df, append = TRUE, row.names = FALSE)
+write.csv(df, 'stg_traffic_volume.csv', row.names = FALSE)
+dbWriteTable(conn = connec, name = 'stg_traffic_volume', value = df, append = TRUE, row.names = FALSE)
+db_write_table(con = connec, table = 'stg_traffic_volume', )
