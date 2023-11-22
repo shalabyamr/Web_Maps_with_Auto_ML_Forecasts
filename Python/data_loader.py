@@ -140,12 +140,12 @@ def load_traffic_volumes(save_locally):
         os.remove('/Users/amr/PycharmProjects/ggr473/Data/traffic_volume.csv')
 
 # to execute loading the monthly data into staging layer
-#load_monthly_data(save_locally=False)
+load_monthly_data(save_locally=False)
 ## OR to save the CSV files locally to ./Data/XXXXX.CSV  ##
 #load_and_ingest(save_locally=True)
 
 # to execute loading the monthly forecasts into the staging layer
-#load_monthly_forecasts(save_locally=False)
+load_monthly_forecasts(save_locally=False)
 ## OR to save the CSV files locally to ./Data/Forecasts_XXXXX.CSV  ##
 #load_monthly_forecasts(save_locally=True)
 
