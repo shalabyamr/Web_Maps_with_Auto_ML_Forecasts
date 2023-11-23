@@ -26,7 +26,13 @@ parent_dir = os.path.split(os.getcwd())[0]
 print('Working Directory: ', current_dirs_parent)
 print('Parent Directory: ', parent_dir)
 
-pg_engine = pg.connect(host='localhost', port='5433', dbname='postgres', user='postgres', password='postgres')
+host = 'localhost'
+port = '5433'
+dbname = 'postgres'
+user = 'postgres'
+password = 'postgres'
+
+pg_engine = pg.connect(host=host, port=port, dbname=dbname, user=user, password=password)
 # Connection String is of the form: ‘postgresql://username:password@databasehost:port/databasename’
 sqlalchemy_engine = sqlalchemy.create_engine('postgresql://postgres:postgres@localhost:5433/postgres')
 
