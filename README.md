@@ -12,12 +12,11 @@
 
 ## 1. Staging Layer:
 ### 1. Monthly Data Web Scraping:
-To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, function _load_monthly_data(boolean save_loally)_in the the Data Loader is /Python/Data_Loader.py File.
+To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, function _extract_monthly_data(boolean save_loally)_in the the Data Loader is /Python/Data_Loader.py File.
 which ingests the public data into the **first** staging table "**stg_monthly_air_data**."
 
 | Column         | Data Type        |
 |----------------|------------------|
-| index          | bigint           |
 | date           | date             |
 | hour_utc       | bigint           |
 | FAFFD          | double precision |
@@ -67,13 +66,12 @@ which ingests the public data into the **first** staging table "**stg_monthly_ai
 | src_filename   | text             |
 
 ### 2. Monthly Forecasts Data Web Scraping:
-To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/, the function _load_monthly_forecasts(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
+To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/, the function _extract_monthly_forecasts(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the public data into the **second** staging table "**stg_monthly_forecasts**" with the option to locally save the CSV files with a prefix **'FORECAST_'** to differentiate them from the actual monthly data.
 
 
 |      Column       | Data Type |
 |:-----------------:|:---------:|
-|       index       |  bigint   |
 |    cgndb_code     |   text    |
 |  community_name   |   text    |
 |   validity_date   |   date    |
@@ -87,7 +85,7 @@ which ingests the public data into the **second** staging table "**stg_monthly_f
 
 
 ### 3. Traffic Volume:
-Using the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, the function _load_traffic_volumes(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
+Using the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, the function _extract_traffic_volumes(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the traffic volume data into the **third** staging table "**stg_traffic_volume**" with the option to locally save the CSV file to _'./Data/traffic_volume.csv'_.
 
 |      Column       |    Data Type     |
@@ -106,12 +104,11 @@ which ingests the traffic volume data into the **third** staging table "**stg_tr
 |   last_updated    |    timestamp     |
 
 ### 4. Geographical Names Data:
-Downloads and extracts the zip file of the Geographical Names Data from https://natural-resources.canada.ca/earth-sciences/geography/download-geographical-names-data/9245, the function _load_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
+Downloads and extracts the zip file of the Geographical Names Data from https://natural-resources.canada.ca/earth-sciences/geography/download-geographical-names-data/9245, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the geographical names data containing the coordinates of the air quality stations into the **fourth** staging table "**stg_geo_names**" with the option to retain the extracted CSV file to _'./Data/cgn_canada_csv_eng.csv'_.
 
 |        Column        |    Data Type     |
 |:--------------------:|:----------------:|
-|        index         |      bigint      |
 |       cgndb_id       |       text       |
 |  geographical_name   |       text       |
 |       language       |       text       |
@@ -132,7 +129,7 @@ which ingests the geographical names data containing the coordinates of the air 
 |     src_filename     |       text       |
 
 ### 5. Toronto and Peel Traffic Count:
-Downloads Toronto and Peel Traffic Count from https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da, the function _load_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
+Downloads Toronto and Peel Traffic Count from https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the Toronto and Peel Traffic Counts with latitude and longitude provided by ArcGIS  into the **fifth** staging table "**load_gta_traffic_arcgis**" with the option to create CSV file to _'./Data/ArcGIS_Toronto_and_Peel_Traffic.csv'_.
 
 |         Column         |    Data Type     |
@@ -155,3 +152,5 @@ which ingests the Toronto and Peel Traffic Counts with latitude and longitude pr
 |     donwnload_link     |       text       |
 |      src_filename      |       text       |
 
+
+## 2. Production Layer:
