@@ -11,7 +11,7 @@
 ## Pipeline Design
 
 ## 1. Staging Layer:
-### 0. Monthly Data Web Scraping:
+### 1. Monthly Data Web Scraping:
 To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, function _load_monthly_data(boolean save_loally)_in the the Data Loader is /Python/Data_Loader.py File.
 which ingests the public data into the **first** staging table "**stg_monthly_air_data**."
 
@@ -66,9 +66,10 @@ which ingests the public data into the **first** staging table "**stg_monthly_ai
 | donwnload_link | text             |
 | src_filename   | text             |
 
-### 1. Monthly Forecasts Data Web Scraping:
+### 2. Monthly Forecasts Data Web Scraping:
 To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/, the function _load_monthly_forecasts(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
-which ingests the public data into the **first** staging table "**stg_monthly_forecasts**" with the option to locally save the CSV files with a prefix **'FORECAST_'** to differentiate them from the actual monthly data.
+which ingests the public data into the **second** staging table "**stg_monthly_forecasts**" with the option to locally save the CSV files with a prefix **'FORECAST_'** to differentiate them from the actual monthly data.
+
 
 |      Column       | Data Type |
 |:-----------------:|:---------:|
@@ -85,9 +86,9 @@ which ingests the public data into the **first** staging table "**stg_monthly_fo
 |   src_filename    |   text    |
 
 
-### 2. Traffic Volume:
+### 3. Traffic Volume:
 Using the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, the function _load_traffic_volumes(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
-which ingests the traffic volume data into the **first** staging table "**stg_traffic_volume**" with the option to locally save the CSV file to _'./Data/traffic_volume.csv'_.
+which ingests the traffic volume data into the **third** staging table "**stg_traffic_volume**" with the option to locally save the CSV file to _'./Data/traffic_volume.csv'_.
 
 |      Column       |    Data Type     |
 |:-----------------:|:----------------:|
@@ -100,4 +101,32 @@ which ingests the traffic volume data into the **first** staging table "**stg_tr
 |   centreline_id   | double precision |
 |        px         | double precision |
 | latest_count_date |       text       |
+|   download_link   |       text       |
+|     filename      |       text       |
 |   last_updated    |    timestamp     |
+
+### 4. Geographical D:
+Downloads and extracts the zip file of the Geographical Names Data from https://natural-resources.canada.ca/earth-sciences/geography/download-geographical-names-data/9245, the function _load_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
+which ingests the geographical names data containing the coordinates of the air quality stations into the **fourth** staging table "**stg_geo_names**" with the option to retain the extracted CSV file to _'./Data/cgn_canada_csv_eng.csv'_.
+
+|        Column        |    Data Type     |
+|:--------------------:|:----------------:|
+|        index         |      bigint      |
+|       cgndb_id       |       text       |
+|  geographical_name   |       text       |
+|       language       |       text       |
+|    syllabic_form     |       text       |
+|     generic_term     |       text       |
+|   generic_category   |       text       |
+|     concise_code     |       text       |
+| toponymic_feature_id |       text       |
+|       latitude       | double precision |
+|      longitude       | double precision |
+|       location       |       text       |
+|  province_territory  |       text       |
+|  relevance_at_scale  |      bigint      |
+|    decision_date     |       date       |
+|        source        |       text       |
+|     last_updated     |    timestamp     |
+|    donwnload_link    |       text       |
+|     src_filename     |       text       |

@@ -8,20 +8,22 @@ import sqlalchemy
 import os
 from rpy2 import robjects as ro
 import rpy2.robjects.packages as rpackages
+import zipfile
+import wget
 
 warnings.filterwarnings("ignore")
 
 # To write temp files into the Parent ./Data/ Folder to
 # to keep the Python folder clean of csv and temp files
 def get_parent_dir(directory):
-    import os
     return os.path.dirname(directory)
 
+print("********************************")
 current_dirs_parent = get_parent_dir(os.getcwd())
 parent_dir = os.path.split(os.getcwd())[0]
 
 print('Working Directory: ', current_dirs_parent)
-print('Parent Directory: ', parent_dir)
+print('Parent Directory: ', parent_dir, '\n*****************************\n')
 
 host = 'localhost'
 port = '5433'
@@ -35,7 +37,9 @@ sqlalchemy_engine = sqlalchemy.create_engine('postgresql://{}:{}@{}:{}/{}'.forma
 
 
 def load_monthly_data(save_locally):
+    a = datetime.datetime.now()
     # URL from which pdfs to be downloaded
+    print('Started Downloading Monthly Data as of {}'.format(a))
     url = "https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/"
 
     # Requests URL and get response object
@@ -75,9 +79,14 @@ def load_monthly_data(save_locally):
                 csv = open(filename, 'wb')
                 csv.write(response.content)
                 csv.close()
-    print("********************************\n",'All Monthly CSV files done')
+
+    b = datetime.datetime.now()
+    delta_seconds = (b-a).total_seconds()
+    print("********************************\n",'Loaded Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n********************************\n")
 
 def load_monthly_forecasts(save_locally):
+    a = datetime.datetime.now()
+    print('Loading Monthly Forecasts as of: {}'.format(a))
     # URL from which pdfs to be downloaded
     url = "https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/monthly/csv/"
 
@@ -97,7 +106,7 @@ def load_monthly_forecasts(save_locally):
         if ('.csv' in link.get('href', [])):
             download_link = url + link.get('href')
             print('Download Link: ', download_link)
-            filename = parent_dir + '/Data/Forecasts_' + link.get('href')
+            filename = parent_dir + '/Data/Forecast_' + link.get('href')
             if save_locally == True:
                 print("Filename to be Written: ", filename)
             i += 1
@@ -117,10 +126,16 @@ def load_monthly_forecasts(save_locally):
                 csv = open(filename, 'wb')
                 csv.write(response.content)
                 csv.close()
-    print("********************************\n",'All Daily Forecasts  done')
+    b = datetime.datetime.now()
+    delta_seconds = (b-a).total_seconds()
+    print("********************************\n",'Loaded Daily Forecasts Done in {} Seconds.'.format(delta_seconds),"\n********************************\n")
 
 
 def load_traffic_volumes(save_locally):
+    a = datetime.datetime.now()
+    print('Loading Traffic Data as of: {}'.format(a))
+    download_link = 'https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/'
+    filename = parent_dir + '/Data/' + 'traffic_volume.csv'
     utils = rpackages.importr('utils')
     utils.chooseCRANmirror(ind=1)
 
@@ -134,29 +149,67 @@ def load_traffic_volumes(save_locally):
         datastore_resources <- filter(resources, tolower(format) %in% c('csv'))
         df_r <- filter(datastore_resources, row_number()==1) %>% get_resource()
         print(summary(df_r))
-        write.csv(df_r, '/Users/amr/PycharmProjects/ggr473/Data/traffic_volume.csv', row.names = FALSE)
-        ''')
-    df = pd.read_csv('/Users/amr/PycharmProjects/ggr473/Data/traffic_volume.csv', parse_dates=True)
+        write.csv(df_r, '{}traffic_volume.csv', row.names = FALSE)
+        '''.format(parent_dir + '/Data/'))
+    df = pd.read_csv(parent_dir + '/Data/' + 'traffic_volume.csv', parse_dates=True)
     df['last_updated'] = datetime.datetime.now()
+    df['donwnload_link'] = download_link
+    df['src_filename'] = filename
     df.to_sql(name='stg_traffic_volume', con=sqlalchemy_engine, if_exists='append', schema='stage')
     if save_locally == False:
-        os.remove('/Users/amr/PycharmProjects/ggr473/Data/traffic_volume.csv')
+        os.remove(parent_dir + '/Data/'+'traffic_volume.csv')
+
+    b = datetime.datetime.now()
+    delta_seconds = (b-a).total_seconds()
+    print("********************************\n",'Loaded Toronto Traffic Volume Done in {} Seconds'.format(delta_seconds),"\n********************************\n")
+
+
+def load_geo_names_data(save_locally):
+    a = datetime.datetime.now()
+    print('Download Geographical Names Data as of: '.format(a))
+    # URL from which pdfs to be downloaded
+    download_link = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/vector/geobase_cgn_toponyme/prov_csv_eng/cgn_canada_csv_eng.zip"
+    csv_filename = parent_dir + '/Data/' + 'cgn_canada_csv_eng.csv'
+    zip_filename = parent_dir+'/Data/'+'cgn_canada_csv_eng.zip'
+    wget.download(url=download_link, out=parent_dir + '/Data/')
+    print('Zip File {}', a)
+    with zipfile.ZipFile(zip_filename, 'r') as zip_ref:
+        zip_ref.extractall(path=parent_dir+'/Data/')
+    # delete the downloaded Zip File
+    os.remove(zip_filename)
+
+    df = pd.read_csv(csv_filename, parse_dates=True)
+    df.columns = map(str.lower, df.columns)
+    df.columns = df.columns.str.replace(' ', '_')
+    df['decision_date'] = pd.to_datetime(df['decision_date']).dt.date
+    df['last_updated'] = datetime.datetime.now()
+    df['donwnload_link'] = download_link
+    df['src_filename'] = csv_filename
+    df.to_sql(name='stg_geo_names', con=sqlalchemy_engine, if_exists='append', schema='stage')
+    if save_locally != True:
+        os.remove(csv_filename)
+
+    b = datetime.datetime.now()
+    delta_seconds = (b-a).total_seconds()
+    print("********************************\n",'Loaded Geo Data Names Done in {} Seconds'.format(delta_seconds),"\n********************************\n")
+
 
 # to execute loading the monthly data into staging layer
-load_monthly_data(save_locally=False)
+#load_monthly_data(save_locally=False)
 ## OR to save the CSV files locally to ./Data/XXXXX.CSV  ##
 #load_and_ingest(save_locally=True)
 
 # to execute loading the monthly forecasts into the staging layer
-load_monthly_forecasts(save_locally=False)
+#load_monthly_forecasts(save_locally=False)
 ## OR to save the CSV files locally to ./Data/Forecasts_XXXXX.CSV  ##
 #load_monthly_forecasts(save_locally=True)
 
 # to execute loading the traffic volume dataset into the staging layer
-load_traffic_volumes(save_locally=False)
+#load_traffic_volumes(save_locally=False)
 ## OR to save the CSV files locally to ./Data/traffic_volume.CSV  ##
 #load_traffic_volumes(save_locally=True)
 
-
-
-
+# to execute loading the geographilca database names  into the staging layer
+load_geo_names_data(save_locally=False)
+## OR to save the CSV files locally to ./Data/cgn_canada_csv_eng.csv  ##
+#load_geo_names_data(save_locally=True)
