@@ -105,7 +105,7 @@ which ingests the traffic volume data into the **third** staging table "**stg_tr
 |     filename      |       text       |
 |   last_updated    |    timestamp     |
 
-### 4. Geographical D:
+### 4. Geographical Names Data:
 Downloads and extracts the zip file of the Geographical Names Data from https://natural-resources.canada.ca/earth-sciences/geography/download-geographical-names-data/9245, the function _load_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the geographical names data containing the coordinates of the air quality stations into the **fourth** staging table "**stg_geo_names**" with the option to retain the extracted CSV file to _'./Data/cgn_canada_csv_eng.csv'_.
 
@@ -130,3 +130,28 @@ which ingests the geographical names data containing the coordinates of the air 
 |     last_updated     |    timestamp     |
 |    donwnload_link    |       text       |
 |     src_filename     |       text       |
+
+### 5. Toronto and Peel Traffic Count:
+Downloads Toronto and Peel Traffic Count from https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da, the function _load_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
+which ingests the Toronto and Peel Traffic Counts with latitude and longitude provided by ArcGIS  into the **fifth** staging table "**load_gta_traffic_arcgis**" with the option to create CSV file to _'./Data/ArcGIS_Toronto_and_Peel_Traffic.csv'_.
+
+|         Column         |    Data Type     |
+|:----------------------:|:----------------:|
+|        objectid        |      bigint      |
+|         tcs__          | double precision |
+|          main          |       text       |
+|     midblock_route     |       text       |
+|      side_1_route      |       text       |
+|      side_2_route      |       text       |
+|    activation_date     |       date       |
+|        latitude        | double precision |
+|       longitude        | double precision |
+|        latitude        | double precision |
+|       longitude        | double precision |
+|       count_date       |       date       |
+|  f8hr_vehicle_volume   | double precision |
+| f8hr_pedestrian_volume | double precision |
+|      last_updated      |    timestamp     |
+|     donwnload_link     |       text       |
+|      src_filename      |       text       |
+

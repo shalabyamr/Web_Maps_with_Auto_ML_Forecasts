@@ -73,7 +73,7 @@ def load_monthly_data(save_locally):
             df['donwnload_link'] = download_link
             df['src_filename'] = filename
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
-            df.to_sql(name='stg_monthly_air_data', con=sqlalchemy_engine, if_exists='append', schema='stage')
+            df.to_sql(name='stg_monthly_air_data', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
             # Write content in CSV file
             if save_locally == True:
                 csv = open(filename, 'wb')
@@ -120,7 +120,7 @@ def load_monthly_forecasts(save_locally):
             df['donwnload_link'] = download_link
             df['src_filename'] = filename
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
-            df.to_sql(name='stg_monthly_forecasts', con=sqlalchemy_engine, if_exists='append', schema='stage')
+            df.to_sql(name='stg_monthly_forecasts', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
             # Write content in CSV file
             if save_locally == True:
                 csv = open(filename, 'wb')
@@ -155,7 +155,7 @@ def load_traffic_volumes(save_locally):
     df['last_updated'] = datetime.datetime.now()
     df['donwnload_link'] = download_link
     df['src_filename'] = filename
-    df.to_sql(name='stg_traffic_volume', con=sqlalchemy_engine, if_exists='append', schema='stage')
+    df.to_sql(name='stg_traffic_volume', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
     if save_locally == False:
         os.remove(parent_dir + '/Data/'+'traffic_volume.csv')
 
@@ -185,13 +185,35 @@ def load_geo_names_data(save_locally):
     df['last_updated'] = datetime.datetime.now()
     df['donwnload_link'] = download_link
     df['src_filename'] = csv_filename
-    df.to_sql(name='stg_geo_names', con=sqlalchemy_engine, if_exists='append', schema='stage')
+    df.to_sql(name='stg_geo_names', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
     if save_locally != True:
         os.remove(csv_filename)
 
     b = datetime.datetime.now()
     delta_seconds = (b-a).total_seconds()
     print("********************************\n",'Loaded Geo Data Names Done in {} Seconds'.format(delta_seconds),"\n********************************\n")
+
+
+def load_gta_traffic_arcgis(save_locally):
+    a = datetime.datetime.now()
+    print('Loading ArcGIS Traffic from ArcGIS as of: ',a)
+    download_link = 'https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da'
+    filename = parent_dir+'/Data/'+'ArcGIS_Toronto_and_Peel_Traffic.txt'
+    df = pd.read_csv(filename, sep=',', parse_dates=True)
+    df.columns = map(str.lower, df.columns)
+    df['activation_date'] = pd.to_datetime(df['activation_date']).dt.date
+    df['count_date'] = pd.to_datetime(df['count_date']).dt.date
+    df['last_updated'] = datetime.datetime.now()
+    df['donwnload_link'] = download_link
+    df['src_filename'] = filename
+    df.to_sql(name='stg_gta_traffic_arcgis', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
+
+    if save_locally == True:
+        df.to_csv(parent_dir+'/Data/'+'ArcGIS_Toronto_and_Peel_Traffic.csv', index=False, index_label=False)
+
+    b = datetime.datetime.now()
+    delta_seconds = (b-a).total_seconds()
+    print('Loaded ArcGIS Toronto and Peel Traffic Count Done in {} Seconds'.format(delta_seconds),"\n********************************\n")
 
 
 # to execute loading the monthly data into staging layer
@@ -213,3 +235,8 @@ load_traffic_volumes(save_locally=False)
 load_geo_names_data(save_locally=False)
 ## OR to save the CSV files locally to ./Data/cgn_canada_csv_eng.csv  ##
 #load_geo_names_data(save_locally=True)
+
+# to execute loading the loading ArcGIS Toronto and Peel Traffic into the staging layer
+load_gta_traffic_arcgis(save_locally=False)
+## OR to save the CSV files locally to ./Data/ArcGIS_Toronto_and_Peel_Traffic.csv  ##
+#load_toronto_and_peel_traffic_arcgis(save_locally=True)
