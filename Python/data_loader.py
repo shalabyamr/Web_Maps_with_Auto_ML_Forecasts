@@ -8,9 +8,6 @@ import sqlalchemy
 import os
 from rpy2 import robjects as ro
 import rpy2.robjects.packages as rpackages
-from rpy2.robjects.packages import importr, data
-from rpy2.robjects import pandas2ri
-
 
 warnings.filterwarnings("ignore")
 
@@ -34,7 +31,7 @@ password = 'postgres'
 
 pg_engine = pg.connect(host=host, port=port, dbname=dbname, user=user, password=password)
 # Connection String is of the form: ‘postgresql://username:password@databasehost:port/databasename’
-sqlalchemy_engine = sqlalchemy.create_engine('postgresql://postgres:postgres@localhost:5433/postgres')
+sqlalchemy_engine = sqlalchemy.create_engine('postgresql://{}:{}@{}:{}/{}'.format(user, password, host, port,dbname))
 
 
 def load_monthly_data(save_locally):
@@ -78,7 +75,7 @@ def load_monthly_data(save_locally):
                 csv = open(filename, 'wb')
                 csv.write(response.content)
                 csv.close()
-    print("All CSV files downloaded")
+    print("********************************\n",'All Monthly CSV files done')
 
 def load_monthly_forecasts(save_locally):
     # URL from which pdfs to be downloaded
@@ -120,7 +117,7 @@ def load_monthly_forecasts(save_locally):
                 csv = open(filename, 'wb')
                 csv.write(response.content)
                 csv.close()
-    print("All CSV files downloaded")
+    print("********************************\n",'All Daily Forecasts  done')
 
 
 def load_traffic_volumes(save_locally):
