@@ -128,7 +128,7 @@ which ingests the geographical names data containing the coordinates of the air 
 |    donwnload_link    |       text       |
 |     src_filename     |       text       |
 
-### 5. Toronto and Peel Traffic Count:
+### 5. ArcGIS Toronto and Peel Traffic Count:
 Downloads Toronto and Peel Traffic Count from https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the Toronto and Peel Traffic Counts with latitude and longitude provided by ArcGIS  into the **fifth** staging table "**load_gta_traffic_arcgis**" with the option to create CSV file to _'./Data/ArcGIS_Toronto_and_Peel_Traffic.csv'_.
 
@@ -154,3 +154,160 @@ which ingests the Toronto and Peel Traffic Counts with latitude and longitude pr
 
 
 ## 2. Production Layer:
+### 1. Monthly Air Data:
+The staging table _stg_monthly_air_data_ creted from the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) ingested and converted into the **first** production table "**FACT_MONTHLY_AIR_DATA** in _**"PUBLIC"**_ Schema with the following two conditions:
+
+* Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
+* The condition _ROW_NUMBER() OVER(PARTITION BY "Date","hours_utc" ORDER BY hours_utc DESC) = 1_to eliminate duplicate records within any given date.
+
+| Column         | Data Type        |
+|----------------|------------------|
+| date           | date             |
+| hour_utc       | bigint           |
+| FAFFD          | double precision |
+| FALIF          | double precision |
+| FALJI          | double precision |
+| FAMXK          | double precision |
+| FAYJG          | double precision |
+| FAZKI          | double precision |
+| FBKKK          | double precision |
+| FBLJL          | double precision |
+| FBLKS          | double precision |
+| FCAEN          | double precision |
+| FCCOT          | double precision |
+| FCFUU          | double precision |
+| FCGKZ          | double precision |
+| FCIBD          | double precision |
+| FCKTB          | double precision |
+| FCNJT          | double precision |
+| FCTOV          | double precision |
+| FCWFX          | double precision |
+| FCWOV          | double precision |
+| FCWYG          | double precision |
+| FDATE          | double precision |
+| FDCHU          | double precision |
+| FDEGT          | double precision |
+| FDGED          | double precision |
+| FDGEJ          | double precision |
+| FDGEM          | double precision |
+| FDJFN          | double precision |
+| FDMOP          | double precision |
+| FDQBU          | double precision |
+| FDQBX          | double precision |
+| FDSUS          | double precision |
+| FDZCP          | double precision |
+| FEAKO          | double precision |
+| FEARV          | double precision |
+| FEBWC          | double precision |
+| FEUTC          | double precision |
+| FEUZB          | double precision |
+| FEVJR          | double precision |
+| FEVJS          | double precision |
+| FEVJV          | double precision |
+| FEVNS          | double precision |
+| FEVNT          | double precision |
+| donwnload_link | text             |
+| src_filename   | text             |
+| last_updated   | timestamp        |
+| last_inserted  | timestamp        |
+
+### 2. Monthly Forecasts:
+The staging table _stg_monthly_forecasts_ acquired from the Ontario monthly air quality data(https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/) is ingested into the production table _FACT_MONTHLY_FORECASTS_in _PUBLIC_ schema with the following two conditions:
+
+* Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
+* The condition _ROW_NUMBER() OVER(PARTITION BY "cgndb_code", "validity_date" ORDER BY validity_time_utc DESC)=1_ to eliminate the duplicated records within the provided dates.
+
+
+|      Column       | Data Type |
+|:-----------------:|:---------:|
+|    cgndb_code     |   text    |
+|  community_name   |   text    |
+|   validity_date   |   date    |
+| validity_time_utc |   text    |
+|      period       |  bigint   |
+|       value       |  bigint   |
+|      amended      |  bigint   |
+|  donwnload_link   |   text    |
+|   src_filename    |   text    |
+|   last_updated    | timestamp |
+|   last_inserted   | timestamp |
+
+### 3. Traffic Volume:
+The staging table _stg_traffic_volume_ constructed from the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, is ingested into production _Public_ Schema as _FACT_TRAFFIC_VOLUME_ with the following two conditions:
+
+* Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
+* The condition _ROW_NUMBER() OVER(PARTITION BY location_id ORDER BY latest_count_date DESC)=1_ to eliminate the duplicated records within the provided dates.
+
+
+|      Column       |    Data Type     |
+|:-----------------:|:----------------:|
+|        _id        |      bigint      |
+|    location_id    |      bigint      |
+|     location      |       text       |
+|        lng        | double precision |
+|        lat        | double precision |
+|  centreline_type  | double precision |
+|   centreline_id   | double precision |
+|        px         | double precision |
+| latest_count_date |       text       |
+|   download_link   |       text       |
+|     filename      |       text       |
+|   last_updated    |    timestamp     |
+|   last_inserted   |    timestamp     |
+
+### 4. Geographical Names Data:
+The staging table _stg_geo_names_from the downloaded and extracted zip file of the Geographical Names Data(https://natural-resources.canada.ca/earth-sciences/geography/download-geographical-names-data/9245) was ingested into the production table _DIM_GEO_NAMES_ with the following two conditions:
+* Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
+* The condition _ROW_NUMBER() OVER(PARTITION BY cgndb_id ORDER BY decision_date DESC) =1_ to eliminate the duplicated records within the provided dates.
+
+
+|        Column        |    Data Type     |
+|:--------------------:|:----------------:|
+|       cgndb_id       |       text       |
+|  geographical_name   |       text       |
+|       language       |       text       |
+|    syllabic_form     |       text       |
+|     generic_term     |       text       |
+|   generic_category   |       text       |
+|     concise_code     |       text       |
+| toponymic_feature_id |       text       |
+|       latitude       | double precision |
+|      longitude       | double precision |
+|       location       |       text       |
+|  province_territory  |       text       |
+|  relevance_at_scale  |      bigint      |
+|    decision_date     |       date       |
+|        source        |       text       |
+|    donwnload_link    |       text       |
+|     src_filename     |       text       |
+|     last_updated     |    timestamp     |
+|    last_inserted     |    timestamp     |
+
+
+### 5. ArcGIS Toronto and Peel Traffic Count:
+The staging table _stg_gta_traffic_arcgis_ obtained from ArcGIS Toronto and Peel Traffic Data(https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da) was ingested into the production table _FACT_GTA_TRAFFIC_ARCGIS_ in PUBLIC schema with the following two conditions:
+
+* Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
+* The condition _ROW_NUMBER() over (PARTITION BY objectid ORDER BY COUNT_DATE DESC) =1_ to eliminate the duplicated records within the provided dates.
+
+
+|         Column         |    Data Type     |
+|:----------------------:|:----------------:|
+|        objectid        |      bigint      |
+|         tcs__          | double precision |
+|          main          |       text       |
+|     midblock_route     |       text       |
+|      side_1_route      |       text       |
+|      side_2_route      |       text       |
+|    activation_date     |       date       |
+|        latitude        | double precision |
+|       longitude        | double precision |
+|        latitude        | double precision |
+|       longitude        | double precision |
+|       count_date       |       date       |
+|  f8hr_vehicle_volume   | double precision |
+| f8hr_pedestrian_volume | double precision |
+|     donwnload_link     |       text       |
+|      src_filename      |       text       |
+|      last_updated      |    timestamp     |
+|     last_inserted      |    timestamp     |
