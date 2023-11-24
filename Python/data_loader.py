@@ -1,12 +1,10 @@
 import warnings
-
 import pandas as pd
 import psycopg2 as pg
 import os
+import glob
 import sqlalchemy
-from pandasql import sqldf
-
-# from data_extractor import load_monthly_data, load_monthly_forecasts, load_traffic_volumes, load_geo_names_data, load_gta_traffic_arcgis
+from sqlalchemy import text
 warnings.filterwarnings("ignore")
 
 
@@ -26,7 +24,17 @@ user = 'postgres'
 password = 'postgres'
 
 conn = pg.connect(host=host, port=port, dbname=dbname, user=user, password=password)
-cursor = conn.cursor()
+cur = conn.cursor()
 
 sqlalchemy_engine = sqlalchemy.create_engine('postgresql://{}:{}@{}:{}/{}'.format(user, password, host, port,dbname))
 sa_connect = sqlalchemy_engine.connect()
+
+sql_files = glob.glob(parent_dir+'/SQL/*')
+print("SQL Queries to execute: ", sql_files)
+
+for file in sql_files:
+    print('Processing Query File: ', file)
+    query = str(open(file).read())
+    cur.execute(query)
+    conn.commit()
+    print('Done Creating Table for the Query: ', file)
