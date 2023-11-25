@@ -345,7 +345,7 @@ The staging table _stg_gta_traffic_arcgis_ obtained from ArcGIS Toronto and Peel
 |       count_date       |       date       |
 |  f8hr_vehicle_volume   | double precision |
 | f8hr_pedestrian_volume | double precision |
-|     download_link     |       text       |
+|     download_link      |       text       |
 |      src_filename      |       text       |
 |      last_updated      |    timestamp     |
 |     last_inserted      |    timestamp     |
