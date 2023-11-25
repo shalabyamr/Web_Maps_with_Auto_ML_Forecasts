@@ -77,6 +77,34 @@ def extract_monthly_data(save_locally):
                 csv.write(response.content)
                 csv.close()
 
+    # Transposing the Monthly Air Quality Data #
+    print('*** Transposing the Monthly Air Quality Data ***')
+    df = pd.read_sql_table(table_name='stg_monthly_air_data', con=sqlalchemy_engine, schema='stage', parse_dates=True)
+    df_columns = ['FAFFD', 'FALIF', 'FALJI', 'FAMXK', 'FAYJG',
+                  'FAZKI', 'FBKKK', 'FBLJL', 'FBLKS', 'FCAEN', 'FCCOT', 'FCFUU', 'FCGKZ',
+                  'FCIBD', 'FCKTB', 'FCNJT', 'FCTOV', 'FCWFX', 'FCWOV', 'FCWYG', 'FDATE',
+                  'FDCHU', 'FDEGT', 'FDGED', 'FDGEJ', 'FDGEM', 'FDJFN', 'FDMOP', 'FDQBU',
+                  'FDQBX', 'FDSUS', 'FDZCP', 'FEAKO', 'FEARV', 'FEBWC', 'FEUTC', 'FEUZB',
+                  'FEVJR', 'FEVJS', 'FEVJV', 'FEVNS', 'FEVNT']
+    df_out = pd.DataFrame()
+    for column in df_columns:
+        print('Transposing Column: ', column)
+        df2 = pd.DataFrame()
+        df2['the_date'] = df['the_date'].dt.date
+        df2['hours_utc'] = df['hours_utc']
+        df2['cgndb_id'] = str(column)
+        df2['air_quality_value'] = df[column]
+        df2['download_link'] = df['download_link']
+        df2['src_filename'] = df['src_filename']
+        df2['last_updated'] = df['last_updated']
+        df_out = pd.concat([df_out, df2])
+    df_out.to_sql(name='stg_monthly_air_data_transpos', con=sqlalchemy_engine, if_exists='replace', schema='stage', index_label=False, index=False)
+
+    if save_locally == True:
+        transposed_filename = parent_dir+'/Data/'+'monthly_air_data_transposed.csv'
+        print('Saving Transposed Monthly Air Data to: ', transposed_filename)
+        df_out.to_csv(transposed_filename, index_label=False, index=False)
+
     b = datetime.datetime.now()
     delta_seconds = (b-a).total_seconds()
     print("********************************\n",'Loaded Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n********************************\n")
@@ -114,7 +142,7 @@ def extract_monthly_forecasts(save_locally):
             df['validity date'] = pd.to_datetime(df['validity date']).dt.date
             df.rename(columns={'validity time (UTC)':'validity_time_utc', 'cgndb code':'cgndb_code', 'amended?':'amended','validity date':'validity_date','community name':'community_name'}, inplace=True)
             df['last_updated'] = datetime.datetime.now()
-            df['donwnload_link'] = download_link
+            df['download_link'] = download_link
             df['src_filename'] = filename
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
             df.to_sql(name='stg_monthly_forecasts', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
@@ -150,7 +178,7 @@ def extract_traffic_volumes(save_locally):
         '''.format(parent_dir + '/Data/'))
     df = pd.read_csv(parent_dir + '/Data/' + 'traffic_volume.csv', parse_dates=True)
     df['last_updated'] = datetime.datetime.now()
-    df['donwnload_link'] = download_link
+    df['download_link'] = download_link
     df['src_filename'] = filename
     df.to_sql(name='stg_traffic_volume', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
     if save_locally == False:
@@ -181,7 +209,7 @@ def extract_geo_names_data(save_locally):
     df.rename(columns={'province_-_territory':'province_territory'}, inplace=True)
     df['decision_date'] = pd.to_datetime(df['decision_date']).dt.date
     df['last_updated'] = datetime.datetime.now()
-    df['donwnload_link'] = download_link
+    df['download_link'] = download_link
     df['src_filename'] = csv_filename
     df.to_sql(name='stg_geo_names', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
     if save_locally != True:
@@ -202,7 +230,7 @@ def extract_gta_traffic_arcgis(save_locally):
     df['activation_date'] = pd.to_datetime(df['activation_date']).dt.date
     df['count_date'] = pd.to_datetime(df['count_date']).dt.date
     df['last_updated'] = datetime.datetime.now()
-    df['donwnload_link'] = download_link
+    df['download_link'] = download_link
     df['src_filename'] = filename
     df.to_sql(name='stg_gta_traffic_arcgis', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
 
