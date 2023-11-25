@@ -41,7 +41,7 @@ for file in sql_files:
         print('Done Executing the Query: ', file)
 
     if file == 'combine_air_data.sql':
-        print('Processing Query File: ', file)
+        print('Combining dim_geo_names and fact_monthly_air_data_transpose in Query File: ', file)
         query = str(open(file).read())
         cur.execute(query)
         conn.commit()
