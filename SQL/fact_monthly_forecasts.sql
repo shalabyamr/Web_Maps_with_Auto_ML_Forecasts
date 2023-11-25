@@ -8,7 +8,7 @@ CREATE TABLE PUBLIC.FACT_MONTHLY_FORECASTS AS(
     period,
     value,
     amended,
-    donwnload_link,
+    download_link,
     src_filename,
     last_updated,
     NOW() AT TIME ZONE 'EST' AS last_inserted

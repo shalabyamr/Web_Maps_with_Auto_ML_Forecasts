@@ -13,7 +13,7 @@ CREATE TABLE PUBLIC.FACT_GTA_TRAFFIC_ARCGIS AS(
     A.count_date             ,
     A.f8hr_vehicle_volume    ,
     A.f8hr_pedestrian_volume ,
-    A.donwnload_link         ,
+    A.download_link         ,
     A.src_filename           ,
     A.last_updated           ,
     NOW() AT TIME ZONE 'EST' AS last_inserted

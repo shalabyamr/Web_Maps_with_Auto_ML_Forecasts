@@ -16,7 +16,7 @@ CREATE TABLE PUBLIC.DIM_GEO_NAMES AS(
     , A.relevance_at_scale
     , A.decision_date
     , A.source
-    , A.donwnload_link
+    , A.download_link
     , A.src_filename
     , A.last_updated
     , (NOW() AT TIME ZONE 'EST') AS last_inserted

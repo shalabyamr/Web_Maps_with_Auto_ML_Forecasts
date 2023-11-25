@@ -98,7 +98,7 @@ def extract_monthly_data(save_locally):
         df2['src_filename'] = df['src_filename']
         df2['last_updated'] = df['last_updated']
         df_out = pd.concat([df_out, df2])
-    df_out.to_sql(name='stg_monthly_air_data_transpos', con=sqlalchemy_engine, if_exists='replace', schema='stage', index_label=False, index=False)
+    df_out.to_sql(name='stg_monthly_air_data_transpose', con=sqlalchemy_engine, if_exists='replace', schema='stage', index_label=False, index=False)
 
     if save_locally == True:
         transposed_filename = parent_dir+'/Data/'+'monthly_air_data_transposed.csv'
