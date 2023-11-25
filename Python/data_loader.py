@@ -33,8 +33,16 @@ sql_files = glob.glob(parent_dir+'/SQL/*')
 print("SQL Queries to execute: ", sql_files)
 
 for file in sql_files:
-    print('Processing Query File: ', file)
-    query = str(open(file).read())
-    cur.execute(query)
-    conn.commit()
-    print('Done Creating Table for the Query: ', file)
+    if file != 'combine_air_data.sql':
+        print('Processing Query File: ', file)
+        query = str(open(file).read())
+        cur.execute(query)
+        conn.commit()
+        print('Done Executing the Query: ', file)
+
+    if file == 'combine_air_data.sql':
+        print('Processing Query File: ', file)
+        query = str(open(file).read())
+        cur.execute(query)
+        conn.commit()
+        print('Done Executing the Query: ', file)
