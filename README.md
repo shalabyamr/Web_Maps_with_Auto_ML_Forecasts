@@ -311,3 +311,4 @@ The staging table _stg_gta_traffic_arcgis_ obtained from ArcGIS Toronto and Peel
 |      src_filename      |       text       |
 |      last_updated      |    timestamp     |
 |     last_inserted      |    timestamp     |
+

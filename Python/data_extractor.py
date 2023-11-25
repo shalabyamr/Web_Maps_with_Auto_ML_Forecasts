@@ -65,10 +65,9 @@ def extract_monthly_data(save_locally):
             response = requests.get(download_link)
             df = pd.read_csv(download_link)
             df['Date'] = pd.to_datetime(df['Date']).dt.date
-            df.rename(columns={'Date':'date'})
-            df.rename(columns={'Hour (UTC)':'hours_utc'}, inplace=True)
+            df.rename(columns={'Date':'the_date', 'Hour (UTC)':'hours_utc'}, inplace=True)
             df['last_updated'] = datetime.datetime.now()
-            df['donwnload_link'] = download_link
+            df['download_link'] = download_link
             df['src_filename'] = filename
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
             df.to_sql(name='stg_monthly_air_data', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
@@ -239,5 +238,3 @@ extract_geo_names_data(save_locally=False)
 extract_gta_traffic_arcgis(save_locally=False)
 ## OR to save the CSV files locally to ./Data/ArcGIS_Toronto_and_Peel_Traffic.csv  ##
 #extract_gta_traffic_arcgis(save_locally=True)
-
-

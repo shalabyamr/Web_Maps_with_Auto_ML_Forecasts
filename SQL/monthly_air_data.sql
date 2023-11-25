@@ -45,7 +45,7 @@ CREATE TABLE PUBLIC.FACT_MONTHLY_AIR_DATA AS(
     "FEVJV",
     "FEVNS",
     "FEVNT",
-    donwnload_link,
+    download_link,
     src_filename,
     last_updated,
     NOW() AT TIME ZONE 'EST' AS last_inserted
