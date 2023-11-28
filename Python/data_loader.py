@@ -16,31 +16,31 @@ parent_dir = os.path.split(os.getcwd())[0]
 print('Working Directory: ', current_dirs_parent)
 print('Parent Directory: ', parent_dir, '\n*****************************\n')
 
-def create_staging_tables():
+def create_staging_tables(save_locally):
     master_list = []
     # to execute loading the monthly data into staging layer
-    monthly_date_step = extract_monthly_data(save_locally=False)
+    monthly_date_step = extract_monthly_data(save_locally=save_locally)
     master_list.append(monthly_date_step)
 
     # to execute loading the monthly forecasts into the staging layer
-    monthly_forecasts_step = extract_monthly_forecasts(save_locally=False)
+    monthly_forecasts_step = extract_monthly_forecasts(save_locally=save_locally)
     master_list.append(monthly_forecasts_step)
 
     # to execute loading the traffic volume dataset into the staging layer
-    traffic_volume_step = extract_traffic_volumes(save_locally=False)
+    traffic_volume_step = extract_traffic_volumes(save_locally=save_locally)
     master_list.append(traffic_volume_step)
 
     # to execute loading the geographical database names  into the staging layer
-    geo_names_step = extract_geo_names_data(save_locally=False)
+    geo_names_step = extract_geo_names_data(save_locally=save_locally)
     master_list.append(geo_names_step)
 
 
     # to execute loading the loading ArcGIS Toronto and Peel Traffic into the staging layer
-    traffic_arcgis_step = extract_gta_traffic_arcgis(save_locally=False)
+    traffic_arcgis_step = extract_gta_traffic_arcgis(save_locally=save_locally)
     master_list.append(traffic_arcgis_step)
 
     # Transposes monthly Air Data from Column Names to Rows
-    transform_monthly_step = transform_monthly_data(save_locally=False)
+    transform_monthly_step = transform_monthly_data(save_locally=save_locally)
     master_list.append(transform_monthly_step)
     return master_list
 
@@ -86,7 +86,7 @@ def create_production_tables():
     return master_list
 
 
-staging_tables_list = create_staging_tables()
+staging_tables_list = create_staging_tables(save_locally=False)
 production_tables_list = create_production_tables()
 
 pipeline_df = pd.DataFrame(production_tables_list, columns=['step_name','duration_seconds', 'start_time', 'end_time', 'files_processed'])
