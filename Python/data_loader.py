@@ -89,7 +89,7 @@ pipeline_df = pd.concat([pipeline_df2, pipeline_df])
 pipeline_df.drop(pipeline_df.tail(1).index,inplace=True) # drop last row
 
 if save_locally_flag == True:
-    print('Saving Data Model Performance {} in: {}'.format('data_model_performance_stage.csv', parent_dir+'/Analytics/'))
-    pipeline_df.to_csv(parent_dir + '/Analytics/data_model_performance_stage.csv', index=False, index_label=False)
+    print('Saving Data Model Performance {} in: {}'.format('data_model_performance.csv', parent_dir+'/Analytics/'))
+    pipeline_df.to_csv(parent_dir + '/Analytics/data_model_performance.csv', index=False, index_label=False)
 
 pipeline_df.to_sql(name='data_model_performance_tbl', con=intialize_database()[0], if_exists='replace', schema='public', index_label=False, index=False)
