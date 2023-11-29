@@ -1,7 +1,6 @@
 import datetime
 import warnings
 import pandas as pd
-import os
 from data_extractor import intialize_database, parent_dir
 warnings.filterwarnings("ignore")
 

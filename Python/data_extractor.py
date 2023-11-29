@@ -12,6 +12,9 @@ import zipfile
 import wget
 warnings.filterwarnings("ignore")
 
+save_locally_flag = False
+print('The Parameter Save Locally is set to : {}'.format(save_locally_flag))
+
 # To write temp files into the Parent ./Data/ Folder to
 # to keep the Python folder clean of csv and temp files
 def get_parent_dir():
@@ -23,6 +26,7 @@ parent_dir = get_parent_dir()[0]
 current_dirs_parent = get_parent_dir()[1]
 print('Working Directory: ', current_dirs_parent)
 print('Parent Directory: ', parent_dir, '\n*****************************\n')
+
 
 def intialize_database():
     try:
