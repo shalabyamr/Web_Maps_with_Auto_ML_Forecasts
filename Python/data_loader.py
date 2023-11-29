@@ -89,3 +89,4 @@ pipeline_df2['phase'] = 'stage'
 pipeline_df2 = pipeline_df2[['phase', 'step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed']]
 pipeline_df = pd.concat([pipeline_df2, pipeline_df])
 pipeline_df.to_csv(parent_dir+'/Analytics/data_model_performance_stage.csv', index=False, index_label=False)
+pipeline_df.to_sql(name='data_model_performance', con=intialize_database()[1], if_exists='replace', schema='public', index_label=False, index=False)
