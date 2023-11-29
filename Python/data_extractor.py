@@ -14,12 +14,13 @@ warnings.filterwarnings("ignore")
 
 # To write temp files into the Parent ./Data/ Folder to
 # to keep the Python folder clean of csv and temp files
-def get_parent_dir(directory):
-    return os.path.dirname(directory)
+def get_parent_dir():
+    directory = os.getcwd()
+    parent_directory = os.path.split(os.getcwd())[0]
+    return parent_directory, os.path.dirname(directory)
 
-
-current_dirs_parent = get_parent_dir(os.getcwd())
-parent_dir = os.path.split(os.getcwd())[0]
+parent_dir = get_parent_dir()[0]
+current_dirs_parent = get_parent_dir()[1]
 print('Working Directory: ', current_dirs_parent)
 print('Parent Directory: ', parent_dir, '\n*****************************\n')
 

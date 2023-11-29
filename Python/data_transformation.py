@@ -2,17 +2,8 @@ import datetime
 import warnings
 import pandas as pd
 import os
-from data_extractor import intialize_database
+from data_extractor import intialize_database, parent_dir
 warnings.filterwarnings("ignore")
-
-
-def get_parent_dir(directory):
-    return os.path.dirname(directory)
-
-current_dirs_parent = get_parent_dir(os.getcwd())
-parent_dir = os.path.split(os.getcwd())[0]
-print('Working Directory: ', current_dirs_parent)
-print('Parent Directory: ', parent_dir, '\n*****************************\n')
 
 def transform_monthly_data(save_locally):
 

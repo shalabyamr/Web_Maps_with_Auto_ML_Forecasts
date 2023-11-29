@@ -4,17 +4,9 @@ import pandas as pd
 import os
 import glob
 import datetime
-from data_extractor import (intialize_database, extract_monthly_data, extract_monthly_forecasts, extract_traffic_volumes, extract_geo_names_data, extract_gta_traffic_arcgis)
+from data_extractor import (intialize_database, parent_dir, extract_monthly_data, extract_monthly_forecasts, extract_traffic_volumes, extract_geo_names_data, extract_gta_traffic_arcgis)
 from data_transformation import transform_monthly_data
 
-def get_parent_dir(directory):
-    return os.path.dirname(directory)
-
-
-current_dirs_parent = get_parent_dir(os.getcwd())
-parent_dir = os.path.split(os.getcwd())[0]
-print('Working Directory: ', current_dirs_parent)
-print('Parent Directory: ', parent_dir, '\n*****************************\n')
 
 def create_staging_tables(save_locally):
     master_list = []
