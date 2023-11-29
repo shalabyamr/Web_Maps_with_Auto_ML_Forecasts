@@ -39,7 +39,7 @@ def create_staging_tables(save_locally):
 def create_production_tables():
     a1 = datetime.datetime.now()
     master_list = []
-    sql_files = glob.glob(parent_dir + '/SQL/*')
+    sql_files = glob.glob(parent_dir + '/SQL/*.sql')
 
     # Combine_Air_Data Table needs to be created after all staging tables
     for i in sql_files:
@@ -53,7 +53,7 @@ def create_production_tables():
     for file in sql_files:
         a = datetime.datetime.now()
 
-        if ('combine_air_data.sql' not in file) or ('create_postgis_tables.sql' not in file):
+        if 'combine_air_data.sql' not in file:
             print('Processing Query File: ', file)
             query = str(open(file).read())
             cur.execute(query)

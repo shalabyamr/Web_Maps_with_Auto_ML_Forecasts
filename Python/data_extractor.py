@@ -155,7 +155,6 @@ def extract_traffic_volumes(save_locally):
         resources <- list_package_resources("traffic-volumes-at-intersections-for-all-modes")
         datastore_resources <- filter(resources, tolower(format) %in% c('csv'))
         df_r <- filter(datastore_resources, row_number()==1) %>% get_resource()
-        print(summary(df_r))
         write.csv(df_r, '{}traffic_volume.csv', row.names = FALSE)
         '''.format(parent_dir + '/Data/'))
     df = pd.read_csv(parent_dir + '/Data/' + 'traffic_volume.csv', parse_dates=True)
