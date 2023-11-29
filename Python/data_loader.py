@@ -61,14 +61,14 @@ def create_production_tables():
     for file in sql_files:
         a = datetime.datetime.now()
 
-        if 'combine_air_data.sql' not in file:
+        if any('combine_air_data.sql' or 'create_postgis_tables.sql') not in file:
             print('Processing Query File: ', file)
             query = str(open(file).read())
             cur.execute(query)
             conn.commit()
             print('Executed Query: ', file)
 
-        else:
+        elif 'combine_air_data.sql' in file:
             print('Processing Query File: ', file)
             query = str(open(file).read())
             cur.execute(query)
