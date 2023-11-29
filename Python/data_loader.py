@@ -80,7 +80,6 @@ def create_production_tables():
 
 staging_tables_list = create_staging_tables(save_locally=False)
 production_tables_list = create_production_tables()
-
 pipeline_df = pd.DataFrame(production_tables_list, columns=['step_name','duration_seconds', 'start_time', 'end_time', 'files_processed'])
 pipeline_df['phase'] = 'production'
 pipeline_df = pipeline_df[['phase', 'step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed']]
