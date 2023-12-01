@@ -16,8 +16,8 @@ warnings.filterwarnings("ignore")
 
 config = configparser.ConfigParser()
 config.read('config.ini')
-save_locally_flag = config['save_files']['save_locally_flag']
-print('Save Locally Flag is set to: {}\n*********'.format(save_locally_flag))
+save_locally = config['save_files']['save_locally_flag']
+print('Save Locally Flag is set to: {}\n*********'.format(save_locally))
 
 # To write temp files into the Parent ./Data/ Folder to
 # to keep the Python folder clean of csv and temp files
@@ -66,7 +66,7 @@ engines = initialize_database()
 sqlalchemy_engine = engines[0]  # to avoid re-initializing the database
 pg_engine = engines[1]          # to avoid re-initilizing the database
 
-def extract_monthly_data(save_locally, sqlalchemy_engine):
+def extract_monthly_data(sqlalchemy_engine):
     a = datetime.datetime.now()
     # URL from which pdfs to be downloaded
     print('Started Downloading Monthly Data as of {}'.format(a))
@@ -90,7 +90,7 @@ def extract_monthly_data(save_locally, sqlalchemy_engine):
             download_link = url + link.get('href')
             print('Download Link: ', download_link)
             filename = parent_dir + '/Data/' + link.get('href')
-            if save_locally:
+            if save_locally == True:
                 print("Filename to be Written: ", filename)
             i += 1
             # Get response object for link
@@ -104,7 +104,7 @@ def extract_monthly_data(save_locally, sqlalchemy_engine):
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
             df.to_sql(name='stg_monthly_air_data', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
             # Write content in CSV file
-            if save_locally:
+            if save_locally == True:
                 csv = open(filename, 'wb')
                 csv.write(response.content)
                 csv.close()
@@ -114,7 +114,7 @@ def extract_monthly_data(save_locally, sqlalchemy_engine):
     print("********************************\n",'Loaded Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n********************************\n")
     return 'extract_monthly_data', delta_seconds, a, b, i
 
-def extract_monthly_forecasts(save_locally, sqlalchemy_engine):
+def extract_monthly_forecasts(sqlalchemy_engine):
     a = datetime.datetime.now()
     print('Loading Monthly Forecasts as of: {}'.format(a))
     # URL from which pdfs to be downloaded
@@ -137,7 +137,7 @@ def extract_monthly_forecasts(save_locally, sqlalchemy_engine):
             download_link = url + link.get('href')
             print('Download Link: ', download_link)
             filename = parent_dir + '/Data/Forecast_' + link.get('href')
-            if save_locally:
+            if save_locally == True:
                 print("Filename to be Written: ", filename)
             i += 1
             # Get response object for link
@@ -151,7 +151,7 @@ def extract_monthly_forecasts(save_locally, sqlalchemy_engine):
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
             df.to_sql(name='stg_monthly_forecasts', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
             # Write content in CSV file
-            if save_locally:
+            if save_locally == True:
                 csv = open(filename, 'wb')
                 csv.write(response.content)
                 csv.close()
@@ -160,7 +160,7 @@ def extract_monthly_forecasts(save_locally, sqlalchemy_engine):
     print("********************************\n",'Loaded Daily Forecasts Done in {} Seconds.'.format(delta_seconds),"\n********************************\n")
     return 'extract_monthly_forecasts', delta_seconds, a, b, i
 
-def extract_traffic_volumes(save_locally, sqlalchemy_engine):
+def extract_traffic_volumes(sqlalchemy_engine):
     a = datetime.datetime.now()
     print('Loading Traffic Data as of: {}'.format(a))
     download_link = 'https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/'
@@ -192,7 +192,7 @@ def extract_traffic_volumes(save_locally, sqlalchemy_engine):
     print("********************************\n",'Loaded Toronto Traffic Volume Done in {} Seconds'.format(delta_seconds),"\n********************************\n")
     return 'extract_traffic_volumes', delta_seconds, a, b, 1
 
-def extract_geo_names_data(save_locally, sqlalchemy_engine):
+def extract_geo_names_data(sqlalchemy_engine):
     a = datetime.datetime.now()
     print('Downloading Geographical Names Data as of: ', a)
     # URL from which pdfs to be downloaded
@@ -224,7 +224,7 @@ def extract_geo_names_data(save_locally, sqlalchemy_engine):
     print("********************************\n",'Loaded Geo Data Names Done in {} Seconds'.format(delta_seconds),"\n********************************\n")
     return 'extract_geo_names_data', delta_seconds, a, b, 2
 
-def extract_gta_traffic_arcgis(save_locally, sqlalchemy_engine):
+def extract_gta_traffic_arcgis(sqlalchemy_engine):
     a = datetime.datetime.now()
     print('Loading ArcGIS Traffic from ArcGIS as of: ',a)
     download_link = 'https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da'
@@ -237,7 +237,7 @@ def extract_gta_traffic_arcgis(save_locally, sqlalchemy_engine):
     df['download_link'] = download_link
     df['src_filename'] = filename
     df.to_sql(name='stg_gta_traffic_arcgis', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
-    if save_locally:
+    if save_locally == True:
         df.to_csv(parent_dir+'/Data/'+'ArcGIS_Toronto_and_Peel_Traffic.csv', index=False, index_label=False)
 
     b = datetime.datetime.now()

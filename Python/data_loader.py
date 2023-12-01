@@ -3,35 +3,35 @@ warnings.filterwarnings("ignore")
 import pandas as pd
 import glob
 import datetime
-from data_extractor import (save_locally_flag, sqlalchemy_engine, pg_engine, parent_dir, extract_monthly_data, extract_monthly_forecasts, extract_traffic_volumes, extract_geo_names_data, extract_gta_traffic_arcgis)
+from data_extractor import (save_locally, sqlalchemy_engine, pg_engine, parent_dir, extract_monthly_data, extract_monthly_forecasts, extract_traffic_volumes, extract_geo_names_data, extract_gta_traffic_arcgis)
 from data_transformation import transform_monthly_data
 
 
-def create_staging_tables(save_locally):
+def create_staging_tables():
     master_list = []
     # to execute loading the monthly data into staging layer
-    monthly_date_step = extract_monthly_data(save_locally=save_locally_flag, sqlalchemy_engine=sqlalchemy_engine)
+    monthly_date_step = extract_monthly_data(sqlalchemy_engine=sqlalchemy_engine)
     master_list.append(monthly_date_step)
 
     # to execute loading the monthly forecasts into the staging layer
-    monthly_forecasts_step = extract_monthly_forecasts(save_locally=save_locally_flag, sqlalchemy_engine=sqlalchemy_engine)
+    monthly_forecasts_step = extract_monthly_forecasts(sqlalchemy_engine=sqlalchemy_engine)
     master_list.append(monthly_forecasts_step)
 
     # to execute loading the traffic volume dataset into the staging layer
-    traffic_volume_step = extract_traffic_volumes(save_locally=save_locally_flag, sqlalchemy_engine=sqlalchemy_engine)
+    traffic_volume_step = extract_traffic_volumes(sqlalchemy_engine=sqlalchemy_engine)
     master_list.append(traffic_volume_step)
 
     # to execute loading the geographical database names  into the staging layer
-    geo_names_step = extract_geo_names_data(save_locally=save_locally_flag, sqlalchemy_engine=sqlalchemy_engine)
+    geo_names_step = extract_geo_names_data(sqlalchemy_engine=sqlalchemy_engine)
     master_list.append(geo_names_step)
 
 
     # to execute loading the loading ArcGIS Toronto and Peel Traffic into the staging layer
-    traffic_arcgis_step = extract_gta_traffic_arcgis(save_locally=save_locally_flag, sqlalchemy_engine=sqlalchemy_engine)
+    traffic_arcgis_step = extract_gta_traffic_arcgis(sqlalchemy_engine=sqlalchemy_engine)
     master_list.append(traffic_arcgis_step)
 
     # Transposes monthly Air Data from Column Names to Rows
-    transform_monthly_step = transform_monthly_data(save_locally=save_locally_flag, sqlalchemy_engine=sqlalchemy_engine)
+    transform_monthly_step = transform_monthly_data(sqlalchemy_engine=sqlalchemy_engine)
     master_list.append(transform_monthly_step)
     return master_list
 
@@ -74,4 +74,13 @@ def create_production_tables():
     delta_seconds_1 = (b1-a1).total_seconds()
     master_list.append(['create_production_tables', a1, b1, len(sql_files)])
     print('Done Creating ALL Production Tables in {} seconds as of: {}'.format(delta_seconds_1, b1))
+
+    if save_locally == True:
+        public_tables = ['data_model_performance_tbl', 'dim_geo_names', 'fact_combined_air_data','fact_gta_traffic_arcgis', 'fact_monthly_air_data', 'fact_monthly_air_data_transpose', 'fact_monthly_forecasts', 'fact_traffic_volume']
+        for public_table in public_tables:
+            df = pd.read_sql_table(table_name=public_table, con= sqlalchemy_engine, schema='public')
+            filename = parent_dir+'/Data/'+'Public_'+public_table
+            print("Writing PUBLIC.{} locally to file: {}".format(public_table, filename))
+            df.to_csv(filename, index_label=False, index=False)
+
     return master_list

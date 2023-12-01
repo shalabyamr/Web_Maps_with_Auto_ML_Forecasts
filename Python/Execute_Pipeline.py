@@ -1,7 +1,8 @@
-from data_loader import parent_dir, create_staging_tables, create_production_tables, save_locally_flag, sqlalchemy_engine, pg_engine
+from data_loader import parent_dir, create_staging_tables, create_production_tables, save_locally, sqlalchemy_engine, pg_engine
 import pandas as pd
 
-staging_tables_list = create_staging_tables(save_locally=save_locally_flag)
+print('save locally flag ::::: {}'.format(save_locally))
+staging_tables_list = create_staging_tables()
 production_tables_list = create_production_tables()
 pipeline_df = pd.DataFrame(production_tables_list, columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
 pipeline_df['phase'] = 'production'
@@ -12,7 +13,7 @@ pipeline_df2 = pipeline_df2[['phase', 'step_name', 'duration_seconds', 'start_ti
 pipeline_df = pd.concat([pipeline_df2, pipeline_df])
 pipeline_df.drop(pipeline_df.tail(1).index,inplace=True) # drop last row
 
-if save_locally_flag:
+if save_locally == True:
     print('Saving Data Model Performance {} in: {}'.format('data_model_performance.csv', parent_dir+'/Analytics/'))
     pipeline_df.to_csv(parent_dir + '/Analytics/data_model_performance.csv', index=False, index_label=False)
 
