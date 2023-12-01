@@ -9,7 +9,6 @@ def transform_monthly_data(save_locally, sqlalchemy_engine):
     # Transposing the Monthly Air Quality Data #
     a = datetime.datetime.now()
     print('*** Transposing the Monthly Air Quality Data as of: {}***'.format(a))
-    sqlalchemy_engine = initialize_database()[0]
     df = pd.read_sql_table(table_name='stg_monthly_air_data', con=sqlalchemy_engine, schema='stage', parse_dates=True)
     df_out = pd.DataFrame()
     for column in df.columns:

@@ -43,7 +43,7 @@ def initialize_database():
         dbname = config['postgres_db']['db_name']
         user = config['postgres_db']['user']
         password = config['postgres_db']['password']
-        print('Database Configuration: Host: {}\nPort: {}\nDatabase Name: {}\nUser: {}\nPassword: {}\n'.format(host, port, dbname, user, password))
+        print('Database Configuration: Host: {}\nPort: {}\nDatabase Name: {}\nUser: {}\nPassword: {}'.format(host, port, dbname, user, password))
         pg_engine = pg.connect(host=host, port=port, dbname=dbname, user=user, password=password)
         # Connection String is of the form: ‘postgresql://username:password@databasehost:port/databasename’
         sqlalchemy_engine = sqlalchemy.create_engine('postgresql://{}:{}@{}:{}/{}'.format(user, password, host, port,dbname))
@@ -52,7 +52,7 @@ def initialize_database():
             stage_query = "CREATE SCHEMA IF NOT EXISTS stage;"
             cursor.execute(stage_query)
             pg_engine.commit()
-            print('Initialized Database and Created Schema Stage, ')
+            print('Done Initializing Database and Created Schema Stage\n************, ')
         except BaseException as exception:
             print('Failed to create schema!', exception)
             sys.exit()
@@ -60,6 +60,11 @@ def initialize_database():
     except BaseException as exception:
         print('Error thrown by initialize_database()!, {} '.format(exception))
         return exception
+
+
+engines = initialize_database()
+sqlalchemy_engine = engines[0]  # to avoid re-initializing the database
+pg_engine = engines[1]          # to avoid re-initilizing the database
 
 def extract_monthly_data(save_locally, sqlalchemy_engine):
     a = datetime.datetime.now()

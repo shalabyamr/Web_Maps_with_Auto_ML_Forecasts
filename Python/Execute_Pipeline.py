@@ -1,4 +1,4 @@
-from data_loader import parent_dir, create_staging_tables, create_production_tables, save_locally_flag, initialize_database
+from data_loader import parent_dir, create_staging_tables, create_production_tables, save_locally_flag, sqlalchemy_engine, pg_engine
 import pandas as pd
 
 staging_tables_list = create_staging_tables(save_locally=save_locally_flag)
@@ -17,4 +17,4 @@ if save_locally_flag:
     pipeline_df.to_csv(parent_dir + '/Analytics/data_model_performance.csv', index=False, index_label=False)
 
 
-pipeline_df.to_sql(name='data_model_performance_tbl', con=initialize_database()[0], if_exists='replace', schema='public', index_label=False, index=False)
+pipeline_df.to_sql(name='data_model_performance_tbl', con=sqlalchemy_engine, if_exists='replace', schema='public', index_label=False, index=False)
