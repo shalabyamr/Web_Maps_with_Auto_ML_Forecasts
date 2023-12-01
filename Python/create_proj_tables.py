@@ -2,7 +2,6 @@ import pandas as pd
 from shapely.geometry import Point
 from data_extractor import sqlalchemy_engine, pg_engine
 import geopandas
-from datetime import datetime
 
 
 df_gta_traffic_arcgis = pd.read_sql_table(table_name='fact_gta_traffic_arcgis', con=sqlalchemy_engine, schema='public')
