@@ -26,7 +26,7 @@ def transform_monthly_data(save_locally):
     df_out.to_sql(name='stg_monthly_air_data_transpose', con=sqlalchemy_engine, if_exists='replace', schema='stage',
                   index_label=False, index=False)
 
-    if save_locally == True:
+    if save_locally:
         transposed_filename = parent_dir + '/Data/' + 'monthly_air_data_transposed.csv'
         print('Saving Transposed Monthly Air Data to: ', transposed_filename)
         df_out.to_csv(transposed_filename, index_label=False, index=False)
