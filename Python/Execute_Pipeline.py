@@ -1,7 +1,6 @@
 from data_loader import parent_dir, create_staging_tables, create_production_tables, save_locally, sqlalchemy_engine, pg_engine
 import pandas as pd
 
-print('save locally flag ::::: {}'.format(save_locally))
 staging_tables_list = create_staging_tables()
 production_tables_list = create_production_tables()
 pipeline_df = pd.DataFrame(production_tables_list, columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
