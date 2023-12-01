@@ -2,7 +2,6 @@ import pandas as pd
 from data_extractor import sqlalchemy_engine, pg_engine
 import geopandas
 
-
 df_gta_traffic_arcgis = pd.read_sql_table(table_name='fact_gta_traffic_arcgis', con=sqlalchemy_engine, schema='public')
 gdf = geopandas.GeoDataFrame(df_gta_traffic_arcgis, geometry=geopandas.points_from_xy(df_gta_traffic_arcgis.longitude, df_gta_traffic_arcgis.latitude), crs="EPSG:26917")
 gdf.rename(columns={'geometry':'geom'}, inplace=True)
