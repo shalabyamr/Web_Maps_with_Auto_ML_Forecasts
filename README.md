@@ -394,3 +394,70 @@ After all the staging tables, sql scripts, and hard extractions made, _data_mode
 | production | /Users/amr/PycharmProjects/ggr473/SQL/traffic_volume.sql              | 0.067657             | 23:48.7        | 23:48.7      | 1                   |
 | production | /Users/amr/PycharmProjects/ggr473/SQL/traffic_volume.sql              | 0.015518             | 23:48.7        | 23:48.7      | 1                   |
 | production | /Users/amr/PycharmProjects/ggr473/SQL/combine_air_data.sql            | 0.521394             | 23:48.8        | 23:49.3      | 1                   |
+
+### 8. fact_air_data_proj:
+The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [create_proj_tables.py](Python%2Fcreate_proj_tables.py) with the inherited properties of the geolocation name identifiers from the curated table dim_geo_names.
+
+| Column                           |         Data Type          |
+|----------------------------------|:--------------------------:|
+| **geom**                         | **geometry(Point, 26917)** |
+| the_date                         |            date            |
+| hour_utc                         |           bigint           |
+| cgndb_id                         |            text            |
+| air_quality_value                |      double precision      |
+| donwnload_link                   |            text            |
+| src_filename                     |            text            |
+| last_updated                     |         timestamp          |
+| last_inserted                    |         timestamp          |
+| geo_lat                          |      double precision      |
+| geo_long                         |      double precision      |
+| province_territory               |            text            |
+| geo_location                     |            text            |
+| geo_decision_date                |         timestamp          |
+| concise_code                     |            text            |
+| generic_category                 |            text            |
+| generic_term                     |            text            |
+| geographical_name                |            text            |
+| geo_names_second_from_extraction |      double precision      |
+| weekday                          |            text            |
+
+
+### 9. fact_gta_traffic_proj:
+The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_gta_traffic_arcgis with additional geometry column 'geom' created in Python via [create_proj_tables.py](Python%2Fcreate_proj_tables.py).
+
+|         Column         |         Data Type          |
+|:----------------------:|:--------------------------:|
+|        **geom**        | **geometry(Point, 26917)** |
+|        objectid        |           bigint           |
+|         tcs__          |      double precision      |
+|          main          |            text            |
+|     midblock_route     |            text            |
+|      side_1_route      |            text            |
+|      side_2_route      |            text            |
+|    activation_date     |            date            |
+|        latitude        |      double precision      |
+|       longitude        |      double precision      |
+|        latitude        |      double precision      |
+|       longitude        |      double precision      |
+|       count_date       |            date            |
+|  f8hr_vehicle_volume   |      double precision      |
+| f8hr_pedestrian_volume |      double precision      |
+|     download_link      |            text            |
+|      src_filename      |            text            |
+|      last_updated      |         timestamp          |
+|     last_inserted      |         timestamp          |
+
+### 10. fact_hourly_avg:
+The table fact_hourly_avg contains the calculated means for the hourly segments per station and converted POSTGIS table via [create_proj_tables.py](Python%2Fcreate_proj_tables.py).
+
+|   Column    |         Data Type          |
+|:-----------:|:--------------------------:|
+|  **geom**   | **geometry(Point, 26917)** |
+|  cgndb_id   |            text            |
+|   geo_lat   |      double precision      |
+|  geo_long   |      double precision      |
+|  dawn_avg   |      double precision      |
+| morning_avg |      double precision      |
+|  noon_avg   |      double precision      |
+| evening_avg |      double precision      |
+
