@@ -61,7 +61,7 @@ def initialize_database():
         print('Error thrown by initialize_database()!, {} '.format(exception))
         return exception
 
-def extract_monthly_data(save_locally):
+def extract_monthly_data(save_locally, sqlalchemy_engine):
     a = datetime.datetime.now()
     # URL from which pdfs to be downloaded
     print('Started Downloading Monthly Data as of {}'.format(a))
@@ -80,7 +80,6 @@ def extract_monthly_data(save_locally):
     # From all links check for CSV link and
     # if present download file
 
-    sqlalchemy_engine = initialize_database()[0]
     for link in links:
         if ('.csv' in link.get('href', [])):
             download_link = url + link.get('href')
@@ -110,7 +109,7 @@ def extract_monthly_data(save_locally):
     print("********************************\n",'Loaded Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n********************************\n")
     return 'extract_monthly_data', delta_seconds, a, b, i
 
-def extract_monthly_forecasts(save_locally):
+def extract_monthly_forecasts(save_locally, sqlalchemy_engine):
     a = datetime.datetime.now()
     print('Loading Monthly Forecasts as of: {}'.format(a))
     # URL from which pdfs to be downloaded
@@ -128,7 +127,6 @@ def extract_monthly_forecasts(save_locally):
     i = 0
     # From all links check for CSV link and
     # if present download file
-    sqlalchemy_engine = initialize_database()[0]
     for link in links:
         if ('.csv' in link.get('href', [])):
             download_link = url + link.get('href')
@@ -157,7 +155,7 @@ def extract_monthly_forecasts(save_locally):
     print("********************************\n",'Loaded Daily Forecasts Done in {} Seconds.'.format(delta_seconds),"\n********************************\n")
     return 'extract_monthly_forecasts', delta_seconds, a, b, i
 
-def extract_traffic_volumes(save_locally):
+def extract_traffic_volumes(save_locally, sqlalchemy_engine):
     a = datetime.datetime.now()
     print('Loading Traffic Data as of: {}'.format(a))
     download_link = 'https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/'
@@ -167,7 +165,6 @@ def extract_traffic_volumes(save_locally):
 
     utils.install_packages('opendatatoronto')
     utils.install_packages('dplyr')
-    sqlalchemy_engine = initialize_database()[0]
     ro.r('''
         library(opendatatoronto)
         library(dplyr)
@@ -190,7 +187,7 @@ def extract_traffic_volumes(save_locally):
     print("********************************\n",'Loaded Toronto Traffic Volume Done in {} Seconds'.format(delta_seconds),"\n********************************\n")
     return 'extract_traffic_volumes', delta_seconds, a, b, 1
 
-def extract_geo_names_data(save_locally):
+def extract_geo_names_data(save_locally, sqlalchemy_engine):
     a = datetime.datetime.now()
     print('Downloading Geographical Names Data as of: ', a)
     # URL from which pdfs to be downloaded
@@ -212,7 +209,6 @@ def extract_geo_names_data(save_locally):
     df['last_updated'] = datetime.datetime.now()
     df['download_link'] = download_link
     df['src_filename'] = csv_filename
-    sqlalchemy_engine = initialize_database()[0]
     df.to_sql(name='stg_geo_names', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
 
     if save_locally != True:
@@ -223,7 +219,7 @@ def extract_geo_names_data(save_locally):
     print("********************************\n",'Loaded Geo Data Names Done in {} Seconds'.format(delta_seconds),"\n********************************\n")
     return 'extract_geo_names_data', delta_seconds, a, b, 2
 
-def extract_gta_traffic_arcgis(save_locally):
+def extract_gta_traffic_arcgis(save_locally, sqlalchemy_engine):
     a = datetime.datetime.now()
     print('Loading ArcGIS Traffic from ArcGIS as of: ',a)
     download_link = 'https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da'
@@ -235,7 +231,6 @@ def extract_gta_traffic_arcgis(save_locally):
     df['last_updated'] = datetime.datetime.now()
     df['download_link'] = download_link
     df['src_filename'] = filename
-    sqlalchemy_engine = initialize_database()[0]
     df.to_sql(name='stg_gta_traffic_arcgis', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
     if save_locally:
         df.to_csv(parent_dir+'/Data/'+'ArcGIS_Toronto_and_Peel_Traffic.csv', index=False, index_label=False)
