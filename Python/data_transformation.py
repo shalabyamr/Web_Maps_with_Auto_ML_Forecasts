@@ -1,15 +1,14 @@
 import datetime
 import warnings
 import pandas as pd
-from data_extractor import initialize_database, parent_dir
+from data_extractor import sqlalchemy_engine, parent_dir, save_locally
 warnings.filterwarnings("ignore")
 
-def transform_monthly_data(save_locally):
+def transform_monthly_data(sqlalchemy_engine):
 
     # Transposing the Monthly Air Quality Data #
     a = datetime.datetime.now()
     print('*** Transposing the Monthly Air Quality Data as of: {}***'.format(a))
-    sqlalchemy_engine = initialize_database()[0]
     df = pd.read_sql_table(table_name='stg_monthly_air_data', con=sqlalchemy_engine, schema='stage', parse_dates=True)
     df_out = pd.DataFrame()
     for column in df.columns:
@@ -26,7 +25,7 @@ def transform_monthly_data(save_locally):
     df_out.to_sql(name='stg_monthly_air_data_transpose', con=sqlalchemy_engine, if_exists='replace', schema='stage',
                   index_label=False, index=False)
 
-    if save_locally:
+    if save_locally == True:
         transposed_filename = parent_dir + '/Data/' + 'monthly_air_data_transposed.csv'
         print('Saving Transposed Monthly Air Data to: ', transposed_filename)
         df_out.to_csv(transposed_filename, index_label=False, index=False)
