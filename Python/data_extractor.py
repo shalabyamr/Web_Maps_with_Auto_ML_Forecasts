@@ -235,7 +235,7 @@ def extract_gta_traffic_arcgis(save_locally):
     df['last_updated'] = datetime.datetime.now()
     df['download_link'] = download_link
     df['src_filename'] = filename
-    sqlalchemy_engine = intialize_database()[0]
+    sqlalchemy_engine = initialize_database()[0]
     df.to_sql(name='stg_gta_traffic_arcgis', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
     if save_locally == True:
         df.to_csv(parent_dir+'/Data/'+'ArcGIS_Toronto_and_Peel_Traffic.csv', index=False, index_label=False)
