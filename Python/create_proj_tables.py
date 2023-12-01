@@ -1,5 +1,4 @@
 import pandas as pd
-from shapely.geometry import Point
 from data_extractor import sqlalchemy_engine, pg_engine
 import geopandas
 
