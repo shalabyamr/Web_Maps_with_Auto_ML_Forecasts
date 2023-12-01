@@ -460,4 +460,3 @@ The table fact_hourly_avg contains the calculated means for the hourly segments 
 | morning_avg |      double precision      |
 |  noon_avg   |      double precision      |
 | evening_avg |      double precision      |
-
