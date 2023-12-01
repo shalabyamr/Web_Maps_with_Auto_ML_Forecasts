@@ -90,7 +90,7 @@ def extract_monthly_data(sqlalchemy_engine):
             download_link = url + link.get('href')
             print('Download Link: ', download_link)
             filename = parent_dir + '/Data/' + link.get('href')
-            if save_locally == True:
+            if save_locally:
                 print("Filename to be Written: ", filename)
             i += 1
             # Get response object for link
@@ -104,7 +104,7 @@ def extract_monthly_data(sqlalchemy_engine):
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
             df.to_sql(name='stg_monthly_air_data', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
             # Write content in CSV file
-            if save_locally == True:
+            if save_locally:
                 csv = open(filename, 'wb')
                 csv.write(response.content)
                 csv.close()
@@ -151,7 +151,7 @@ def extract_monthly_forecasts(sqlalchemy_engine):
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
             df.to_sql(name='stg_monthly_forecasts', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
             # Write content in CSV file
-            if save_locally == True:
+            if save_locally:
                 csv = open(filename, 'wb')
                 csv.write(response.content)
                 csv.close()
@@ -237,7 +237,7 @@ def extract_gta_traffic_arcgis(sqlalchemy_engine):
     df['download_link'] = download_link
     df['src_filename'] = filename
     df.to_sql(name='stg_gta_traffic_arcgis', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
-    if save_locally == True:
+    if save_locally:
         df.to_csv(parent_dir+'/Data/'+'ArcGIS_Toronto_and_Peel_Traffic.csv', index=False, index_label=False)
 
     b = datetime.datetime.now()

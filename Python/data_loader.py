@@ -74,7 +74,7 @@ def create_production_tables():
     master_list.append(['create_production_tables', a1, b1, len(sql_files)])
     print('Done Creating ALL Production Tables in {} seconds as of: {}'.format(delta_seconds_1, b1))
 
-    if data_extractor.save_locally == True:
+    if data_extractor.save_locally:
         public_tables = ['data_model_performance_tbl', 'dim_geo_names', 'fact_combined_air_data','fact_gta_traffic_arcgis', 'fact_monthly_air_data', 'fact_monthly_air_data_transpose', 'fact_monthly_forecasts', 'fact_traffic_volume']
         for public_table in public_tables:
             df = pd.read_sql_table(table_name=public_table, con=data_extractor.sqlalchemy_engine, schema='public')
