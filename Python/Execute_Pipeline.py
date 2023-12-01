@@ -1,4 +1,4 @@
-from data_loader import parent_dir, create_staging_tables, create_production_tables, save_locally, sqlalchemy_engine, pg_engine
+from data_loader import parent_dir, create_staging_tables, create_production_tables, save_locally, sqlalchemy_engine
 import pandas as pd
 
 staging_tables_list = create_staging_tables()
