@@ -47,8 +47,7 @@ def create_production_tables():
         sql_files.append(i)
 
     print("SQL Queries to execute: ", sql_files)
-    conn = pg_engine
-    cur = conn.cursor()
+    cur = pg_engine.cursor()
     for file in sql_files:
         a = datetime.datetime.now()
 
@@ -56,14 +55,14 @@ def create_production_tables():
             print('Processing Query File: ', file)
             query = str(open(file).read())
             cur.execute(query)
-            conn.commit()
+            pg_engine.commit()
             print('Executed Query: ', file)
 
         elif 'combine_air_data.sql' in file:
             print('Processing Query File: ', file)
             query = str(open(file).read())
             cur.execute(query)
-            conn.commit()
+            pg_engine.commit()
             print('Executed Query: ', file)
 
         b = datetime.datetime.now()
