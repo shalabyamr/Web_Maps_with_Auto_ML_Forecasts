@@ -212,7 +212,7 @@ def extract_geo_names_data(save_locally):
     df['last_updated'] = datetime.datetime.now()
     df['download_link'] = download_link
     df['src_filename'] = csv_filename
-    sqlalchemy_engine = intialize_database()[0]
+    sqlalchemy_engine = initialize_database()[0]
     df.to_sql(name='stg_geo_names', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
 
     if save_locally != True:
