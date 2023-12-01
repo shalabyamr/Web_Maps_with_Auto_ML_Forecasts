@@ -1,10 +1,10 @@
 import datetime
 import warnings
 import pandas as pd
-from data_extractor import initialize_database, parent_dir
+from data_extractor import sqlalchemy_engine, parent_dir
 warnings.filterwarnings("ignore")
 
-def transform_monthly_data(save_locally):
+def transform_monthly_data(save_locally, sqlalchemy_engine):
 
     # Transposing the Monthly Air Quality Data #
     a = datetime.datetime.now()
