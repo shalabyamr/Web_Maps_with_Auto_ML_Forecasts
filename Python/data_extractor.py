@@ -10,10 +10,14 @@ from rpy2 import robjects as ro
 import rpy2.robjects.packages as rpackages
 import zipfile
 import wget
+import configparser
+import sys
 warnings.filterwarnings("ignore")
 
-save_locally_flag = False
-print('The Parameter Save Locally is set to : {}'.format(save_locally_flag))
+config = configparser.ConfigParser()
+config.read('config.ini')
+save_locally_flag = config['save_files']['save_locally_flag']
+print('Save Locally Flag is set to: {}\n*********'.format(save_locally_flag))
 
 # To write temp files into the Parent ./Data/ Folder to
 # to keep the Python folder clean of csv and temp files
@@ -28,22 +32,34 @@ print('Working Directory: ', current_dirs_parent)
 print('Parent Directory: ', parent_dir, '\n*****************************\n')
 
 
-def intialize_database():
+def initialize_database():
     try:
         # Define Database Connector :
-        host = 'localhost'
-        port = '5433'
-        dbname = 'postgres'
-        user = 'postgres'
-        password = 'postgres'
-
+        config = configparser.ConfigParser()
+        print('Reading Database Configuration.')
+        config.read('config.ini')
+        host = config['postgres_db']['host']
+        port = config['postgres_db']['port']
+        dbname = config['postgres_db']['db_name']
+        user = config['postgres_db']['user']
+        password = config['postgres_db']['password']
+        print('Database Configuration: Host: {}\nPort: {}\nDatabase Name: {}\nUser: {}\nPassword: {}\n'.format(host, port, dbname, user, password))
         pg_engine = pg.connect(host=host, port=port, dbname=dbname, user=user, password=password)
         # Connection String is of the form: ‘postgresql://username:password@databasehost:port/databasename’
         sqlalchemy_engine = sqlalchemy.create_engine('postgresql://{}:{}@{}:{}/{}'.format(user, password, host, port,dbname))
-        return sqlalchemy_engine, pg_engine
-    except Exception:
-        print('Error Connecting to Database, {} '.format(Exception))
-        return Exception
+        cursor = pg_engine.cursor()
+        try:
+            stage_query = "CREATE SCHEMA IF NOT EXISTS stage;"
+            cursor.execute(stage_query)
+            pg_engine.commit()
+            print('Initialized Database and Created Schema Stage, ')
+        except BaseException as exception:
+            print('Failed to create schema!', exception)
+            sys.exit()
+        return sqlalchemy_engine, pg_engine, save_locally_flag
+    except BaseException as exception:
+        print('Error thrown by initialize_database()!, {} '.format(exception))
+        return exception
 
 def extract_monthly_data(save_locally):
     a = datetime.datetime.now()
@@ -64,7 +80,7 @@ def extract_monthly_data(save_locally):
     # From all links check for CSV link and
     # if present download file
 
-    sqlalchemy_engine = intialize_database()[0]
+    sqlalchemy_engine = initialize_database()[0]
     for link in links:
         if ('.csv' in link.get('href', [])):
             download_link = url + link.get('href')
@@ -112,7 +128,7 @@ def extract_monthly_forecasts(save_locally):
     i = 0
     # From all links check for CSV link and
     # if present download file
-    sqlalchemy_engine = intialize_database()[0]
+    sqlalchemy_engine = initialize_database()[0]
     for link in links:
         if ('.csv' in link.get('href', [])):
             download_link = url + link.get('href')
@@ -151,7 +167,7 @@ def extract_traffic_volumes(save_locally):
 
     utils.install_packages('opendatatoronto')
     utils.install_packages('dplyr')
-    sqlalchemy_engine = intialize_database()[0]
+    sqlalchemy_engine = initialize_database()[0]
     ro.r('''
         library(opendatatoronto)
         library(dplyr)
