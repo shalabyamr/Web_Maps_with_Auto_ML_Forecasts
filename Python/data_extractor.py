@@ -56,7 +56,7 @@ def initialize_database():
         except BaseException as exception:
             print('Failed to create schema!', exception)
             sys.exit()
-        return sqlalchemy_engine, pg_engine, save_locally_flag
+        return sqlalchemy_engine, pg_engine
     except BaseException as exception:
         print('Error thrown by initialize_database()!, {} '.format(exception))
         return exception
