@@ -12,7 +12,7 @@ pipeline_df2 = pipeline_df2[['phase', 'step_name', 'duration_seconds', 'start_ti
 pipeline_df = pd.concat([pipeline_df2, pipeline_df])
 pipeline_df.drop(pipeline_df.tail(1).index,inplace=True) # drop last row
 
-if save_locally == True:
+if save_locally:
     print('Saving Data Model Performance {} in: {}'.format('data_model_performance.csv', parent_dir+'/Analytics/'))
     pipeline_df.to_csv(parent_dir + '/Analytics/data_model_performance.csv', index=False, index_label=False)
 
