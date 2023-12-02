@@ -4,7 +4,7 @@ import pandas as pd
 import glob
 import datetime
 import data_extractor as data_extractor
-from data_transformation import transform_monthly_data
+from data_transformation import transform_monthly_data, create_postgis_proj_tables
 
 
 def create_staging_tables():
@@ -36,8 +36,8 @@ def create_staging_tables():
     return master_list
 
 def create_production_tables():
-    a1 = datetime.datetime.now()
     master_list = []
+    a1 = datetime.datetime.now()
     sql_files = glob.glob(data_extractor.parent_dir + '/SQL/*.sql')
 
     # Combine_Air_Data Table needs to be created after all staging tables
@@ -51,28 +51,31 @@ def create_production_tables():
     for file in sql_files:
         a = datetime.datetime.now()
 
-        if 'combine_air_data.sql' not in file:
+        if 'combine_air_data.sql' and 'postgis' not in file:
             print('Processing Query File: ', file)
             query = str(open(file).read())
             cur.execute(query)
             data_extractor.pg_engine.commit()
-            print('Executed Query: ', file)
 
         elif 'combine_air_data.sql' in file:
             print('Processing Query File: ', file)
             query = str(open(file).read())
             cur.execute(query)
             data_extractor.pg_engine.commit()
-            print('Executed Query: ', file)
+
+    for file in sql_files:
+        if 'postgis' in file:
+            print('---- Creating Projection Tables ----')
+            postgis_proj_list = create_postgis_proj_tables(data_extractor.sqlalchemy_engine, data_extractor.pg_engine)
+            master_list.append(postgis_proj_list)
+            print('Processing Query File: ', file)
+            query = str(open(file).read())
+            cur.execute(query)
+            data_extractor.pg_engine.commit()
 
         b = datetime.datetime.now()
-        delta_seconds = (b - a).total_seconds()
+        delta_seconds = (b-a).total_seconds()
         master_list.append([file, delta_seconds, a, b, 1])
-
-    b1 = datetime.datetime.now()
-    delta_seconds_1 = (b1-a1).total_seconds()
-    master_list.append(['create_production_tables', a1, b1, len(sql_files)])
-    print('Done Creating ALL Production Tables in {} seconds as of: {}'.format(delta_seconds_1, b1))
 
     if data_extractor.save_locally:
         public_tables = ['data_model_performance_tbl', 'dim_geo_names', 'fact_combined_air_data','fact_gta_traffic_arcgis', 'fact_monthly_air_data', 'fact_monthly_air_data_transpose', 'fact_monthly_forecasts', 'fact_traffic_volume']
@@ -81,5 +84,10 @@ def create_production_tables():
             filename = data_extractor.parent_dir+'/Data/'+'Public_'+public_table
             print("Writing PUBLIC.{} locally to file: {}".format(public_table, filename))
             df.to_csv(filename, index_label=False, index=False)
+
+    b1 = datetime.datetime.now()
+    delta_seconds_1 = (b1-a1).total_seconds()
+    master_list.append(['create_production_tables', a1, b1, len(sql_files)])
+    print('Done Creating ALL Production Tables in {} seconds as of: {}'.format(delta_seconds_1, b1))
 
     return master_list

@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore")
 
 config = configparser.ConfigParser()
 config.read('config.ini')
-save_locally = config['save_files']['save_locally_flag']
+save_locally = eval(config['save_files']['save_locally_flag'])
 print('Save Locally Flag is set to: {}\n*********'.format(save_locally))
 
 # To write temp files into the Parent ./Data/ Folder to
@@ -137,7 +137,7 @@ def extract_monthly_forecasts(sqlalchemy_engine):
             download_link = url + link.get('href')
             print('Download Link: ', download_link)
             filename = parent_dir + '/Data/Forecast_' + link.get('href')
-            if save_locally == True:
+            if save_locally:
                 print("Filename to be Written: ", filename)
             i += 1
             # Get response object for link
@@ -150,11 +150,12 @@ def extract_monthly_forecasts(sqlalchemy_engine):
             df['src_filename'] = filename
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
             df.to_sql(name='stg_monthly_forecasts', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
-            # Write content in CSV file
+            # Write ALL Forecasts into one file
             if save_locally:
-                csv = open(filename, 'wb')
-                csv.write(response.content)
-                csv.close()
+                if i == 0:
+                    df.to_csv(parent_dir+'/Data/Monthly_Forecasts.csv', index=False, index_label=False, header=True)
+                else:
+                    df.to_csv('parent_dir'+'/Data/Monthly_Forecasts.csv', mode='a', index=False, index_label=False, header=False)
     b = datetime.datetime.now()
     delta_seconds = (b-a).total_seconds()
     print("********************************\n",'Loaded Daily Forecasts Done in {} Seconds.'.format(delta_seconds),"\n********************************\n")

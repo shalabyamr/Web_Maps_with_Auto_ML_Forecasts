@@ -1,9 +1,49 @@
 DROP TABLE IF EXISTS PUBLIC.FACT_COMBINED_AIR_DATA;
 CREATE TABLE PUBLIC.FACT_COMBINED_AIR_DATA AS(
 WITH GEO_NAMES AS(
-    SELECT * FROM dim_geo_names
+        SELECT
+      A.cgndb_id
+    , A.geographical_name
+    , A.language
+    , A.syllabic_form
+    , A.generic_term
+    , A.generic_category
+    , A.concise_code
+    , A.toponymic_feature_id
+    , A.latitude
+    , A.longitude
+    , A.location
+    , A.province_territory
+    , A.relevance_at_scale
+    , A.decision_date
+    , A.source
+    , A.download_link
+    , A.src_filename
+    , A.last_updated
+    , (NOW() AT TIME ZONE 'EST') AS last_inserted
+    FROM(
+        SELECT
+        *
+      , ROW_NUMBER() OVER(PARTITION BY cgndb_id ORDER BY decision_date DESC) AS rn
+    FROM stage.stg_geo_names) A
+    WHERE rn = 1
+), MONTHLY_AIR_DATA_FILETERED AS(
+  SELECT
+    "the_date",
+    hours_utc,
+    cgndb_id,
+    air_quality_value,
+    download_link,
+    src_filename,
+    last_updated,
+    NOW() AT TIME ZONE 'EST' AS last_inserted
+  FROM(
+      SELECT *
+   , ROW_NUMBER() OVER(PARTITION BY "the_date","hours_utc" ORDER BY hours_utc DESC) AS RN
+      FROM STAGE.stg_monthly_air_data_transpose
+  ) A WHERE RN=1
 ), monthly_air_data_transpose AS(
-    SELECT * FROM fact_monthly_air_data_transpose
+    SELECT * FROM MONTHLY_AIR_DATA_FILETERED
 ), EXPORT AS(
   SELECT
     UPPER(G.cgndb_id)   cgndb_id
