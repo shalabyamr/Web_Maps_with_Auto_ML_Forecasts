@@ -62,6 +62,7 @@ WITH GEO_NAMES AS(
   , EXTRACT('Month' FROM M.the_date) AS "month"
   , TO_CHAR(M.the_date, 'Month') AS "the_month"
   , TO_CHAR(M.the_date, 'Day')  AS "weekday"
+  , DATE_PART('week', M.the_date) AS week_number
   , M.hours_utc
   , CASE WHEN hours_utc BETWEEN 0 AND 5 THEN 'DAWN_0_TO_5'
          WHEN hours_utc BETWEEN 6 AND 11 THEN 'MORNING_6_TO_11'
