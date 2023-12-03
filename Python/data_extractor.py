@@ -35,7 +35,6 @@ print('Parent Directory: ', parent_dir, '\n*****************************\n')
 def initialize_database():
     try:
         # Define Database Connector :
-        config = configparser.ConfigParser()
         print('Reading Database Configuration.')
         config.read('config.ini')
         host = config['postgres_db']['host']

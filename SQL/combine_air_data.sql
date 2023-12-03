@@ -57,10 +57,17 @@ WITH GEO_NAMES AS(
   , G.generic_term
   , G.geographical_name
   , ROUND(EXTRACT('SECOND' FROM G.last_inserted - G.last_updated),1)     GEO_NAMES_SECOND_FROM_EXTRACTION
-  , M.the_date
+  , DATE(M.the_date) AS "the_date"
+  , EXTRACT('Year' FROM M.the_date) AS "year"
+  , EXTRACT('Month' FROM M.the_date) AS "month"
+  , TO_CHAR(M.the_date, 'Month') AS "the_month"
+  , TO_CHAR(M.the_date, 'Day')  AS "weekday"
   , M.hours_utc
   , M.air_quality_value
   , ROUND(EXTRACT('SECOND' FROM M.last_inserted - M.last_updated),1)   AS AIR_DATA_SECONDS_FROM_EXTRACTION
+  , M.last_updated
+  , M.last_inserted
+  , M.src_filename
    FROM
      monthly_air_data_transpose M
  INNER JOIN GEO_NAMES G ON UPPER(G.cgndb_id) = UPPER(M.cgndb_id)
