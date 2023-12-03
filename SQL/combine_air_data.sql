@@ -63,6 +63,11 @@ WITH GEO_NAMES AS(
   , TO_CHAR(M.the_date, 'Month') AS "the_month"
   , TO_CHAR(M.the_date, 'Day')  AS "weekday"
   , M.hours_utc
+  , CASE WHEN hours_utc BETWEEN 0 AND 5 THEN 'DAWN_0_TO_5'
+         WHEN hours_utc BETWEEN 6 AND 11 THEN 'MORNING_6_TO_11'
+         WHEN hours_utc BETWEEN 12 AND 17 THEN 'NOON_12_TO_17'
+         WHEN hours_utc BETWEEN 18 AND 23 THEN 'EVENING_18_TO_23'
+         ELSE 'Unknown' END          AS PHASE_HOUR_UTC
   , M.air_quality_value
   , ROUND(EXTRACT('SECOND' FROM M.last_inserted - M.last_updated),1)   AS AIR_DATA_SECONDS_FROM_EXTRACTION
   , M.last_updated
