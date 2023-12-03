@@ -47,11 +47,11 @@ WITH GEO_NAMES AS(
 ), EXPORT AS(
   SELECT
     UPPER(G.cgndb_id)   cgndb_id
-  , G.latitude  GEO_LAT
-  , G.longitude GEO_LONG
+  , G.latitude
+  , G.longitude
   , G.province_territory
-  , G.location   GEO_LOCATION
-  , G.decision_date GEO_DECISION_DATE
+  , G.location
+  , G.decision_date
   , G.concise_code
   , G.generic_category
   , G.generic_term

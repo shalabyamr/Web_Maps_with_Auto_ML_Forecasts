@@ -47,7 +47,6 @@ def create_postgis_proj_tables(sqlalchemy_engine, pg_engine):
                                                                    df_gta_traffic_arcgis.latitude), crs="EPSG:26917")
     gdf.rename(columns={'geometry': 'geom'}, inplace=True)
     gdf.set_geometry(col='geom', drop=False, inplace=True)
-    print(gdf.dtypes)
     gdf.to_postgis('fact_gta_traffic_proj', con=sqlalchemy_engine, schema='public', if_exists='replace', index=False)
 
     cur = pg_engine.cursor()
@@ -69,11 +68,10 @@ def create_postgis_proj_tables(sqlalchemy_engine, pg_engine):
     df_air_data['weekday'] = df_air_data['the_date'].dt.strftime('%A')
     df_air_data = df_air_data[df_air_data['cgndb_id'].str.upper().isin(['FCKTB', 'FCWYG', 'FDQBU', 'FDQBX', 'FEUZB'])]
     gdf_air_data = geopandas.GeoDataFrame(df_air_data,
-                                          geometry=geopandas.points_from_xy(df_air_data.geo_long, df_air_data.geo_lat),
+                                          geometry=geopandas.points_from_xy(df_air_data.longitude, df_air_data.latitude),
                                           crs="EPSG:26917")
     gdf_air_data.rename(columns={'geometry': 'geom'}, inplace=True)
     gdf_air_data.set_geometry(col='geom', drop=False, inplace=True)
-    print(gdf_air_data.dtypes)
     gdf_air_data.to_postgis('fact_air_data_proj', con=sqlalchemy_engine, schema='public', if_exists='replace',
                             index=False)
 
