@@ -407,35 +407,35 @@ After all the staging tables, sql scripts, and hard extractions made, _data_mode
 
 | **phase**  |          **step_name**          | **duration_seconds** | **start_time** | **end_time** | **files_processed** |
 |:----------:|:-------------------------------:|:--------------------:|:--------------:|:------------:|:-------------------:|
-|   stage    |      extract_monthly_data       |      23.460327       |    17:19.6     |   17:43.0    |         26          |
-|   stage    |    extract_monthly_forecasts    |      283.59226       |    17:43.0     |   22:26.6    |         534         |
-|   stage    |     extract_traffic_volumes     |       7.266312       |    22:26.6     |   22:33.9    |          1          |
-|   stage    |     extract_geo_names_data      |      27.110073       |    22:33.9     |   23:01.0    |          2          |
-|   stage    |   extract_gta_traffic_arcgis    |       0.198528       |    23:01.0     |   23:01.2    |          1          |
-|   stage    |     transform_monthly_data      |      26.999731       |    23:01.2     |   23:28.2    |          1          |
-| production |       traffic_volume.sql        |       0.033641       |    23:28.3     |   23:28.3    |          1          |
-| production |     gta_traffic_arcgis.sql      |       0.00933        |    23:28.3     |   23:28.3    |          1          |
-| production |      monthly_air_data.sql       |       0.108791       |    23:28.3     |   23:28.4    |          1          |
-| production |   fact_monthly_forecasts.sql    |       0.193405       |    23:28.4     |   23:28.6    |          1          |
-| production | monthly_air_data_transposed.sql |       0.732036       |    23:28.6     |   23:29.3    |          1          |
-| production |          geo_names.sql          |       3.58753        |    23:29.3     |   23:32.9    |          1          |
-| production |       traffic_volume.sql        |       0.045792       |    23:32.9     |   23:33.0    |          1          |
-| production |      monthly_air_data.sql       |       0.079115       |    23:33.0     |   23:33.1    |          1          |
-| production |   fact_monthly_forecasts.sql    |       0.178125       |    23:33.1     |   23:33.2    |          1          |
-| production | monthly_air_data_transposed.sql |       0.681285       |    23:33.2     |   23:33.9    |          1          |
-| production |          geo_names.sql          |       3.638743       |    23:33.9     |   23:37.6    |          1          |
-| production |       traffic_volume.sql        |       0.055139       |    23:37.6     |   23:37.6    |          1          |
-| production |   fact_monthly_forecasts.sql    |       0.162446       |    23:37.6     |   23:37.8    |          1          |
-| production | monthly_air_data_transposed.sql |       0.676279       |    23:37.8     |   23:38.4    |          1          |
-| production |          geo_names.sql          |       3.696634       |    23:38.4     |   23:42.1    |          1          |
-| production |       traffic_volume.sql        |       0.055699       |    23:42.1     |   23:42.2    |          1          |
-| production | monthly_air_data_transposed.sql |       0.697172       |    23:42.2     |   23:42.9    |          1          |
-| production |          geo_names.sql          |       2.760062       |    23:42.9     |   23:45.7    |          1          |
-| production |       traffic_volume.sql        |       0.036789       |    23:45.7     |   23:45.7    |          1          |
-| production |          geo_names.sql          |       2.973035       |    23:45.7     |   23:48.7    |          1          |
-| production |       traffic_volume.sql        |       0.067657       |    23:48.7     |   23:48.7    |          1          |
-| production |       traffic_volume.sql        |       0.015518       |    23:48.7     |   23:48.7    |          1          |
-| production |      combine_air_data.sql       |       0.521394       |    23:48.8     |   23:49.3    |          1          |
+|   stage    |      extract_monthly_data       |        23.47         |    17:19.6     |   17:43.0    |         26          |
+|   stage    |    extract_monthly_forecasts    |        283.59        |    17:43.0     |   22:26.6    |         534         |
+|   stage    |     extract_traffic_volumes     |         7.27         |    22:26.6     |   22:33.9    |          1          |
+|   stage    |     extract_geo_names_data      |        27.11         |    22:33.9     |   23:01.0    |          2          |
+|   stage    |   extract_gta_traffic_arcgis    |         0.19         |    23:01.0     |   23:01.2    |          1          |
+|   stage    |     transform_monthly_data      |        26.99         |    23:01.2     |   23:28.2    |          1          |
+| production |       traffic_volume.sql        |        0.033         |    23:28.3     |   23:28.3    |          1          |
+| production |     gta_traffic_arcgis.sql      |        0.009         |    23:28.3     |   23:28.3    |          1          |
+| production |      monthly_air_data.sql       |        0.108         |    23:28.3     |   23:28.4    |          1          |
+| production |   fact_monthly_forecasts.sql    |        0.193         |    23:28.4     |   23:28.6    |          1          |
+| production | monthly_air_data_transposed.sql |        0.732         |    23:28.6     |   23:29.3    |          1          |
+| production |          geo_names.sql          |        3.587         |    23:29.3     |   23:32.9    |          1          |
+| production |       traffic_volume.sql        |        0.045         |    23:32.9     |   23:33.0    |          1          |
+| production |      monthly_air_data.sql       |        0.079         |    23:33.0     |   23:33.1    |          1          |
+| production |   fact_monthly_forecasts.sql    |        0.178         |    23:33.1     |   23:33.2    |          1          |
+| production | monthly_air_data_transposed.sql |        0.681         |    23:33.2     |   23:33.9    |          1          |
+| production |          geo_names.sql          |        3.638         |    23:33.9     |   23:37.6    |          1          |
+| production |       traffic_volume.sql        |        0.055         |    23:37.6     |   23:37.6    |          1          |
+| production |   fact_monthly_forecasts.sql    |        0.162         |    23:37.6     |   23:37.8    |          1          |
+| production | monthly_air_data_transposed.sql |        0.676         |    23:37.8     |   23:38.4    |          1          |
+| production |          geo_names.sql          |        3.696         |    23:38.4     |   23:42.1    |          1          |
+| production |       traffic_volume.sql        |        0.055         |    23:42.1     |   23:42.2    |          1          |
+| production | monthly_air_data_transposed.sql |        0.697         |    23:42.2     |   23:42.9    |          1          |
+| production |          geo_names.sql          |        2.760         |    23:42.9     |   23:45.7    |          1          |
+| production |       traffic_volume.sql        |        0.036         |    23:45.7     |   23:45.7    |          1          |
+| production |          geo_names.sql          |        2.973         |    23:45.7     |   23:48.7    |          1          |
+| production |       traffic_volume.sql        |        0.067         |    23:48.7     |   23:48.7    |          1          |
+| production |       traffic_volume.sql        |        0.015         |    23:48.7     |   23:48.7    |          1          |
+| production |      combine_air_data.sql       |        0.521         |    23:48.8     |   23:49.3    |          1          |
 
 ### 7. fact_air_data_proj:
 The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [create_proj_tables.py](Python%2Fcreate_proj_tables.py) with the inherited properties of the geolocation name identifiers from the curated table dim_geo_names.
