@@ -67,7 +67,7 @@ After modifying the _**Config.ini**_, run the python script _**Execute_Pipeline.
 
 # Pipeline Design
 
-## 1. Staging Layer:
+## 1. Staging (Extraction) Layer:
 ### 1. Monthly Data Web Scraping:
 To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, function _extract_monthly_data(boolean save_loally)_in the the Data Loader is /Python/Data_Loader.py File.
 which ingests the public data into the **first** staging table "**stg_monthly_air_data**."
@@ -122,26 +122,8 @@ which ingests the public data into the **first** staging table "**stg_monthly_ai
 | download_link | text             |
 | src_filename   | text             |
 
-### 2. Monthly Data Transposd:
-The download Ontario monthly air quality data(https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/), was unusable as each column name was the 
-geo_station_id in other tables making it possible for a row join.  The staging table _stg_monthly_air_data_ from the previous step had to transposed to 
-a new staging table _stg_monthly_air_data_transpos_ via the revised function 
-_extract_monthly_data(boolean save_loally)_in the the Data Loader is /Python/data_transformation.py File.
-which ingests the public data into the **second** staging table "**stg_monthly_air_data_**transposed."
 
-
-| Column            | Data Type        |
-|-------------------|------------------|
-| the_date          | date             |
-| hour_utc          | bigint           |
-| cgndb_id          | text             |
-| air_quality_value | double precision |
-| donwnload_link    | text             |
-| src_filename      | text             |
-| last_updated      | timestamp        |
-
-
-### 3. Monthly Forecasts Data Web Scraping:
+### 2. Monthly Forecasts Data Web Scraping:
 To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/, the function _extract_monthly_forecasts(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the public data into the **third** staging table "**stg_monthly_forecasts**" with the option to locally save the CSV files with a prefix **'FORECAST_'** to differentiate them from the actual monthly data.
 
@@ -160,7 +142,7 @@ which ingests the public data into the **third** staging table "**stg_monthly_fo
 |   src_filename    |   text    |
 
 
-### 4. Traffic Volume:
+### 3. Traffic Volume:
 Using the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, the function _extract_traffic_volumes(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the traffic volume data into the **fourth** staging table "**stg_traffic_volume**" with the option to locally save the CSV file to _'./Data/traffic_volume.csv'_.
 
@@ -179,7 +161,7 @@ which ingests the traffic volume data into the **fourth** staging table "**stg_t
 |     filename      |       text       |
 |   last_updated    |    timestamp     |
 
-### 5. Geographical Names Data:
+### 4. Geographical Names Data:
 Downloads and extracts the zip file of the Geographical Names Data from https://natural-resources.canada.ca/earth-sciences/geography/download-geographical-names-data/9245, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the geographical names data containing the coordinates of the air quality stations into the **fifth** staging table "**stg_geo_names**" with the option to retain the extracted CSV file to _'./Data/cgn_canada_csv_eng.csv'_.
 
@@ -204,7 +186,7 @@ which ingests the geographical names data containing the coordinates of the air 
 |    download_link    |       text       |
 |     src_filename     |       text       |
 
-### 6. ArcGIS Toronto and Peel Traffic Count:
+### 5. ArcGIS Toronto and Peel Traffic Count:
 Downloads Toronto and Peel Traffic Count from https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the Toronto and Peel Traffic Counts with latitude and longitude provided by ArcGIS  into the **sixth** staging table "**load_gta_traffic_arcgis**" with the option to create CSV file to _'./Data/ArcGIS_Toronto_and_Peel_Traffic.csv'_.
 
@@ -229,7 +211,28 @@ which ingests the Toronto and Peel Traffic Counts with latitude and longitude pr
 |      src_filename      |       text       |
 
 
-## 2. Production Layer:
+## 2. Transformation Layer
+### 1. Monthly Air Data Transpose:
+The staging table _stg_monthly_air_data_transpose_ created from the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) ingested and converted 
+into the **second** production table "**FACT_MONTHLY_AIR_DATA_TRANSPOSE** in _**"PUBLIC"**_ Schema with the following two conditions:
+
+* Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
+* The condition _ROW_NUMBER() OVER(PARTITION BY "the_date","hours_utc" ORDER BY hours_utc DESC) = 1_to eliminate duplicate records within any given date.
+
+
+| Column            |    Data Type     |
+|-------------------|:----------------:|
+| the_date          |       date       |
+| hour_utc          |      bigint      |
+| cgndb_id          |       text       |
+| air_quality_value | double precision |
+| donwnload_link    |       text       |
+| src_filename      |       text       |
+| last_updated      |    timestamp     |
+| last_inserted     |    timestamp     |
+
+
+## 2. Production (Loading) Layer:
 ### 1. Monthly Air Data:
 The staging table _stg_monthly_air_data_ creted from the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) ingested and converted into the **first** production table "**FACT_MONTHLY_AIR_DATA** in _**"PUBLIC"**_ Schema with the following two conditions:
 
@@ -287,24 +290,6 @@ The staging table _stg_monthly_air_data_ creted from the Ontario monthly air qua
 | last_updated  |    timestamp     |
 | last_inserted |    timestamp     |
 
-### 2. Monthly Air Data Transpose:
-The staging table _stg_monthly_air_data_transpose_ created from the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) ingested and converted 
-into the **second** production table "**FACT_MONTHLY_AIR_DATA_TRANSPOSE** in _**"PUBLIC"**_ Schema with the following two conditions:
-
-* Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
-* The condition _ROW_NUMBER() OVER(PARTITION BY "the_date","hours_utc" ORDER BY hours_utc DESC) = 1_to eliminate duplicate records within any given date.
-
-
-| Column            |    Data Type     |
-|-------------------|:----------------:|
-| the_date          |       date       |
-| hour_utc          |      bigint      |
-| cgndb_id          |       text       |
-| air_quality_value | double precision |
-| donwnload_link    |       text       |
-| src_filename      |       text       |
-| last_updated      |    timestamp     |
-| last_inserted     |    timestamp     |
 
 ### 3. Monthly Forecasts:
 The staging table _stg_monthly_forecasts_ acquired from the Ontario monthly air quality data(https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/) is ingested into the production table _FACT_MONTHLY_FORECASTS_in _PUBLIC_ schema with the following two conditions:
