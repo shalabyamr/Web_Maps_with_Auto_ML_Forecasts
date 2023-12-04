@@ -11,6 +11,8 @@ pipeline_df2 = pd.DataFrame(staging_tables_list, columns=['step_name', 'duration
 pipeline_df2['phase'] = 'stage'
 pipeline_df2 = pipeline_df2[['phase', 'step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed']]
 pipeline_df = pd.concat([pipeline_df2, pipeline_df])
+pipeline_df['duration_seconds'] = round(pipeline_df['duration_seconds'],2)
+pipeline_df['duration_seconds'] = pipeline_df['duration_seconds'].round(2)
 pipeline_df.drop(pipeline_df.tail(1).index, inplace=True)  # drop last row
 
 if save_locally:
