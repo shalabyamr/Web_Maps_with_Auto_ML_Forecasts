@@ -2,7 +2,7 @@ import datetime
 import warnings
 import geopandas
 import pandas as pd
-from data_extractor import parent_dir, save_locally, sqlalchemy_engine
+from data_extractor import parent_dir, save_locally
 warnings.filterwarnings("ignore")
 
 def transform_monthly_data(sqlalchemy_engine):

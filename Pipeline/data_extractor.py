@@ -14,21 +14,13 @@ import configparser
 import sys
 warnings.filterwarnings("ignore")
 
-# To write temp files into the Parent ./Data/ Folder to
+# To write temp files into the Parent ./Data/ Folder
 # to keep the Pipeline folder clean of csv and temp files
-def get_parent_dir():
-    directory = os.getcwd()
-    parent_directory = os.path.split(os.getcwd())[0]
-    return parent_directory, os.path.dirname(directory)
-
-parent_dir = get_parent_dir()[0]
-current_dirs_parent = get_parent_dir()[1]
-print('Working Directory: ', current_dirs_parent)
-print('Parent Directory: ', parent_dir, '\n*****************************\n')
-
 config = configparser.ConfigParser()
 config.read('config.ini')
 save_locally = eval(config['save_files']['save_locally_flag'])
+parent_dir = str(config['save_files']['parent_dir'])
+print('Parent Directory: ', parent_dir, '\n*****************************\n')
 print('Save Locally Flag is set to: {}\n*********'.format(save_locally))
 
 
@@ -167,23 +159,21 @@ def extract_traffic_volumes(sqlalchemy_engine):
     filename = parent_dir + '/Data/' + 'traffic_volume.csv'
     utils = rpackages.importr('utils')
     utils.chooseCRANmirror(ind=1)
-
     utils.install_packages('opendatatoronto')
     utils.install_packages('dplyr')
-    ro.r('''
+    ro.r("""
         library(opendatatoronto)
         library(dplyr)
-        package <- show_package("traffic-volumes-at-intersections-for-all-modes")
-        resources <- list_package_resources("traffic-volumes-at-intersections-for-all-modes")
-        datastore_resources <- filter(resources, tolower(format) %in% c('csv'))
-        df_r <- filter(datastore_resources, row_number()==1) %>% get_resource()
-        write.csv(df_r, '{}traffic_volume.csv', row.names = FALSE)
-        '''.format(parent_dir + '/Data/'))
+        package = show_package("traffic-volumes-at-intersections-for-all-modes")
+        resources = list_package_resources("traffic-volumes-at-intersections-for-all-modes")
+        datastore_resources = filter(resources, tolower(format) %in% c('csv'))
+        df_r = filter(datastore_resources, row_number()==1) %>% get_resource()
+        write.csv(df_r, '{}traffic_volume.csv', row.names = FALSE)""".format(parent_dir + '/Data/'))
     df = pd.read_csv(parent_dir + '/Data/' + 'traffic_volume.csv', parse_dates=True)
     df['last_updated'] = datetime.datetime.now()
     df['download_link'] = download_link
     df['src_filename'] = filename
-    df.to_sql(name='stg_traffic_volume', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
+    df.to_sql(name='stg_traffic_volume', con=sqlalchemy_engine, if_exists='replace', schema='stage', index_label=False, index=False)
     if save_locally == False:
         os.remove(parent_dir + '/Data/'+'traffic_volume.csv')
 
@@ -244,3 +234,5 @@ def extract_gta_traffic_arcgis(sqlalchemy_engine):
     delta_seconds = (b-a).total_seconds()
     print('Loaded ArcGIS Toronto and Peel Traffic Count Done in {} Seconds'.format(delta_seconds),"\n********************************\n")
     return 'extract_gta_traffic_arcgis', delta_seconds, a, b, 1
+
+extract_traffic_volumes(sqlalchemy_engine=sqlalchemy_engine)
