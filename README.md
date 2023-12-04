@@ -2,6 +2,8 @@
 * [GGR473 : GGR473 Group Project](#ggr473--ggr473-group-project)
   * [Members:](#members)
 * [Pipeline Setup](#pipeline-setup)
+  * [Config.ini](#configini)
+  * [Python Requirements](#python-requirements)
 * [Pipeline Execution](#pipeline-execution)
 * [Pipeline Design](#pipeline-design)
   * [1. Staging Layer:](#1-staging-layer)
