@@ -3,7 +3,7 @@
   * [Members:](#members)
 * [Pipeline Setup](#pipeline-setup)
 * [Pipeline Execution](#pipeline-execution)
-  * [Pipeline Design](#pipeline-design)
+* [Pipeline Design](#pipeline-design)
   * [1. Staging Layer:](#1-staging-layer)
     * [1. Monthly Data Web Scraping:](#1-monthly-data-web-scraping)
     * [2. Monthly Data Transposd:](#2-monthly-data-transposd)
@@ -50,7 +50,7 @@ Congfig.ini :
 # Pipeline Execution
 After modifying the _**Config.ini**_, run the python script _Execute_Pipeline.py_ in **_Pipeline_** folder.
 
-## Pipeline Design
+# Pipeline Design
 
 ## 1. Staging Layer:
 ### 1. Monthly Data Web Scraping:
