@@ -1,3 +1,30 @@
+<!-- TOC -->
+* [GGR473 : GGR473 Group Project](#ggr473--ggr473-group-project)
+  * [Members:](#members)
+* [Pipeline Setup](#pipeline-setup)
+* [Pipeline Execution](#pipeline-execution)
+  * [Pipeline Design](#pipeline-design)
+  * [1. Staging Layer:](#1-staging-layer)
+    * [1. Monthly Data Web Scraping:](#1-monthly-data-web-scraping)
+    * [2. Monthly Data Transposd:](#2-monthly-data-transposd)
+    * [3. Monthly Forecasts Data Web Scraping:](#3-monthly-forecasts-data-web-scraping)
+    * [4. Traffic Volume:](#4-traffic-volume)
+    * [5. Geographical Names Data:](#5-geographical-names-data)
+    * [6. ArcGIS Toronto and Peel Traffic Count:](#6-arcgis-toronto-and-peel-traffic-count)
+  * [2. Production Layer:](#2-production-layer)
+    * [1. Monthly Air Data:](#1-monthly-air-data)
+    * [2. Monthly Air Data Transpose:](#2-monthly-air-data-transpose)
+    * [3. Monthly Forecasts:](#3-monthly-forecasts)
+    * [4. Traffic Volume:](#4-traffic-volume-1)
+    * [5. Geographical Names Data:](#5-geographical-names-data-1)
+    * [6. ArcGIS Toronto and Peel Traffic Count:](#6-arcgis-toronto-and-peel-traffic-count-1)
+    * [7. Data Model Performance:](#7-data-model-performance)
+    * [8. fact_air_data_proj:](#8-factairdataproj)
+    * [9. fact_gta_traffic_proj:](#9-factgtatrafficproj)
+    * [10. fact_hourly_avg:](#10-facthourlyavg)
+<!-- TOC -->
+
+
 # GGR473 : GGR473 Group Project
 
 ## Members:
@@ -7,6 +34,21 @@
 |   Ryan Siu   |   1007268519   |   ryan.siu@mail.utoronto.ca   |
 | Amr Shalaby  |   1005280397   | amr.shalaby@mail.utoronto.ca  |
 
+# Pipeline Setup
+The only file that requires configuration is _**Config.ini**_.  Update the database login credentials and the **_parent_dir_** without quotations as below.
+
+Congfig.ini :
+
+|    [postgres_db]     |                  [save_files]                  |
+|:--------------------:|------------------------------------------------|
+|   host = localhost   |           save_locally_flag = False            |
+| db_name   = postgres | parent_dir = /Users/amr/PycharmProjects/ggr473 |
+|   user = postgres    |                                                |
+| password = postgres  |                                                |
+|     port = 5432      |                                                |
+
+# Pipeline Execution
+After modifying the _**Config.ini**_, run the python script _Execute_Pipeline.py_ in **_Pipeline_** folder.
 
 ## Pipeline Design
 

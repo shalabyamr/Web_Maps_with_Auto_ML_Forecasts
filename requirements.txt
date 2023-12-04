@@ -4,4 +4,4 @@ SQLAlchemy~=2.0.23
 rpy2~=3.5.14
 wget~=3.2
 beautifulsoup4~=4.12.2
-shapely~=2.0.2
+geopandas~=0.14.1
