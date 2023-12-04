@@ -35,6 +35,7 @@
 | Amr Shalaby  |   1005280397   | amr.shalaby@mail.utoronto.ca  |
 
 # Pipeline Setup
+## Config.ini
 The only file that requires configuration is _**Config.ini**_.  Update the database login credentials and the **_parent_dir_** without quotations as below.
 
 Congfig.ini :
@@ -46,6 +47,18 @@ Congfig.ini :
 |   user = postgres    |                                                |
 | password = postgres  |                                                |
 |     port = 5432      |                                                |
+
+## Python Requirements
+
+You need to have the following packages installed.
+* pandas~=2.1.3
+* requests~=2.31.0
+* SQLAlchemy~=2.0.23
+* rpy2~=3.5.14
+* wget~=3.2
+* beautifulsoup4~=4.12.2
+* geopandas~=0.14.1
+
 
 # Pipeline Execution
 After modifying the _**Config.ini**_, run the python script _Execute_Pipeline.py_ in **_Pipeline_** folder.
