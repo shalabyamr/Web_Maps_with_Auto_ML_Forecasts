@@ -15,9 +15,9 @@
   * [2. Transformation Layer](#2-transformation-layer)
     * [1. Monthly Air Data Transpose](#1-monthly-air-data-transpose)
   * [2. Production (Loading) Layer:](#2-production-loading-layer)
-    * [1. Monthly Air Data:](#1-monthly-air-data)
+    * [1. Monthly Air Data](#1-monthly-air-data)
     * [2. Monthly Forecasts](#2-monthly-forecasts)
-    * [3. Traffic Volume:](#3-traffic-volume-1)
+    * [3. Traffic Volume](#3-traffic-volume-1)
     * [4. Geographical Names Data](#4-geographical-names-data-1)
     * [5. ArcGIS Toronto and Peel Traffic Count](#5-arcgis-toronto-and-peel-traffic-count-1)
     * [6. Data Model Performance](#6-data-model-performance)
@@ -234,7 +234,7 @@ into the **second** production table "**FACT_MONTHLY_AIR_DATA_TRANSPOSE** in _**
 
 
 ## 2. Production (Loading) Layer:
-### 1. Monthly Air Data:
+### 1. Monthly Air Data
 The staging table _stg_monthly_air_data_ creted from the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) ingested and converted into the **first** production table "**FACT_MONTHLY_AIR_DATA** in _**"PUBLIC"**_ Schema with the following two conditions:
 
 * Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
@@ -313,7 +313,7 @@ The staging table _stg_monthly_forecasts_ acquired from the Ontario monthly air 
 |   last_updated    | timestamp |
 |   last_inserted   | timestamp |
 
-### 3. Traffic Volume:
+### 3. Traffic Volume
 The staging table _stg_traffic_volume_ constructed from the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, is ingested into production _Public_ Schema as _FACT_TRAFFIC_VOLUME_ with the following two conditions:
 
 * Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
