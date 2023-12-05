@@ -39,7 +39,7 @@
 
 # Pipeline Setup
 ## Config.ini
-The only file that requires configuration is _**Config.ini**_.  Update the database login credentials and the **_parent_dir_** without quotations as below.
+The only file that requires user input is _**Config.ini**_.  Update the database login credentials and the **_parent_dir_** without quotations as below.
 
 Congfig.ini :
 
