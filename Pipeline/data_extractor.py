@@ -20,8 +20,8 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 save_locally = eval(config['save_files']['save_locally_flag'])
 parent_dir = str(config['save_files']['parent_dir'])
-print('Parent Directory: ', parent_dir, '\n*****************************\n')
-print('Save Locally Flag is set to: {}\n*********'.format(save_locally))
+print('Parent Directory: ', parent_dir, '\n*****************************')
+print('Save Locally Flag is set to: {}\n*****************************'.format(save_locally))
 
 
 def initialize_database():
@@ -43,7 +43,7 @@ def initialize_database():
             stage_query = "CREATE SCHEMA IF NOT EXISTS stage;"
             cursor.execute(stage_query)
             pg_engine.commit()
-            print('Done Initializing Database and Created Schema Stage\n************, ')
+            print('Done Initializing Database and Created Schema Stage.\n*****************************')
         except BaseException as exception:
             print('Failed to create schema!', exception)
             sys.exit()
@@ -102,7 +102,7 @@ def extract_monthly_data(sqlalchemy_engine):
 
     b = datetime.datetime.now()
     delta_seconds = (b-a).total_seconds()
-    print("********************************\n",'Loaded Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n********************************\n")
+    print("*****************************\n",'Loaded Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n*****************************\n")
     return 'extract_monthly_data', delta_seconds, a, b, i
 
 def extract_monthly_forecasts(sqlalchemy_engine):

@@ -33,7 +33,7 @@ def transform_monthly_data(sqlalchemy_engine):
 
     b = datetime.datetime.now()
     delta_seconds = (b-a).total_seconds()
-    print("********************************\n",'Transposed Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n********************************\n")
+    print("*****************************\n",'Transposed Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n*****************************\n")
     return 'transform_monthly_data', delta_seconds, a, b, 1
 
 def create_postgis_proj_tables(sqlalchemy_engine, pg_engine):
@@ -88,4 +88,5 @@ def create_postgis_proj_tables(sqlalchemy_engine, pg_engine):
         print(exception)
     b = datetime.datetime.now()
     delta_seconds = (b-a).total_seconds()
+    print("*****************************\n",'Done Creating POSTGIS Projection Tables in {} seconds.'.format(delta_seconds), "\n*****************************\n")
     return 'create_postgis_projected_tables', delta_seconds, a, b, 1
