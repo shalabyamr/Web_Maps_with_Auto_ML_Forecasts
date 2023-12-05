@@ -29,7 +29,7 @@
 
 # GGR473 : GGR473 Group Project
 
-## Members:
+## Members
 |     Name     | Student Number |             Email             |
 |:------------:|:--------------:|:-----------------------------:|
 | Matthew Ruku |   1000881272   | matthew.ruku@mail.utoronto.ca |
@@ -67,8 +67,8 @@ After modifying the _**Config.ini**_, run the python script _**Execute_Pipeline.
 
 # Pipeline Design
 
-## 1. Staging (Extraction) Layer:
-### 1. Monthly Data Web Scraping:
+## 1. Staging (Extraction) Layer
+### 1. Monthly Data Web Scraping
 To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, function _extract_monthly_data(boolean save_loally)_in the the Data Loader is /Python/Data_Loader.py File.
 which ingests the public data into the **first** staging table "**stg_monthly_air_data**."
 
@@ -123,7 +123,7 @@ which ingests the public data into the **first** staging table "**stg_monthly_ai
 | src_filename   | text             |
 
 
-### 2. Monthly Forecasts Data Web Scraping:
+### 2. Monthly Forecasts Data Web Scraping
 To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/, the function _extract_monthly_forecasts(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the public data into the **third** staging table "**stg_monthly_forecasts**" with the option to locally save the CSV files with a prefix **'FORECAST_'** to differentiate them from the actual monthly data.
 
@@ -142,7 +142,7 @@ which ingests the public data into the **third** staging table "**stg_monthly_fo
 |   src_filename    |   text    |
 
 
-### 3. Traffic Volume:
+### 3. Traffic Volume
 Using the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, the function _extract_traffic_volumes(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the traffic volume data into the **fourth** staging table "**stg_traffic_volume**" with the option to locally save the CSV file to _'./Data/traffic_volume.csv'_.
 
@@ -161,7 +161,7 @@ which ingests the traffic volume data into the **fourth** staging table "**stg_t
 |     filename      |       text       |
 |   last_updated    |    timestamp     |
 
-### 4. Geographical Names Data:
+### 4. Geographical Names Data
 Downloads and extracts the zip file of the Geographical Names Data from https://natural-resources.canada.ca/earth-sciences/geography/download-geographical-names-data/9245, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the geographical names data containing the coordinates of the air quality stations into the **fifth** staging table "**stg_geo_names**" with the option to retain the extracted CSV file to _'./Data/cgn_canada_csv_eng.csv'_.
 
@@ -186,7 +186,7 @@ which ingests the geographical names data containing the coordinates of the air 
 |    download_link    |       text       |
 |     src_filename     |       text       |
 
-### 5. ArcGIS Toronto and Peel Traffic Count:
+### 5. ArcGIS Toronto and Peel Traffic Count
 Downloads Toronto and Peel Traffic Count from https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
 which ingests the Toronto and Peel Traffic Counts with latitude and longitude provided by ArcGIS  into the **sixth** staging table "**load_gta_traffic_arcgis**" with the option to create CSV file to _'./Data/ArcGIS_Toronto_and_Peel_Traffic.csv'_.
 
@@ -212,7 +212,7 @@ which ingests the Toronto and Peel Traffic Counts with latitude and longitude pr
 
 
 ## 2. Transformation Layer
-### 1. Monthly Air Data Transpose:
+### 1. Monthly Air Data Transpose
 The staging table _stg_monthly_air_data_transpose_ created from the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) ingested and converted 
 into the **second** production table "**FACT_MONTHLY_AIR_DATA_TRANSPOSE** in _**"PUBLIC"**_ Schema with the following two conditions:
 
@@ -291,7 +291,7 @@ The staging table _stg_monthly_air_data_ creted from the Ontario monthly air qua
 | last_inserted |    timestamp     |
 
 
-### 2. Monthly Forecasts:
+### 2. Monthly Forecasts
 The staging table _stg_monthly_forecasts_ acquired from the Ontario monthly air quality data(https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/) is ingested into the production table _FACT_MONTHLY_FORECASTS_in _PUBLIC_ schema with the following two conditions:
 
 * Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
@@ -335,7 +335,7 @@ The staging table _stg_traffic_volume_ constructed from the REST API provided fo
 |   last_updated    |    timestamp     |
 |   last_inserted   |    timestamp     |
 
-### 4. Geographical Names Data:
+### 4. Geographical Names Data
 The staging table _stg_geo_names_from the downloaded and extracted zip file of the Geographical Names Data(https://natural-resources.canada.ca/earth-sciences/geography/download-geographical-names-data/9245) was ingested into the production table _DIM_GEO_NAMES_ with the following two conditions:
 * Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
 * The condition _ROW_NUMBER() OVER(PARTITION BY cgndb_id ORDER BY decision_date DESC) =1_ to eliminate the duplicated records within the provided dates.
@@ -364,7 +364,7 @@ The staging table _stg_geo_names_from the downloaded and extracted zip file of t
 |    last_inserted     |    timestamp     |
 
 
-### 5. ArcGIS Toronto and Peel Traffic Count:
+### 5. ArcGIS Toronto and Peel Traffic Count
 The staging table _stg_gta_traffic_arcgis_ obtained from ArcGIS Toronto and Peel Traffic Data(https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da) was ingested into the production table _FACT_GTA_TRAFFIC_ARCGIS_ in PUBLIC schema with the following two conditions:
 
 * Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
@@ -392,7 +392,7 @@ The staging table _stg_gta_traffic_arcgis_ obtained from ArcGIS Toronto and Peel
 |     last_inserted      |    timestamp     |
 
 
-### 6. Data Model Performance:
+### 6. Data Model Performance
 After all the staging tables, sql scripts, and hard extractions made, _data_model_performance_tbl_ in _PUBLIC_ Schema provides insight on duration, scope, and complexity of the execution steps within each of the Extractino, Trasnformation, and Loading Phases.
 
 | Column           |    Data Type     |
@@ -436,7 +436,7 @@ After all the staging tables, sql scripts, and hard extractions made, _data_mode
 | production |       traffic_volume.sql        |        0.015         |    23:48.7     |   23:48.7    |          1          |
 | production |      combine_air_data.sql       |        0.521         |    23:48.8     |   23:49.3    |          1          |
 
-### 7. fact_air_data_proj:
+### 7. fact_air_data_proj
 The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [create_proj_tables.py](Python%2Fcreate_proj_tables.py) with the inherited properties of the geolocation name identifiers from the curated table _dim_geo_names_.
 
 | Column                           |         Data Type          |
@@ -463,7 +463,7 @@ The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version 
 | weekday                          |            text            |
 
 
-### 8. fact_gta_traffic_proj:
+### 8. fact_gta_traffic_proj
 The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_gta_traffic_arcgis with additional geometry column 'geom' created in Python via [create_proj_tables.py](Python%2Fcreate_proj_tables.py).
 
 |         Column         |         Data Type          |
@@ -488,7 +488,7 @@ The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Versi
 |      last_updated      |         timestamp          |
 |     last_inserted      |         timestamp          |
 
-### 9. fact_hourly_avg:
+### 9. fact_hourly_avg
 The table _fact_hourly_avg_ contains the calculated means for the hourly segments per station and converted POSTGIS table via [create_proj_tables.py](Python%2Fcreate_proj_tables.py).
 
 |   Column    |         Data Type          |
@@ -502,7 +502,7 @@ The table _fact_hourly_avg_ contains the calculated means for the hourly segment
 |  noon_avg   |      double precision      |
 | evening_avg |      double precision      |
 
-### 10. fact_weekdays_avg:
+### 10. fact_weekdays_avg
 The table _fact_weekdays_avg_ contains the calculated means for the weekdays per station and converted POSTGIS table via [create_proj_tables.py](Pipeline%2Fcreate_proj_tables.py) that executes the query _create_postgis_proj_tbl.sql_ in 'SQL' Directory.
 
 |    Column    |       Data Type        |
