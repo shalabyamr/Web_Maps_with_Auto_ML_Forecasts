@@ -358,7 +358,7 @@ The staging table _stg_geo_names_from the downloaded and extracted zip file of t
 |  relevance_at_scale  |      bigint      |
 |    decision_date     |       date       |
 |        source        |       text       |
-|    donwnload_link    |       text       |
+|    download_link     |       text       |
 |     src_filename     |       text       |
 |     last_updated     |    timestamp     |
 |    last_inserted     |    timestamp     |
@@ -369,7 +369,6 @@ The staging table _stg_gta_traffic_arcgis_ obtained from ArcGIS Toronto and Peel
 
 * Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
 * The condition _ROW_NUMBER() over (PARTITION BY objectid ORDER BY COUNT_DATE DESC) =1_ to eliminate the duplicated records within the provided dates.
-
 
 |         Column         |    Data Type     |
 |:----------------------:|:----------------:|
@@ -438,7 +437,7 @@ After all the staging tables, sql scripts, and hard extractions made, _data_mode
 | production |      combine_air_data.sql       |        0.521         |    23:48.8     |   23:49.3    |          1          |
 
 ### 7. fact_air_data_proj:
-The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [create_proj_tables.py](Python%2Fcreate_proj_tables.py) with the inherited properties of the geolocation name identifiers from the curated table dim_geo_names.
+The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [create_proj_tables.py](Python%2Fcreate_proj_tables.py) with the inherited properties of the geolocation name identifiers from the curated table _dim_geo_names_.
 
 | Column                           |         Data Type          |
 |----------------------------------|:--------------------------:|
@@ -490,7 +489,7 @@ The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Versi
 |     last_inserted      |         timestamp          |
 
 ### 9. fact_hourly_avg:
-The table fact_hourly_avg contains the calculated means for the hourly segments per station and converted POSTGIS table via [create_proj_tables.py](Python%2Fcreate_proj_tables.py).
+The table _fact_hourly_avg_ contains the calculated means for the hourly segments per station and converted POSTGIS table via [create_proj_tables.py](Python%2Fcreate_proj_tables.py).
 
 |   Column    |         Data Type          |
 |:-----------:|:--------------------------:|
@@ -502,3 +501,20 @@ The table fact_hourly_avg contains the calculated means for the hourly segments 
 | morning_avg |      double precision      |
 |  noon_avg   |      double precision      |
 | evening_avg |      double precision      |
+
+### 10. fact_weekdays_avg:
+The table _fact_weekdays_avg_ contains the calculated means for the weekdays per station and converted POSTGIS table via [create_proj_tables.py](Pipeline%2Fcreate_proj_tables.py) that executes the query _create_postgis_proj_tbl.sql_ in 'SQL' Directory.
+
+|    Column    |       Data Type        |
+|:------------:|:----------------------:|
+|     geom     | geometry(Point, 26917) |
+|   cgndb_id   |          text          |
+|   latitude   |     numeric(10, 2)     |
+|  longitude   |     numeric(10, 2)     |
+|  monday_avg  |     numeric(10, 2)     |
+| tuesday_avg  |     numeric(10, 2)     |
+| thursday_avg |     numeric(10, 2)     |
+|  friday_avg  |     numeric(10, 2)     |
+| saturday_avg |     numeric(10, 2)     |
+|  sunday_avg  |     numeric(10, 2)     |
+
