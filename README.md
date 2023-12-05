@@ -39,9 +39,9 @@
 
 # Pipeline Setup
 ## Config.ini
-The only file that requires user input is _**Config.ini**_.  Update the database login credentials and the **_parent_dir_** without quotations as below.
+The only file that requires user input is _**Config.ini**_ in _Pipeline_ folder.  Update the database login credentials and the **_parent_dir_** without quotations as below.
 
-Congfig.ini :
+Congfig.ini:
 
 |    [postgres_db]     |                  [save_files]                  |
 |:--------------------:|------------------------------------------------|
