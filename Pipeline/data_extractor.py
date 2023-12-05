@@ -234,5 +234,3 @@ def extract_gta_traffic_arcgis(sqlalchemy_engine):
     delta_seconds = (b-a).total_seconds()
     print('Loaded ArcGIS Toronto and Peel Traffic Count Done in {} Seconds'.format(delta_seconds),"\n********************************\n")
     return 'extract_gta_traffic_arcgis', delta_seconds, a, b, 1
-
-extract_traffic_volumes(sqlalchemy_engine=sqlalchemy_engine)
