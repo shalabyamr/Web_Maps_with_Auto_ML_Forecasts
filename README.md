@@ -402,7 +402,7 @@ The staging table _stg_gta_traffic_arcgis_ obtained from ArcGIS Toronto and Peel
 
 
 ### §6. Data Model Performance
-After all the staging tables, sql scripts, and hard extractions made, _data_model_performance_tbl_ in _PUBLIC_ Schema provides insight on duration, scope, and complexity of the execution steps within each of the Extraction, Transformation, and Loading Phases which are tracked by [execute_pipeline.py]([data_loader.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/execute_pipeline.py).
+After all the staging tables, sql scripts, and hard extractions made, _data_model_performance_tbl_ in _PUBLIC_ Schema provides insight on duration, scope, and complexity of the execution steps within each of the Extraction, Transformation, and Loading Phases which are tracked by [execute_pipeline.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/execute_pipeline.py).
 
 | Column           |    Data Type     |
 |------------------|:----------------:|
