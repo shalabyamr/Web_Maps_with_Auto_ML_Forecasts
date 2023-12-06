@@ -16,7 +16,7 @@
     * [§5. ArcGIS Toronto and Peel Traffic Count](#5-arcgis-toronto-and-peel-traffic-count)
   * [2. Transformation Layer](#2-transformation-layer)
     * [§1. Monthly Air Data Transpose](#1-monthly-air-data-transpose)
-  * [2. Production (Loading) Layer:](#2-production-loading-layer)
+  * [3. Production (Loading) Layer:](#3-production-loading-layer)
     * [§1. Monthly Air Data](#1-monthly-air-data)
     * [§2. Monthly Forecasts](#2-monthly-forecasts)
     * [§3. Traffic Volume](#3-traffic-volume-1)
