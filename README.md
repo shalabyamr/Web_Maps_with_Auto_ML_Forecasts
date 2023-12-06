@@ -133,7 +133,7 @@ which ingests the public data into the **first** staging table "**stg_monthly_ai
 
 
 ### §2. Monthly Forecasts Data Web Scraping
-To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/, the function _extract_monthly_forecasts(boolean save_locally)_ in the Data Loader [data_loader.py](/Python/data_loader.py) File.
+To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/, the function _extract_monthly_forecasts(boolean save_locally)_ in the Data Loader [data_loader.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_loader.py) File.
 which ingests the public data into the **third** staging table "**stg_monthly_forecasts**" with the option to locally save the CSV files with a prefix **'FORECAST_'** to differentiate them from the actual monthly data.
 
 
@@ -152,8 +152,8 @@ which ingests the public data into the **third** staging table "**stg_monthly_fo
 
 
 ### §3. Traffic Volume
-Using the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, the function _extract_traffic_volumes(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
-which ingests the traffic volume data into the **fourth** staging table "**stg_traffic_volume**" with the option to locally save the CSV file to _'./Data/traffic_volume.csv'_.
+Using the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, the function _extract_traffic_volumes(boolean save_locally)_ in the [Data Loader](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_loader.py) File.
+which ingests the traffic volume data into the **fourth** staging table "**stg_traffic_volume**" with the option to locally save the CSV file to _['./Data/traffic_volume.csv'](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Data/traffic_volume.csv).
 
 |      Column       |    Data Type     |
 |:-----------------:|:----------------:|
@@ -171,7 +171,7 @@ which ingests the traffic volume data into the **fourth** staging table "**stg_t
 |   last_updated    |    timestamp     |
 
 ### §4. Geographical Names Data
-Downloads and extracts the zip file of the Geographical Names Data from https://natural-resources.canada.ca/earth-sciences/geography/download-geographical-names-data/9245, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
+Downloads and extracts the zip file of the Geographical Names Data from https://natural-resources.canada.ca/earth-sciences/geography/download-geographical-names-data/9245, the function _extract_geo_names()_ in the [Data Loader](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_loader.py).
 which ingests the geographical names data containing the coordinates of the air quality stations into the **fifth** staging table "**stg_geo_names**" with the option to retain the extracted CSV file to _'./Data/cgn_canada_csv_eng.csv'_.
 
 |        Column        |    Data Type     |
@@ -196,7 +196,7 @@ which ingests the geographical names data containing the coordinates of the air 
 |     src_filename     |       text       |
 
 ### §5. ArcGIS Toronto and Peel Traffic Count
-Downloads Toronto and Peel Traffic Count from https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at [/Python/Data_Loader.py File.
+Downloads Toronto and Peel Traffic Count from https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da, the function _extract_geo_names()_ in the [Data Loader](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_loader.py).
 which ingests the Toronto and Peel Traffic Counts with latitude and longitude provided by ArcGIS  into the **sixth** staging table "**load_gta_traffic_arcgis**" with the option to create CSV file to _'./Data/ArcGIS_Toronto_and_Peel_Traffic.csv'_.
 
 |         Column         |    Data Type     |
@@ -223,7 +223,7 @@ which ingests the Toronto and Peel Traffic Counts with latitude and longitude pr
 ## 2. Transformation Layer
 ### §1. Monthly Air Data Transpose
 The staging table _stg_monthly_air_data_transpose_ created from the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) ingested and converted 
-into the **second** production table "**FACT_MONTHLY_AIR_DATA_TRANSPOSE** in _**"PUBLIC"**_ Schema with the following two conditions:
+into the **second** production table "**FACT_MONTHLY_AIR_DATA_TRANSPOSE** in _**"PUBLIC"**_ Schema via the execution of [data_transformation.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_transformation.py) with the following two conditions:
 
 * Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
 * The condition _ROW_NUMBER() OVER(PARTITION BY "the_date","hours_utc" ORDER BY hours_utc DESC) = 1_to eliminate duplicate records within any given date.
