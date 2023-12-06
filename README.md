@@ -71,7 +71,7 @@ You need to have the following packages installed.
 * geopandas~=0.14.1
 
 
-## §3. Pipeline Execution
+## §3. Execution
 After modifying the _**Config.ini**_, run the python script _**Execute_Pipeline.py**_ in **_Pipeline_** folder.
 
 # Pipeline Design
