@@ -241,7 +241,7 @@ into the **second** production table "**FACT_MONTHLY_AIR_DATA_TRANSPOSE** in _**
 | last_inserted     |    timestamp     |
 
 
-## 2. Production (Loading) Layer:
+## 3. Production (Loading) Layer:
 ### §1. Monthly Air Data
 The staging table _stg_monthly_air_data_ creted from the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) ingested and converted into the **first** production table "**FACT_MONTHLY_AIR_DATA** in _**"PUBLIC"**_ Schema with the following two conditions:
 
