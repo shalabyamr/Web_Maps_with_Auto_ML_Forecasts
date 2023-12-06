@@ -47,7 +47,7 @@
 ![Report](Report/pipeline_execution_time.png)
 
 ## §1.Setup: Config.ini
-The only file that requires user input is _**Config.ini**_ in _**Pipeline**_ folder.  Update the database login credentials and the **_parent_dir_** without quotations as below.
+The only file that requires user input is _**Config.ini**_ in _**Pipeline**_ folder.  Update the database login credentials and the [parent_dir](/Pipeline/Config.ini)**_parent_dir_** without quotations as below.
 
 Congfig.ini:
 
@@ -72,13 +72,13 @@ You need to have the following packages installed.
 
 
 ## §3. Execution
-After modifying the _**Config.ini**_, run the python script _**Execute_Pipeline.py**_ in **_Pipeline_** folder.
+After modifying the _**Config.ini**_, run the python script _**execute_pipeline.py**_ in **_Pipeline_** folder.
 
 # Pipeline Design
 
 ## 1. Staging (Extraction) Layer
 ### §1. Monthly Data Web Scraping
-To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, function _extract_monthly_data(boolean save_loally)_in the the Data Loader is /Python/Data_Loader.py File.
+To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, function _extract_monthly_data(boolean save_loally)_in the the Data Loader [data_loader.py](/Python/Data_Loader.py) File.
 which ingests the public data into the **first** staging table "**stg_monthly_air_data**."
 
 | Column         | Data Type        |
@@ -133,7 +133,7 @@ which ingests the public data into the **first** staging table "**stg_monthly_ai
 
 
 ### §2. Monthly Forecasts Data Web Scraping
-To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/, the function _extract_monthly_forecasts(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
+To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/forecast/model/csv/, the function _extract_monthly_forecasts(boolean save_locally)_ in the Data Loader [data_loader.py](/Python/data_loader.py) File.
 which ingests the public data into the **third** staging table "**stg_monthly_forecasts**" with the option to locally save the CSV files with a prefix **'FORECAST_'** to differentiate them from the actual monthly data.
 
 
@@ -196,7 +196,7 @@ which ingests the geographical names data containing the coordinates of the air 
 |     src_filename     |       text       |
 
 ### §5. ArcGIS Toronto and Peel Traffic Count
-Downloads Toronto and Peel Traffic Count from https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at /Python/Data_Loader.py File.
+Downloads Toronto and Peel Traffic Count from https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da, the function _extract_geo_names(boolean save_locally)_ in the Data Loader located at [/Python/Data_Loader.py File.
 which ingests the Toronto and Peel Traffic Counts with latitude and longitude provided by ArcGIS  into the **sixth** staging table "**load_gta_traffic_arcgis**" with the option to create CSV file to _'./Data/ArcGIS_Toronto_and_Peel_Traffic.csv'_.
 
 |         Column         |    Data Type     |
@@ -243,7 +243,7 @@ into the **second** production table "**FACT_MONTHLY_AIR_DATA_TRANSPOSE** in _**
 
 ## 3. Production (Loading) Layer:
 ### §1. Monthly Air Data
-The staging table _stg_monthly_air_data_ creted from the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) ingested and converted into the **first** production table "**FACT_MONTHLY_AIR_DATA** in _**"PUBLIC"**_ Schema with the following two conditions:
+The staging table _stg_monthly_air_data_ created from the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) ingested and converted into the **first** production table "**FACT_MONTHLY_AIR_DATA** in _**"PUBLIC"**_ Schema with the following two conditions:
 
 * Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
 * The condition _ROW_NUMBER() OVER(PARTITION BY "Date","hours_utc" ORDER BY hours_utc DESC) = 1_to eliminate duplicate records within any given date.
@@ -446,7 +446,7 @@ After all the staging tables, sql scripts, and hard extractions made, _data_mode
 | production |      combine_air_data.sql       |        0.521         |    23:48.8     |   23:49.3    |          1          |
 
 ### §7. fact_air_data_proj
-The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [create_proj_tables.py](Python%2Fcreate_proj_tables.py) with the inherited properties of the geolocation name identifiers from the curated table _dim_geo_names_.
+The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [create_proj_tables.py](Pipeline/Fcreate_proj_tables.py) with the inherited properties of the geolocation name identifiers from the curated table _dim_geo_names_.
 
 | Column                           |         Data Type          |
 |----------------------------------|:--------------------------:|
@@ -473,7 +473,7 @@ The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version 
 
 
 ### §8. fact_gta_traffic_proj
-The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_gta_traffic_arcgis with additional geometry column 'geom' created in Python via [create_proj_tables.py](Python%2Fcreate_proj_tables.py).
+The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_gta_traffic_arcgis with additional geometry column 'geom' created in Python via [create_proj_tables.py](Pipeline/create_proj_tables.py).
 
 |         Column         |         Data Type          |
 |:----------------------:|:--------------------------:|
@@ -498,7 +498,7 @@ The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Versi
 |     last_inserted      |         timestamp          |
 
 ### §9. fact_hourly_avg
-The table _fact_hourly_avg_ contains the calculated means for the hourly segments per station and converted POSTGIS table via [create_proj_tables.py](Python%2Fcreate_proj_tables.py).
+The table _fact_hourly_avg_ contains the calculated means for the hourly segments per station and converted POSTGIS table via [create_proj_tables.py](Pipeline/Fcreate_proj_tables.py).
 
 |   Column    |         Data Type          |
 |:-----------:|:--------------------------:|
@@ -512,7 +512,7 @@ The table _fact_hourly_avg_ contains the calculated means for the hourly segment
 | evening_avg |      double precision      |
 
 ### §10. fact_weekdays_avg
-The table _fact_weekdays_avg_ contains the calculated means for the weekdays per station and converted POSTGIS table via [create_proj_tables.py](Pipeline%2Fcreate_proj_tables.py) that executes the query _create_postgis_proj_tbl.sql_ in 'SQL' Directory.
+The table _fact_weekdays_avg_ contains the calculated means for the weekdays per station and converted POSTGIS table via [create_proj_tables.py](Pipeline/Fcreate_proj_tables.py) that executes the query _create_postgis_proj_tbl.sql_ in 'SQL' Directory.
 
 |    Column    |       Data Type        |
 |:------------:|:----------------------:|
