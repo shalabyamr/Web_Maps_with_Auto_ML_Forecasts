@@ -74,7 +74,7 @@ After modifying the _**Config.ini**_, run the python script _**Execute_Pipeline.
 
 # Pipeline Design
 
-## §1. Staging (Extraction) Layer
+## 1. Staging (Extraction) Layer
 ### §1. Monthly Data Web Scraping
 To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, function _extract_monthly_data(boolean save_loally)_in the the Data Loader is /Python/Data_Loader.py File.
 which ingests the public data into the **first** staging table "**stg_monthly_air_data**."
