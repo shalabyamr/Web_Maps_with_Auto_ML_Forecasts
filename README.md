@@ -47,7 +47,7 @@
 ![Report](Report/pipeline_execution_time.png)
 
 ## §1.Setup: Config.ini
-The only file that requires user input is _**Config.ini**_ in _**Pipeline**_ folder.  Update the database login credentials and the [parent_dir](/Pipeline/Config.ini) **_parent_dir_** without quotations as below.
+The only file that requires user input is _**Config.ini**_ in _**Pipeline**_ folder.  Update the database login credentials and the [parent_dir](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/Config.ini) **_parent_dir_** without quotations as below.
 
 Congfig.ini:
 
