@@ -41,10 +41,10 @@
 
 # Pipeline
 ## §0.1 Flow
-![](/Users/amr/PycharmProjects/ggr473/Report/pipeline_steps.png)
+![Report](Report/pipeline_steps.png)
 
 ## §0.2 Expected Execution Time
-![](/Users/amr/PycharmProjects/ggr473/Report/pipeline_execution_time.png)
+![Report](Report/pipeline_execution_time.png)
 
 ## §1.Setup: Config.ini
 The only file that requires user input is _**Config.ini**_ in _**Pipeline**_ folder.  Update the database login credentials and the **_parent_dir_** without quotations as below.
