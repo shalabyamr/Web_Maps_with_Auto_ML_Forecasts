@@ -512,7 +512,7 @@ The table _fact_hourly_avg_ contains the calculated means for the hourly segment
 | evening_avg |      double precision      |
 
 ### §10. fact_weekdays_avg
-The table _fact_weekdays_avg_ contains the calculated means for the weekdays per station and converted POSTGIS table via [data_loader.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_loader.py) that executes the query [create_post_proj_tbl.sql]([data_loader.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/SQL/create_postgis_proj_tbl.sql).
+The table _fact_weekdays_avg_ contains the calculated means for the weekdays per station and converted POSTGIS table via [data_loader.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_loader.py) that executes the query [create_post_proj_tbl.sql](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/SQL/create_postgis_proj_tbl.sql).
 
 |    Column    |       Data Type        |
 |:------------:|:----------------------:|
