@@ -72,7 +72,7 @@ You need to have the following packages installed.
 
 
 ## §3. Execution
-After modifying the _**Config.ini**_, run the python script _**execute_pipeline.py**_ in **_Pipeline_** folder.
+After modifying [Config.ini](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/config.ini), run the python script [execute_pipeline.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/execute_pipeline.py).
 
 # Pipeline Design
 
