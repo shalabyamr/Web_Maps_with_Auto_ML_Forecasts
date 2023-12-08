@@ -3,7 +3,7 @@
   * [Members](#members)
 * [Pipeline](#pipeline)
   * [§0.1 Flow](#01-flow)
-  * [§0.2 Expected Execution Time](#02-expected-execution-time)
+  * [§0.2 Execution Time](#02-expected-execution-time)
   * [§1.Setup: Config.ini](#1setup-configini)
   * [§2. Python Requirements](#2-python-requirements)
   * [§3. Pipeline Execution](#3-pipeline-execution)
@@ -43,7 +43,7 @@
 ## §0.1 Flow
 ![Report](Report/pipeline_steps.png)
 
-## §0.2 Expected Execution Time
+## §0.2 Execution Time
 ![Report](Report/pipeline_execution_time.png)
 
 ## §1.Setup: Config.ini
