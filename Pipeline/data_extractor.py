@@ -18,9 +18,11 @@ warnings.filterwarnings("ignore")
 # to keep the Pipeline folder clean of csv and temp files
 config = configparser.ConfigParser()
 config.read('config.ini')
+check_save_locally = str(config['save_files']['save_locally_flag']).title()
 
-if str(config['save_files']['save_locally_flag']).title() not in ['True','False']:
-    raise Exception('save_locally_flag in Config.ini must be True or False')
+if check_save_locally not in ['True','False']:
+    raise Exception("save_locally_flag in Config.ini is set as {}. Only True or False is accepted.".format(check_save_locally))
+del check_save_locally
 
 save_locally = eval(config['save_files']['save_locally_flag'])
 parent_dir = str(config['save_files']['parent_dir'])
