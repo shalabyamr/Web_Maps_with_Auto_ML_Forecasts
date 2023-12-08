@@ -12,6 +12,7 @@ df_stage['phase'] = 'stage'
 df_stage = df_stage[['phase', 'step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed']]
 pipeline_df = pd.concat([df_production, df_stage])
 pipeline_df.drop(pipeline_df.tail(1).index, inplace=True)  # drop last row
+del df_stage, df_production
 
 if save_locally:
     print('Saving Data Model Performance {} in: {}'.format('data_model_performance.csv', parent_dir+'/Analytics/'))
