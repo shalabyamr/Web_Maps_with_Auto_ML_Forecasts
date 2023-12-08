@@ -3,7 +3,7 @@
   * [Members](#members)
 * [Pipeline](#pipeline)
   * [§0.1 Flow](#01-flow)
-  * [§0.2 Execution Time](#02-execution-time)
+  * [§0.2 Expected Execution Time](#02-expected-execution-time)
   * [§1.Setup: Config.ini](#1setup-configini)
   * [§2. Python Requirements](#2-python-requirements)
   * [§3. Execution](#3-execution)
@@ -43,7 +43,7 @@
 ## §0.1 Flow
 ![Report](Report/pipeline_steps.png)
 
-## §0.2 Execution Time
+## §0.2 Expected Execution Time
 ![Report](Report/pipeline_execution_time.png)
 
 ## §1.Setup: Config.ini
@@ -512,7 +512,7 @@ The table _fact_hourly_avg_ contains the calculated means for the hourly segment
 | evening_avg |      double precision      |
 
 ### §10. fact_weekdays_avg
-The table _fact_weekdays_avg_ contains the calculated means for the weekdays per station and converted POSTGIS table via [data_loader.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_loader.py) that executes the query [create_post_proj_tbl.sql]([data_loader.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/SQL/create_postgis_proj_tbl.sql).
+The table _fact_weekdays_avg_ contains the calculated means for the weekdays per station and converted POSTGIS table via [data_loader.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_loader.py) that executes the query [create_post_proj_tbl.sql](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/SQL/create_postgis_proj_tbl.sql).
 
 |    Column    |       Data Type        |
 |:------------:|:----------------------:|
