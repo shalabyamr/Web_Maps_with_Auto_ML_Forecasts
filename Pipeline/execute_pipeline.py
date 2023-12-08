@@ -4,13 +4,13 @@ import pandas as pd
 
 staging_tables_list = create_staging_tables()
 production_tables_list = create_production_tables()
-pipeline_df = pd.DataFrame(production_tables_list, columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
-pipeline_df['phase'] = 'production'
-pipeline_df = pipeline_df[['phase', 'step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed']]
-pipeline_df2 = pd.DataFrame(staging_tables_list, columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
-pipeline_df2['phase'] = 'stage'
-pipeline_df2 = pipeline_df2[['phase', 'step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed']]
-pipeline_df = pd.concat([pipeline_df2, pipeline_df])
+df_production = pd.DataFrame(production_tables_list, columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
+df_production['phase'] = 'production'
+df_production = df_production[['phase', 'step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed']]
+df_stage = pd.DataFrame(staging_tables_list, columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
+df_stage['phase'] = 'stage'
+df_stage = df_stage[['phase', 'step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed']]
+pipeline_df = pd.concat([df_production, df_stage])
 pipeline_df.drop(pipeline_df.tail(1).index, inplace=True)  # drop last row
 
 if save_locally:
