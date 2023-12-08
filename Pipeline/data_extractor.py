@@ -180,7 +180,7 @@ def extract_traffic_volumes(sqlalchemy_engine):
     df['download_link'] = download_link
     df['src_filename'] = filename
     df.to_sql(name='stg_traffic_volume', con=sqlalchemy_engine, if_exists='replace', schema='stage', index_label=False, index=False)
-    if save_locally == False:
+    if not save_locally:
         os.remove(parent_dir + '/Data/'+'traffic_volume.csv')
 
     b = datetime.datetime.now()
@@ -212,7 +212,7 @@ def extract_geo_names_data(sqlalchemy_engine):
     df['src_filename'] = csv_filename
     df.to_sql(name='stg_geo_names', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
 
-    if save_locally != True:
+    if not save_locally:
         os.remove(csv_filename)
 
     b = datetime.datetime.now()
