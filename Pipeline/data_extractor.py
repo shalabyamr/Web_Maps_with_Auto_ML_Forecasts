@@ -102,10 +102,10 @@ def extract_monthly_data(sqlalchemy_engine):
             df.to_sql(name='stg_monthly_air_data', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
             # Write content in CSV file
             if save_locally:
-                csv = open(filename, 'wb')
-                csv.write(response.content)
-                csv.close()
-
+                if i == 1:
+                    df.to_csv(parent_dir + '/Data/monthly_air_data.csv', index=False, index_label=False, header=True)
+                else:
+                    df.to_csv(parent_dir + '/Data/monthly_air_data.csv', mode='a', index=False, index_label=False, header=False)
     b = datetime.datetime.now()
     delta_seconds = (b-a).total_seconds()
     print("*****************************\n",'Loaded Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n*****************************\n")
@@ -149,10 +149,10 @@ def extract_monthly_forecasts(sqlalchemy_engine):
             df.to_sql(name='stg_monthly_forecasts', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
             # Write ALL Forecasts into one file
             if save_locally:
-                if i == 0:
+                if i == 1:
                     df.to_csv(parent_dir+'/Data/Monthly_Forecasts.csv', index=False, index_label=False, header=True)
                 else:
-                    df.to_csv('parent_dir'+'/Data/Monthly_Forecasts.csv', mode='a', index=False, index_label=False, header=False)
+                    df.to_csv(parent_dir+'/Data/Monthly_Forecasts.csv', mode='a', index=False, index_label=False, header=False)
     b = datetime.datetime.now()
     delta_seconds = (b-a).total_seconds()
     print("********************************\n",'Loaded Daily Forecasts Done in {} Seconds.'.format(delta_seconds),"\n********************************\n")
