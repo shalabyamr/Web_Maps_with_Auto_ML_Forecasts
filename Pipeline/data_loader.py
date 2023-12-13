@@ -79,7 +79,7 @@ def create_production_tables():
 
     if data_extractor.save_locally:
         query_get_tables = """SELECT table_name FROM information_schema.tables
-            WHERE (table_schema = 'public') and (table_type = 'BASE TABLE') and (upper(table_name) <> upper('spatial_ref_sys'))"""
+            WHERE (table_schema = 'public') and (table_name not in('spatial_ref_sys','geography_columns','geometry_columns'))"""
         cur.execute(query_get_tables)
         del query_get_tables
         public_tables = [item[0] for item in cur.fetchall()]
