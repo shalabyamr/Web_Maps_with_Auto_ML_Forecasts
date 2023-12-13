@@ -211,7 +211,6 @@ def extract_geo_names_data(sqlalchemy_engine):
     df['download_link'] = download_link
     df['src_filename'] = csv_filename
     df.to_sql(name='stg_geo_names', con=sqlalchemy_engine, if_exists='append', schema='stage', index_label=False, index=False)
-
     if not save_locally:
         os.remove(csv_filename)
 

@@ -91,7 +91,7 @@ def create_production_tables():
 
     b1 = datetime.datetime.now()
     delta_seconds_1 = (b1-a1).total_seconds()
-    master_list.append(['create_production_tables', a1, b1, len(sql_files)])
+    master_list.append(['create_production_tables', delta_seconds_1, a1, b1, len(sql_files)])
     print('*****************************\nDone Creating ALL Production Tables in {} seconds as of: {}'.format(delta_seconds_1, b1))
 
     return master_list
