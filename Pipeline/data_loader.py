@@ -81,6 +81,7 @@ def create_production_tables():
         query_get_tables = """SELECT table_name FROM information_schema.tables
             WHERE (table_schema = 'public') and (table_type = 'BASE TABLE') and (upper(table_name) <> upper('spatial_ref_sys'))"""
         cur.execute(query_get_tables)
+        del query_get_tables
         public_tables = [item[0] for item in cur.fetchall()]
         for public_table in public_tables:
             df = pd.read_sql_table(table_name=public_table, con=data_extractor.sqlalchemy_engine, schema='public')
