@@ -30,14 +30,8 @@
 <!-- TOC -->
 
 
-# GGR473 : GGR473 Group Project
-
-## Members
-|     Name     | Student Number |             Email             |
-|:------------:|:--------------:|:-----------------------------:|
-| Matthew Ruku |   1000881272   | matthew.ruku@mail.utoronto.ca |
-|   Ryan Siu   |   1007268519   |   ryan.siu@mail.utoronto.ca   |
-| Amr Shalaby  |   1005280397   | amr.shalaby@mail.utoronto.ca  |
+# Objective
+To complement Government of Canada Weather Stations Data with ArcGIS Traffic for a unified, geospatial analysis powered by a single, automated pipeline.
 
 # Pipeline
 ## §0.1 Flow
