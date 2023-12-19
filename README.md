@@ -31,7 +31,7 @@
 
 
 # Objective
-To complement Government of Canada Weather Stations Data with ArcGIS Traffic for a unified, geospatial analysis powered by a single, automated pipeline.
+To complement Government of Canada Weather Stations Data, both actual and forecasted, with ArcGIS Traffic for a unified, geospatial analysis powered by a single, automated pipeline.
 
 # Pipeline
 ## §0.1 Flow
