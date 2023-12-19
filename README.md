@@ -1,6 +1,5 @@
 <!-- TOC -->
-* [GGR473 : GGR473 Group Project](#ggr473--ggr473-group-project)
-  * [Members](#members)
+* [Objective](#objective)
 * [Pipeline](#pipeline)
   * [§0.1 Flow](#01-flow)
   * [§0.2 Execution Time](#02-execution-time)
@@ -23,10 +22,10 @@
     * [§4. Geographical Names Data](#4-geographical-names-data-1)
     * [§5. ArcGIS Toronto and Peel Traffic Count](#5-arcgis-toronto-and-peel-traffic-count-1)
     * [§6. Data Model Performance](#6-data-model-performance)
-    * [§7. fact_air_data_proj](#7-factairdataproj)
-    * [§8. fact_gta_traffic_proj](#8-factgtatrafficproj)
-    * [§9. fact_hourly_avg](#9-facthourlyavg)
-    * [§10. fact_weekdays_avg](#10-factweekdaysavg)
+    * [§7. fact_air_data_proj](#7-fact_air_data_proj)
+    * [§8. fact_gta_traffic_proj](#8-fact_gta_traffic_proj)
+    * [§9. fact_hourly_avg](#9-fact_hourly_avg)
+    * [§10. fact_weekdays_avg](#10-fact_weekdays_avg)
 <!-- TOC -->
 
 
