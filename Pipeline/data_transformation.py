@@ -5,9 +5,9 @@ import pandas as pd
 from data_extractor import parent_dir, save_locally
 warnings.filterwarnings("ignore")
 
-def transform_monthly_data(sqlalchemy_engine):
 
-    # Transposing the Monthly Air Quality Data #
+# Transposing the Monthly Air Quality Data #
+def transform_monthly_data(sqlalchemy_engine):
     a = datetime.datetime.now()
     print('*** Transposing the Monthly Air Quality Data as of: {}***'.format(a))
     df = pd.read_sql_table(table_name='stg_monthly_air_data', con=sqlalchemy_engine, schema='stage', parse_dates=True)
