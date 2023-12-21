@@ -85,7 +85,7 @@ def create_production_tables():
         public_tables = [item[0] for item in cur.fetchall()]
         for public_table in public_tables:
             df = pd.read_sql_table(table_name=public_table, con=data_extractor.sqlalchemy_engine, schema='public')
-            filename = data_extractor.parent_dir+'/Data/'+'Public_'+public_table
+            filename = data_extractor.parent_dir+'/Data/'+'Public_'+public_table+'.csv'
             print("Writing PUBLIC.{} locally to file: {}".format(public_table, filename))
             df.to_csv(filename, index_label=False, index=False)
 
