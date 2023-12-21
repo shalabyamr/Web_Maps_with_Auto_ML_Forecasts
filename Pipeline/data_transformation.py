@@ -31,12 +31,10 @@ def transform_monthly_data(sqlalchemy_engine):
     df_out.dropna(inplace=True)
     df_out.to_sql(name='stg_monthly_air_data_transpose', con=sqlalchemy_engine, if_exists='replace', schema='stage',
                   index_label=False, index=False)
-
     if save_locally:
         transposed_filename = parent_dir + '/Data/' + 'monthly_air_data_transposed.csv'
         print('Saving Transposed Monthly Air Data to: ', transposed_filename)
         df_out.to_csv(transposed_filename, index_label=False, index=False)
-
     b = datetime.datetime.now()
     delta_seconds = (b-a).total_seconds()
     print("*****************************\n",'Transposed Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n*****************************\n")
@@ -68,9 +66,7 @@ def create_postgis_proj_tables(sqlalchemy_engine, pg_engine):
     except BaseException as exception:
         print('!!failed to execute query!!')
         print(exception)
-
-    df_air_data = pd.read_sql_table(table_name='fact_combined_air_data', con=sqlalchemy_engine, schema='public',
-                                    parse_dates=True)
+    df_air_data = pd.read_sql_table(table_name='fact_combined_air_data', con=sqlalchemy_engine, schema='public', parse_dates=True)
     df_air_data['weekday'] = df_air_data['the_date'].dt.strftime('%A')
     df_air_data = df_air_data[df_air_data['cgndb_id'].str.upper().isin(['FCKTB', 'FCWYG', 'FDQBU', 'FDQBX', 'FEUZB'])]
     gdf_air_data = geopandas.GeoDataFrame(df_air_data,
@@ -80,11 +76,9 @@ def create_postgis_proj_tables(sqlalchemy_engine, pg_engine):
     gdf_air_data.set_geometry(col='geom', drop=False, inplace=True)
     gdf_air_data.to_postgis('fact_air_data_proj', con=sqlalchemy_engine, schema='public', if_exists='replace',
                             index=False)
-
     query_create_fact_air_data_proj = """ALTER TABLE PUBLIC.fact_air_data_proj 
       ALTER COLUMN geom 
       TYPE Geometry(Point, 26917);"""
-
     try:
         print('Executing Query: {}'.format(query_create_fact_air_data_proj))
         cur.execute(query_create_fact_air_data_proj)
