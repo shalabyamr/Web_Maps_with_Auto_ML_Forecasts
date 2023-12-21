@@ -11,18 +11,24 @@ def transform_monthly_data(sqlalchemy_engine):
     a = datetime.datetime.now()
     print('*** Transposing the Monthly Air Quality Data as of: {}***'.format(a))
     df = pd.read_sql_table(table_name='stg_monthly_air_data', con=sqlalchemy_engine, schema='stage', parse_dates=True)
+    non_cgndb_id_cols = ['download_link', 'hours_utc', 'last_updated', 'src_filename', 'the_date']
     df_out = pd.DataFrame()
     for column in df.columns:
         print('Transposing Column: ', column)
         df_temp = pd.DataFrame()
         df_temp['the_date'] = df['the_date'].dt.date
         df_temp['hours_utc'] = df['hours_utc']
-        df_temp['cgndb_id'] = str(column)
-        df_temp['air_quality_value'] = df[column]
+        if column not in non_cgndb_id_cols:
+            df_temp['cgndb_id'] = str(column)
+            df_temp['air_quality_value'] = df[column]
+        if column in non_cgndb_id_cols:
+            df_temp['cgndb_id'] = None
+            df_temp['air_quality_value'] = None
         df_temp['download_link'] = df['download_link']
         df_temp['src_filename'] = df['src_filename']
         df_temp['last_updated'] = df['last_updated']
         df_out = pd.concat([df_out, df_temp])
+    df_out.dropna(inplace=True)
     df_out.to_sql(name='stg_monthly_air_data_transpose', con=sqlalchemy_engine, if_exists='replace', schema='stage',
                   index_label=False, index=False)
 
