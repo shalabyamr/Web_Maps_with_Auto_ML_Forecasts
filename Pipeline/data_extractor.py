@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import warnings
 import pandas as pd
 import datetime
@@ -7,6 +6,7 @@ import psycopg2 as pg
 import sqlalchemy
 import os
 from rpy2 import robjects as ro
+from bs4 import BeautifulSoup
 import rpy2.robjects.packages as rpackages
 import zipfile
 import wget
