@@ -5,13 +5,13 @@ import datetime
 import psycopg2 as pg
 import sqlalchemy
 import os
-from rpy2 import robjects as ro
-from bs4 import BeautifulSoup
-import rpy2.robjects.packages as rpackages
 import zipfile
 import wget
 import configparser
 import sys
+from rpy2 import robjects as ro
+from bs4 import BeautifulSoup
+import rpy2.robjects.packages as rpackages
 warnings.filterwarnings("ignore")
 
 # To write temp files into the Parent ./Data/ Folder
