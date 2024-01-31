@@ -72,18 +72,6 @@ data = []
 for _, d in temp_df.groupby('latest_count_date'):
     data.append([[row['lat'], row['lng'], row['px']] for _, row in d.iterrows()])
 
-hmt = folium.Map(location=[temp_df['lat'].mean(), temp_df['lng'].mean() ],
-               tiles='cartodbpositron',#'cartodbpositron', stamentoner
-               zoom_start=15,
-               control_scale=True)
-
-HeatMapWithTime(data,
-                index=data,
-                auto_play=True,
-                use_local_extrema=True,
-                display_index=True
-               ).add_to(hmt)
-
 HeatMapWithTime(data,
                 index=data,
                 auto_play=True,
@@ -94,4 +82,3 @@ HeatMapWithTime(data,
 folium.LayerControl().add_to(toronto_map)
 
 toronto_map.save(parent_dir+'/Maps/toronto_map.html')
-hmt.save(parent_dir+'/Maps/toronto_time_heatmap.html')
