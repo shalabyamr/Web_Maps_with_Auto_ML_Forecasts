@@ -1,5 +1,6 @@
 from execute_pipeline import execute_pipeline, sqlalchemy_engine, pg_engine, parent_dir
 import folium
+import pandas as pd
 from folium.plugins import MarkerCluster, HeatMap, HeatMapWithTime
 
 # comment out this line after initial setup of the tables.
@@ -57,11 +58,33 @@ HeatMap(data=zip(df_fact_gta_traffic_arcgis['latitude'], df_fact_gta_traffic_arc
         blur=18).add_to(folium.FeatureGroup(name='Pedestrian Volume').add_to(toronto_map))
 
 temp_df = df_fact_traffic_volume.dropna()
+temp_df['latest_count_date'] = pd.to_datetime(temp_df['latest_count_date'])
+temp_df.sort_values(by=['latest_count_date'], inplace=True)
+temp_df.set_index('latest_count_date', inplace=True)
+
 HeatMap(data=zip(temp_df['lat'], temp_df.lng, temp_df['px']),
         min_opacity=0.4,
         blur=18).add_to(folium.FeatureGroup(name='Vehicle Volume').add_to(toronto_map))
-del temp_df
+
 
 folium.LayerControl().add_to(toronto_map)
 
+# Heatmap with time
+data = []
+for _, d in temp_df.groupby('latest_count_date'):
+    data.append([[row['lat'], row['lng'], row['px']] for _, row in d.iterrows()])
+
+hmt = folium.Map(location=[temp_df['lat'].mean(), temp_df['lng'].mean() ],
+               tiles='cartodbpositron',#'cartodbpositron', stamentoner
+               zoom_start=15,
+               control_scale=True)
+
+HeatMapWithTime(data,
+                index=data,
+                auto_play=True,
+                use_local_extrema=True,
+                display_index=True
+               ).add_to(hmt)
+
 toronto_map.save(parent_dir+'/Maps/toronto_map.html')
+hmt.save(parent_dir+'/Maps/toronto_time_heatmap.html')
