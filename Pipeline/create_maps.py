@@ -4,7 +4,7 @@ import pandas as pd
 from folium.plugins import MarkerCluster, HeatMap, HeatMapWithTime
 
 # comment out this line after initial setup of the tables.
-execute_pipeline()
+#execute_pipeline()
 
 query_get_tables = """SELECT table_name FROM information_schema.tables
     WHERE (table_schema = 'public') and (table_name not in('spatial_ref_sys','geography_columns',
@@ -67,8 +67,6 @@ HeatMap(data=zip(temp_df['lat'], temp_df.lng, temp_df['px']),
         blur=18).add_to(folium.FeatureGroup(name='Vehicle Volume').add_to(toronto_map))
 
 
-folium.LayerControl().add_to(toronto_map)
-
 # Heatmap with time
 data = []
 for _, d in temp_df.groupby('latest_count_date'):
@@ -85,6 +83,15 @@ HeatMapWithTime(data,
                 use_local_extrema=True,
                 display_index=True
                ).add_to(hmt)
+
+HeatMapWithTime(data,
+                index=data,
+                auto_play=True,
+                use_local_extrema=True,
+                display_index=True
+               ).add_to(folium.FeatureGroup(name='Traffic Volume Time Heatmap')).add_to(toronto_map)
+
+folium.LayerControl().add_to(toronto_map)
 
 toronto_map.save(parent_dir+'/Maps/toronto_map.html')
 hmt.save(parent_dir+'/Maps/toronto_time_heatmap.html')
