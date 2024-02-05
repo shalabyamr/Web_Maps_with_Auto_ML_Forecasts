@@ -21,14 +21,16 @@ for public_table in public_tables:
 
 # Load map centred
 toronto_map = folium.Map(location=[df_fact_air_data_proj['latitude'].mean(), df_fact_air_data_proj['longitude'].mean()], zoom_start=10, control_scale=True)
-toronto_map2 = folium.Map(location=[df_fact_air_data_proj['latitude'].mean(), df_fact_air_data_proj['longitude'].mean()], zoom_start=10, control_scale=True)
-marker_cluster = MarkerCluster().add_to(toronto_map)
+marker_cluster = MarkerCluster()
 
+fg = folium.FeatureGroup(name='Air Quality Measures')
 for index, row in df_fact_air_data_proj.iterrows():
-    folium.Marker(
+    marker_cluster.add_child(folium.Marker(
         location=[row['latitude'], row['longitude']],
         popup='Air Quality Measure: <b>{}</b><br>Geographical Name:<b>{}</b>.<br>CGN_ID: <b>{}</b>'.format(row['air_quality_value'], row['geographical_name'],row['cgndb_id']),
-        icon=folium.Icon(color="black", icon="info-sign")).add_to(marker_cluster)
+        icon=folium.Icon(color="black", icon="info-sign")))
+fg.add_child(marker_cluster)
+toronto_map.add_child(fg)
 
 
 for index, row in df_fact_traffic_volume.iterrows():
@@ -72,12 +74,6 @@ data = []
 for _, d in temp_df.groupby('latest_count_date'):
     data.append([[row['lat'], row['lng'], row['px']] for _, row in d.iterrows()])
 
-HeatMapWithTime(data,
-                index=data,
-                auto_play=True,
-                use_local_extrema=True,
-                display_index=True
-               ).add_to(folium.FeatureGroup(name='Traffic Volume Time Heatmap')).add_to(toronto_map)
-
+HeatMapWithTime(data, index=data, auto_play=True, use_local_extrema=True, display_index=True).add_to(folium.FeatureGroup(name='Traffic Time Heatmap')).add_to(toronto_map)
 folium.LayerControl().add_to(toronto_map)
 toronto_map.save(parent_dir + '/Maps/toronto_map.html')
