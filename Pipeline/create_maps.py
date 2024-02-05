@@ -13,15 +13,15 @@ cur = pg_engine.cursor()
 cur.execute(query_get_tables)
 del query_get_tables
 public_tables = [item[0] for item in cur.fetchall()]
-print('Public tables:', public_tables)
+print('Public Tables in Production Schema:', public_tables)
 
 for public_table in public_tables:
     print('Creating Dataframe df_{} from table_name {}'.format(public_table, public_table))
     exec(f"df_%s = pd.read_sql_table(table_name=public_table, con=sqlalchemy_engine, schema='public')" % (public_table), globals())
 
-
 # Load map centred
 toronto_map = folium.Map(location=[df_fact_air_data_proj['latitude'].mean(), df_fact_air_data_proj['longitude'].mean()], zoom_start=10, control_scale=True)
+toronto_map2 = folium.Map(location=[df_fact_air_data_proj['latitude'].mean(), df_fact_air_data_proj['longitude'].mean()], zoom_start=10, control_scale=True)
 marker_cluster = MarkerCluster().add_to(toronto_map)
 
 for index, row in df_fact_air_data_proj.iterrows():
@@ -80,5 +80,4 @@ HeatMapWithTime(data,
                ).add_to(folium.FeatureGroup(name='Traffic Volume Time Heatmap')).add_to(toronto_map)
 
 folium.LayerControl().add_to(toronto_map)
-
-toronto_map.save(parent_dir+'/Maps/toronto_map.html')
+toronto_map.save(parent_dir + '/Maps/toronto_map.html')
