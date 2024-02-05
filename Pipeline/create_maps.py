@@ -70,7 +70,7 @@ HeatMap(data=zip(temp_df['lat'], temp_df.lng, temp_df['px']),
         blur=18).add_to(folium.FeatureGroup(name='Vehicle Volume').add_to(toronto_map))
 
 
-# Heatmap with time
+# Heatmap With Time Series
 data = []
 for _, d in temp_df.groupby('latest_count_date'):
     data.append([[row['lat'], row['lng'], row['px']] for _, row in d.iterrows()])
