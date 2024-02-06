@@ -5,7 +5,7 @@ from folium.plugins import MarkerCluster, HeatMap, HeatMapWithTime
 
 # Important ::::
 # Comment out this line after the initial setup of the tables.
-#execute_pipeline()
+execute_pipeline()
 
 query_get_tables = """SELECT table_name FROM information_schema.tables
     WHERE (table_schema = 'public') and (table_name not in('spatial_ref_sys','geography_columns',
