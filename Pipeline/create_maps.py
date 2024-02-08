@@ -12,8 +12,8 @@ def create_maps(map_type:str):
     # Setting Up the Data for both map types
     start = datetime.datetime.now()
     query_get_tables = """SELECT table_name FROM information_schema.tables
-        WHERE (table_schema = 'public') and (table_name not in('spatial_ref_sys','geography_columns',
-        'geometry_columns','data_model_performance_tbl'))"""
+        WHERE (table_schema = 'public') and (table_name not in(
+        'spatial_ref_sys','geography_columns','geometry_columns','data_model_performance_tbl'))"""
     cur = pg_engine.cursor()
     cur.execute(query_get_tables)
     del query_get_tables
