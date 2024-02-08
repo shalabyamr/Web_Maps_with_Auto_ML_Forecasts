@@ -99,7 +99,7 @@ def create_maps(map_type:str):
                                 color_discrete_sequence=["fuchsia"], zoom=3, height=300)
         fig.update_layout(mapbox_style="open-street-map")
         fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-        fig.to_html(parent_dir + '/Maps/Mapbox_Toronto.html')
+        fig.write_html(parent_dir + '/Maps/Mapbox_Toronto.html')
         end_mapbox = datetime.datetime.now()
         mapbox_total_seconds = (end_mapbox-start).total_seconds()
         print('Done Generating the Mapbox Map in {} seconds as of {}'.format(mapbox_total_seconds, end_mapbox))
