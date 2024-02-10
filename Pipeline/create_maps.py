@@ -31,7 +31,7 @@ def create_maps(map_type:str):
             exec(exec_statement, globals())
         if 'proj' in public_table:
             print("\tCreating Projected Dataframe 'gpdf_{}' from Table '{}' :".format(public_table, public_table))
-            gpd_statement = "gpdf_{} = gpd.read_postgis('SELECT * FROM public.{}', con=sqlalchemy_engine, geom_col='geom')".format(public_table, public_table)
+            gpd_statement = "gpdf_{} = gpd.read_postgis('SELECT * FROM public.{}', con=sqlalchemy_engine, geom_col='geom', crs='EPSG:26917')".format(public_table, public_table)
             exec(gpd_statement, globals())
         i = i+1
 
