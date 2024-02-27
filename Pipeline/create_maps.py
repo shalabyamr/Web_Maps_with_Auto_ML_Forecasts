@@ -5,6 +5,7 @@ import datetime
 from folium.plugins import MarkerCluster, HeatMap, HeatMapWithTime
 import plotly.express as px
 import geopandas as gpd
+import turfpy
 
 # Important ::::
 # Comment out this line after the initial setup of the tables.
@@ -143,4 +144,4 @@ def create_maps(map_type:str):
         print('Done Generating the Mapbox Map in {} seconds as of {}'.format(mapbox_total_seconds, end_mapbox))
 
 # Create Maps Function takes 'folium', 'mapbox', or 'both' as parameters.
-create_maps(map_type='both') #
+create_maps(map_type='both')
