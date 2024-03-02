@@ -9,3 +9,4 @@ folium~=0.15.1
 plotly~=5.18.0
 psycopg2~=2.9.9
 turfpy~=0.0.7
+geoalchemy2~=0.14.6

@@ -1,62 +1,11 @@
-from execute_pipeline import execute_pipeline, sqlalchemy_engine, pg_engine, parent_dir
 import folium
-import pandas as pd
-import datetime
 from folium.plugins import MarkerCluster, HeatMap, HeatMapWithTime
 import plotly.express as px
-import geopandas as gpd
-import gc
+import datetime
 import turfpy as tpy
+from create_dataframes import obj_dfs, parent_dir
+import gc
 
-# Important ::::
-# Comment out this line after the initial setup of the tables.
-#execute_pipeline()
-
-# A Generic Class to store the needed dataframes
-class GenericClass():
-    pass
-
-query_get_tables = """SELECT table_name FROM information_schema.tables
-        WHERE (table_schema = 'public') and (table_name not in(
-        'spatial_ref_sys','geography_columns','geometry_columns','data_model_performance_tbl'))"""
-cur = pg_engine.cursor()
-cur.execute(query_get_tables)
-del query_get_tables
-public_tables = [item[0] for item in cur.fetchall()]
-print('Public Tables in Production Schema : ', public_tables,'\n*****************************')
-print('Creating Dataframes From Public Schema Tables as of: {}\n'.format(datetime.datetime.now()))
-exec('obj_dfs = GenericClass()', globals())
-i = 1
-dfs_start = datetime.datetime.now()
-for public_table in public_tables:
-    print("{} of {}: Processing Public Table '{}':".format(i, len(public_tables), public_table, public_table))
-
-    if 'proj' not in public_table:
-        print("\tCreating Dataframe 'df_{}' from Table '{}' :".format(public_table, public_table))
-        exec_statement = "obj_dfs.df_{} = pd.read_sql_table(table_name='{}', con=sqlalchemy_engine, schema='public')".format(public_table, public_table)
-        exec(exec_statement, globals())
-
-    if 'proj' in public_table:
-        print("\tCreating Projected Dataframe 'gpdf_{}' from Table '{}' :".format(public_table, public_table))
-        gpd_statement = "obj_dfs.gpdf_{} = gpd.read_postgis('SELECT * FROM public.{}', con=sqlalchemy_engine, geom_col='geom', crs='EPSG:26917')".format(public_table, public_table)
-        exec(gpd_statement, globals())
-    i = i+1
-
-dfs_end = datetime.datetime.now()
-obj_dfs.temp_df = obj_dfs.df_fact_traffic_volume.dropna()
-obj_dfs.temp_df['latest_count_date'] = pd.to_datetime(obj_dfs.temp_df['latest_count_date'])
-obj_dfs.temp_df.sort_values(by=['latest_count_date'], inplace=True)
-obj_dfs.temp_df.set_index('latest_count_date', inplace=True)
-
-obj_dfs.data = []
-for _, d in obj_dfs.temp_df.groupby('latest_count_date'):
-    obj_dfs.data.append([[row['lat'], row['lng'], row['px']] for _, row in d.iterrows()])
-
-dfs_total_seconds = (dfs_end - dfs_start).total_seconds()
-print("\n****************************\nDone Storing Public Tables in df_objs in {} Total Seconds.\n****************************\n".format(dfs_total_seconds))
-
-del dfs_start, dfs_end
-gc.collect()
 
 def create_maps(map_type:str, show:bool):
     # Setting Up the Data for both map types
@@ -112,7 +61,9 @@ def create_maps(map_type:str, show:bool):
         end_folium = datetime.datetime.now()
         folium_total_seconds = (end_folium-start).total_seconds()
         print('Done Generating the Folium Map in {} seconds as of {}'.format(folium_total_seconds, end_folium))
+        del end_folium, folium_total_seconds
         toronto_map.save(parent_dir + '/Maps/Folium_Toronto.html')
+        gc.collect()
 
     # Mapbox Specific Code
     if map_type.upper() in('MAPBOX', 'ALL'):
@@ -150,7 +101,6 @@ def create_maps(map_type:str, show:bool):
 
         fig_pedestrian_heatmap.write_html(parent_dir + '/Maps/Mapbox_Pedestrian_HeatMap.html')
 
-
         fig_traffic_volume = px.scatter_mapbox(obj_dfs.gpdf_fact_gta_traffic_proj.dropna(),
                                 lat=obj_dfs.gpdf_fact_gta_traffic_proj.dropna().geom.y,
                                 lon=obj_dfs.gpdf_fact_gta_traffic_proj.dropna().geom.x,
@@ -164,10 +114,12 @@ def create_maps(map_type:str, show:bool):
         end_mapbox = datetime.datetime.now()
         mapbox_total_seconds = (end_mapbox-start).total_seconds()
         print('Done Generating the Mapbox Map in {} seconds as of {}'.format(mapbox_total_seconds, end_mapbox))
+        del end_mapbox, mapbox_total_seconds
+        gc.collect()
 
     # Turf Specific Code
     if map_type.upper() in('TURF', 'ALL'):
         print('Generating Turf Maps...')
-
+        gc.collect()
 # Create_Maps Function takes 'folium', 'mapbox', 'turf', or 'all' as parameters.
 create_maps(map_type='all', show=False)
