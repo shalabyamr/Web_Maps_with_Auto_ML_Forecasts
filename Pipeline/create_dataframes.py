@@ -4,10 +4,11 @@ import datetime
 import gc
 import geopandas as gpd
 import h2o
+from h2o.automl import H2OAutoML
 
 # Important ::::
 # Comment out this line after the initial setup of the tables.
-execute_pipeline()
+#execute_pipeline()
 
 # A Generic Class to store the needed dataframes
 class GenericClass():
@@ -64,6 +65,12 @@ def auto_ml():
     automl_start = datetime.datetime.now()
     print("Starting AutoML as of: {}".format(automl_start))
     h2o.init()
+    for i in dir(obj_dfs):
+        if (not i.startswith('__')) and (not 'data' in i):
+            exec_statement = 'h_{} = h2o.h2o.H2OFrame(obj_dfs.{})'.format(i,i)
+            print('exec_statement: {}'.format(exec_statement))
+            exec(exec_statement, globals())
+    aml = H2OAutoML(max_models=20, seed=1)
 
     h2o.cluster().shutdown()
 
