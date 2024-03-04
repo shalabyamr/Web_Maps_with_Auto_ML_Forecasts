@@ -99,7 +99,7 @@ def auto_ml():
         df_preds_h['predicted_traffic'] = predicted_traffic
         df_preds = df_preds_h.as_data_frame()
         df_preds['latest_count_date'] = pd.to_datetime(df_preds['latest_count_date'], unit='ms')
-        df_preds.to_sql(name='predicted_traffic', con=sqlalchemy_engine, if_exists='replace', schema='stage')
+        df_preds.to_sql(name='predicted_traffic', con=sqlalchemy_engine, if_exists='append', schema='stage')
         print('Saved Forecasts to Database')
         #df_global_forecasts = df_global_forecasts.append(df_preds)
 
