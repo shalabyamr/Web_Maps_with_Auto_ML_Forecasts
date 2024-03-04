@@ -67,10 +67,41 @@ def auto_ml():
     h2o.init()
     for i in dir(obj_dfs):
         if (not i.startswith('__')) and (not 'data' in i):
+            if 'df_fact_traffic_volume' in i:
+                exec('obj_dfs.{}.dropna(inplace=True)'.format(i))
             exec_statement = 'h_{} = h2o.h2o.H2OFrame(obj_dfs.{})'.format(i,i)
             print('exec_statement: {}'.format(exec_statement))
             exec(exec_statement, globals())
-    aml = H2OAutoML(max_models=20, seed=1)
+    obj_dfs.df_fact_traffic_volume['latest_count_date'] = pd.to_datetime(obj_dfs.df_fact_traffic_volume['latest_count_date'])
+    h_df_fact_traffic_volume['_id'] = h_df_fact_traffic_volume['_id'].asfactor()
+    h_df_fact_traffic_volume['location_id'] = h_df_fact_traffic_volume['location_id'].asfactor()
+    h_df_fact_traffic_volume['location'] = h_df_fact_traffic_volume['location'].asfactor()
+    X = ['location_id', '_id', 'latest_count_date']
+    y = 'px'
+    aml = H2OAutoML(max_runtime_secs=60)  # should be 600. However the longer is the better.
+    aml.train(x=X, y=y, training_frame=h_df_fact_traffic_volume, leaderboard_frame=h_df_fact_traffic_volume)
+    leader_model = aml.leader
+
+    for location_id in obj_dfs.df_fact_traffic_volume['location_id'].unique():
+        df_preds = pd.DataFrame()
+        df_location = obj_dfs.df_fact_traffic_volume[obj_dfs.df_fact_traffic_volume['location_id'] == location_id]
+        df_location['latest_count_date'] = pd.to_datetime(obj_dfs.df_fact_traffic_volume['latest_count_date'])
+        start = pd.to_datetime(obj_dfs.df_fact_traffic_volume['latest_count_date'].max() + pd.Timedelta(days=7))
+        future_dates = pd.date_range(start=start, freq='D', periods=365)
+        df_preds['latest_count_date'] = future_dates
+        df_preds['location_id'] = location_id
+        df_preds['_id'] = obj_dfs.df_fact_traffic_volume['_id'].unique()[0]
+        df_preds = df_preds[['location_id', '_id', 'latest_count_date']]
+        df_preds_h = h2o.H2OFrame(df_preds)
+        df_location.reset_index(drop=True, inplace=True)
+        df_location_h = h2o.H2OFrame(df_location)
+        predicted_traffic = leader_model.predict(df_preds_h[['location_id', '_id', 'latest_count_date']])
+        df_preds_h['predicted_traffic'] = predicted_traffic
+        df_preds = df_preds_h.as_data_frame()
+        df_preds['latest_count_date'] = pd.to_datetime(df_preds['latest_count_date'], unit='ms')
+        df_preds.to_sql(name='predicted_traffic', con=sqlalchemy_engine, if_exists='replace', schema='stage')
+        print('Saved Forecasts to Database')
+        #df_global_forecasts = df_global_forecasts.append(df_preds)
 
     h2o.cluster().shutdown()
 
