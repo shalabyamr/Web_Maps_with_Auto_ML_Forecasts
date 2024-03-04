@@ -13,7 +13,7 @@ from h2o.automl import H2OAutoML
 # A Generic Class to store the needed dataframes
 class GenericClass():
     pass
-
+obj_dfs = GenericClass()
 def create_dataframes():
     dfs_start = datetime.datetime.now()
     query_get_tables = """SELECT table_name FROM information_schema.tables
@@ -25,7 +25,6 @@ def create_dataframes():
     public_tables = [item[0] for item in cur.fetchall()]
     print('Public Tables in Production Schema : ', public_tables, '\n*****************************')
     print('Creating Dataframes From Public Schema Tables as of: {}\n'.format(datetime.datetime.now()))
-    exec('obj_dfs = GenericClass()', globals())
     i = 1
     for public_table in public_tables:
         print("{} of {}: Processing Public Table '{}':".format(i, len(public_tables), public_table, public_table))

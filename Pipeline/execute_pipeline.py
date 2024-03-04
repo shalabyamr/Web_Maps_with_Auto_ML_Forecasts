@@ -1,6 +1,6 @@
 import datetime
 from data_loader import create_staging_tables, create_production_tables
-from data_extractor import sqlalchemy_engine, parent_dir, save_locally, pg_engine, parent_dir
+from data_extractor import sqlalchemy_engine, parent_dir, save_locally, pg_engine
 import pandas as pd
 import datetime
 
