@@ -1,14 +1,18 @@
-import pandas as pd
 import datetime
 import gc
-import geopandas as gpd
 import h2o
+import pandas as pd
+import geopandas as gpd
 from h2o.automl import H2OAutoML
+
 from data_extractor import configs_obj
+
 
 # A Generic Class to store the needed dataframes
 class GenericClass():
     pass
+
+
 dfs_obj = GenericClass()
 
 
@@ -29,14 +33,16 @@ def create_dataframes(configs_obj):
 
         if 'proj' not in public_table:
             print("\tCreating Dataframe 'df_{}' from Table '{}' :".format(public_table, public_table))
-            exec_statement = "dfs_obj.df_{} = pd.read_sql_table(table_name='{}', con=configs_obj.sqlalchemy_engine, schema='public')".format(public_table, public_table)
+            exec_statement = "dfs_obj.df_{} = pd.read_sql_table(table_name='{}', con=configs_obj.sqlalchemy_engine, schema='public')".format(
+                public_table, public_table)
             exec(exec_statement, globals())
 
         if 'proj' in public_table:
             print("\tCreating Projected Dataframe 'gpdf_{}' from Table '{}' :".format(public_table, public_table))
-            gpd_statement = "dfs_obj.gpdf_{} = gpd.read_postgis('SELECT * FROM public.{}', con=configs_obj.sqlalchemy_engine, geom_col='geom', crs='EPSG:26917')".format(public_table, public_table)
+            gpd_statement = "dfs_obj.gpdf_{} = gpd.read_postgis('SELECT * FROM public.{}', con=configs_obj.sqlalchemy_engine, geom_col='geom', crs='EPSG:26917')".format(
+                public_table, public_table)
             exec(gpd_statement, globals())
-        i = i+1
+        i = i + 1
 
     dfs_end = datetime.datetime.now()
     dfs_obj.temp_df = dfs_obj.df_fact_traffic_volume.dropna()
@@ -49,14 +55,20 @@ def create_dataframes(configs_obj):
         dfs_obj.data.append([[row['lat'], row['lng'], row['px']] for _, row in d.iterrows()])
 
     dfs_total_seconds = (dfs_end - dfs_start).total_seconds()
-    print("\n****************************\nDone Storing Public Tables in df_objs in {} Total Seconds.\n****************************\n".format(dfs_total_seconds))
+    print(
+        "\n****************************\nDone Storing Public Tables in df_objs in {} Total Seconds.\n****************************\n".format(
+            dfs_total_seconds))
 
     del dfs_start, dfs_end
     gc.collect()
     return dfs_obj
 
+
 ## Auto Machine Learning Step using the previously-created dataframesl. ##
 def auto_ml():
+    print(
+        '****************************\nStarting AutoML with Runtime: {} Seconds, Forecast Horizon: {}, and Forecast Frequency: {}.'.format(
+            configs_obj.run_time_seconds, configs_obj.forecast_horizon, configs_obj.forecast_frequency))
     automl_start = datetime.datetime.now()
     print("Starting AutoML as of: {}".format(automl_start))
     h2o.init()
@@ -64,16 +76,17 @@ def auto_ml():
         if (not i.startswith('__')) and (not 'data' in i):
             if i == 'df_fact_traffic_volume':
                 exec('dfs_obj.{}.dropna(inplace=True)'.format(i))
-            exec_statement = 'h_{} = h2o.h2o.H2OFrame(dfs_obj.{})'.format(i,i)
+            exec_statement = 'h_{} = h2o.h2o.H2OFrame(dfs_obj.{})'.format(i, i)
             print('exec_statement: {}'.format(exec_statement))
             exec(exec_statement, globals())
-    dfs_obj.df_fact_traffic_volume['latest_count_date'] = pd.to_datetime(dfs_obj.df_fact_traffic_volume['latest_count_date'])
+    dfs_obj.df_fact_traffic_volume['latest_count_date'] = pd.to_datetime(
+        dfs_obj.df_fact_traffic_volume['latest_count_date'])
     h_df_fact_traffic_volume['_id'] = h_df_fact_traffic_volume['_id'].asfactor()
     h_df_fact_traffic_volume['location_id'] = h_df_fact_traffic_volume['location_id'].asfactor()
     h_df_fact_traffic_volume['location'] = h_df_fact_traffic_volume['location'].asfactor()
     X = ['location_id', '_id', 'latest_count_date']
     y = 'px'
-    aml = H2OAutoML(max_runtime_secs=60)  # should be 600. However the longer is the better.
+    aml = H2OAutoML(max_runtime_secs=configs_obj.run_time_seconds, max_models=10)
     aml.train(x=X, y=y, training_frame=h_df_fact_traffic_volume, leaderboard_frame=h_df_fact_traffic_volume)
     leader_model = aml.leader
     df_global_forecasts = pd.DataFrame()
@@ -82,7 +95,8 @@ def auto_ml():
         df_location = dfs_obj.df_fact_traffic_volume[dfs_obj.df_fact_traffic_volume['location_id'] == location_id]
         df_location['latest_count_date'] = pd.to_datetime(dfs_obj.df_fact_traffic_volume['latest_count_date'])
         start = pd.to_datetime(dfs_obj.df_fact_traffic_volume['latest_count_date'].max() + pd.Timedelta(days=7))
-        future_dates = pd.date_range(start=start, freq='W', periods=52)
+        future_dates = pd.date_range(start=start, freq=configs_obj.forecast_frequency,
+                                     periods=configs_obj.forecast_horizon)
         df_preds['latest_count_date'] = future_dates
         df_preds['location_id'] = location_id
         df_preds['_id'] = dfs_obj.df_fact_traffic_volume['_id'].unique()[0]
@@ -100,3 +114,8 @@ def auto_ml():
     dfs_obj.df_global_forecasts = df_global_forecasts
     gc.collect()
     h2o.cluster().shutdown()
+    print(
+        '****************************\nDone AutoML Using {} Runtime (Seconds), {} Forecast Horizon, and {} Forecast Frequency.'.format(
+            configs_obj.run_time_seconds, configs_obj.forecast_horizon, configs_obj.forecast_frequency),
+        '****************************')
+    return dfs_obj
