@@ -115,7 +115,7 @@ def auto_ml():
     gc.collect()
     h2o.cluster().shutdown()
     print(
-        '****************************\nDone AutoML Using {} Runtime (Seconds), {} Forecast Horizon, and {} Forecast Frequency.'.format(
+        '****************************\nDone AutoML Using Runtime: {} Seconds, Forecast Horizon: {}, and Forecast Frequency: {}.'.format(
             configs_obj.run_time_seconds, configs_obj.forecast_horizon, configs_obj.forecast_frequency),
-        '****************************')
+        '\n****************************')
     return dfs_obj

@@ -47,3 +47,5 @@ create_dataframes.auto_ml()
 
 ## Third Step: Create HTML Maps
 create_maps.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_type='ALL', show=False)
+
+## Fourth Step: Test Load the Created HTML Maps
