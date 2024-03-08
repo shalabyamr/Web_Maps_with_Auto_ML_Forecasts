@@ -3,7 +3,7 @@ from folium.plugins import MarkerCluster, HeatMap, HeatMapWithTime
 import plotly.express as px
 import datetime
 import turfpy as tpy
-from create_dataframes import obj_dfs, parent_dir
+from create_dataframes import obj_dfs
 import gc
 
 
