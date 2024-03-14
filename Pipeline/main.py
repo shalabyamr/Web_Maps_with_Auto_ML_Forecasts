@@ -1,5 +1,5 @@
 from data_extractor import configs_obj, read_configs, initialize_database
-import data_loader as l
+import data_loader
 import datetime
 import pandas as pd
 import dataframes_creater
@@ -7,14 +7,14 @@ from dataframes_creater import dfs_obj
 import maps_creater
 
 ## First Step is to create Staging and Production Data ##
-live = False
-if live:
+testing = True
+if not testing:
     read_configs()
     initialize_database()
     start = datetime.datetime.now()
     print('Executing Pipeline as of ' + str(start))
-    staging_tables_list = l.create_staging_tables(sqlalchemy_engine=configs_obj.sqlalchemy_engine)
-    production_tables_list = l.create_production_tables()
+    staging_tables_list = data_loader.create_staging_tables(sqlalchemy_engine=configs_obj.sqlalchemy_engine)
+    production_tables_list = data_loader.create_production_tables()
     df_production = pd.DataFrame(production_tables_list,
                                       columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
     df_production['phase'] = 'production'
