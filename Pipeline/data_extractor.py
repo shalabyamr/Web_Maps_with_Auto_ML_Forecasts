@@ -24,6 +24,8 @@ configs_obj = GenericClass()
 
 
 def read_configs():
+    start = datetime.datetime.now()
+    print('*****************************\nReading Configuration File Started: {}'.format(start))
     # To write temp files into the Parent ./Data/ Folder
     # to keep the Pipeline folder clean of csv and temp files
     config = configparser.ConfigParser()
@@ -57,17 +59,25 @@ def read_configs():
 
     try:
         configs_obj.forecast_frequency = str(config['auto_ml']['forecast_frequency']).upper()
+        if ('HOUR' in configs_obj.forecast_frequency) or ('HOURLY' in configs_obj.forecast_frequency):
+            configs_obj.forecast_frequency = 'h'
+            configs_obj.forecast_description = 'Hourly'
         if ('DAY' in configs_obj.forecast_frequency) or ('DAILY' in configs_obj.forecast_frequency):
             configs_obj.forecast_frequency = 'D'
+            configs_obj.forecast_description = 'Daily'
         elif 'MONTH' in configs_obj.forecast_frequency:
             configs_obj.forecast_frequency = 'MS'
+            configs_obj.forecast_description = 'Monthly'
         elif ('YEAR' in configs_obj.forecast_frequency) or ('ANNUAL' in configs_obj.forecast_frequency):
             configs_obj.forecast_frequency = 'YS'
+            configs_obj.forecast_description = 'Yearly'
         elif 'QUARTER' in configs_obj.forecast_frequency:
             configs_obj.forecast_frequency = 'QS'
+            configs_obj.forecast_description = 'Quarterly'
         else:
             raise Exception('Forecast Frequency needs to be Daily, Monthly, Yearly, or Annually instead of {}'.format(
                 config['auto_ml']['forecast_frequency']))
+
     except Exception as e:
         print('Config.ini Error Reading H2O Runtime Settings: {}'.format(e))
         print(
@@ -77,10 +87,16 @@ def read_configs():
 
     print('Parent Directory: ', configs_obj.parent_dir)
     print('Save Locally Flag is set to: {}'.format(configs_obj.save_locally))
-    print('AutoML Runtime is set to: {}'.format(configs_obj.run_time_seconds))
+    print('AutoML Runtime is set to: {} Seconds'.format(configs_obj.run_time_seconds))
     print('AutoML Forecast Horizon is set to: {}'.format(configs_obj.forecast_horizon))
     print(
-        'AutoML Forecast Frequency is set to: {}\n*****************************'.format(configs_obj.forecast_frequency))
+        "AutoML Forecast Frequency is set to: '{}' - {}".format(
+            configs_obj.forecast_frequency, configs_obj.forecast_description))
+    end = datetime.datetime.now()
+    read_configs_total_seconds = (end - start).total_seconds()
+    print(
+        '*****************************\nDone Reading Configuration File in: {} seconds'.format(
+            read_configs_total_seconds), '\n*****************************')
 
 
 def initialize_database():
@@ -109,7 +125,7 @@ def initialize_database():
             cursor.execute(stage_query)
             configs_obj.pg_engine.commit()
             del stage_query
-            print('Done Initializing Database and Created Schema Stage.\n*****************************')
+            print('*****************************\nDone Initializing Database and Created Schema Stage.\n*****************************')
         except BaseException as exception:
             print('Failed to create schema!', exception)
             sys.exit()

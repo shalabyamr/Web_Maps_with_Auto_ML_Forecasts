@@ -2,12 +2,13 @@ from data_extractor import configs_obj, read_configs, initialize_database
 import data_loader as l
 import datetime
 import pandas as pd
-import create_dataframes
-from create_dataframes import dfs_obj
-import create_maps
+import dataframes_creater
+from dataframes_creater import dfs_obj
+import maps_creater
 
 ## First Step is to create Staging and Production Data ##
-if False:
+live = False
+if live:
     read_configs()
     initialize_database()
     start = datetime.datetime.now()
@@ -42,10 +43,10 @@ if False:
 # create_maps().  Also H2O Auto ML needs to save and insert Prediction Dataframes into object.
 read_configs()
 initialize_database()
-create_dataframes.create_dataframes(configs_obj)
-create_dataframes.auto_ml()
+dataframes_creater.create_dataframes(configs_obj)
+dataframes_creater.auto_ml()
 
 ## Third Step: Create HTML Maps
-create_maps.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_type='ALL', show=False)
+maps_creater.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_type='ALL', show=False)
 
 ## Fourth Step: Test Load the Created HTML Maps
