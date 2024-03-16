@@ -40,6 +40,7 @@ def transform_monthly_data(sqlalchemy_engine):
     print("*****************************\n",'Transposed Monthly Air Data Done in {} seconds.'.format(delta_seconds), "\n*****************************\n")
     return 'transform_monthly_data', delta_seconds, a, b, 1
 
+# This step creates the projection tables with "geom" geometry columns in hex.
 def create_postgis_proj_tables(sqlalchemy_engine, pg_engine):
     a = datetime.datetime.now()
     print('*** Creating POST_GIS Projected as of: {} ***'.format(a))

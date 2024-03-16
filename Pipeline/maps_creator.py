@@ -9,7 +9,9 @@ from ipyleaflet import Map, GeoJSON, LayersControl, Marker, WidgetControl, Marke
 from shapely import Polygon, MultiPolygon
 import gc
 
-
+# Creates the three map types (Mapbox, Turf, and Folium) using
+# the previously-created dataframes object.
+# Also needs the configuration and dataframes objects.
 def create_maps(dfs_obj, configs_obj, map_type: str, show: bool):
     # Setting Up the Data for both map types
     start = datetime.datetime.now()
@@ -31,13 +33,9 @@ def create_maps(dfs_obj, configs_obj, map_type: str, show: bool):
 
         for index, row in dfs_obj.pandas_dict['df_fact_traffic_volume'].iterrows():
             folium.Marker(
-                location=[row['lat'], row['lng']],
-                popup='Traffic Volume: <b>{}</b><br>Location:<b>{}</b>.<br>Location ID: <b>{}</b>'.format(row['px'],
-                                                                                                          row[
-                                                                                                              'location'],
-                                                                                                          row[
-                                                                                                              'location_id']),
-                icon=folium.Icon(color="red", icon="car")).add_to(marker_cluster)
+                  location=[row['lat'], row['lng']]
+                , popup=f'Traffic Volume: <b>{row['px']}</b><br>Location:<b>{row['location']}</b>.<br>Location ID: <b>{row['location_id']}</b>'
+                , icon=folium.Icon(color="red", icon="car")).add_to(marker_cluster)
 
         for index, row in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].iterrows():
             folium.Marker(
@@ -79,10 +77,10 @@ def create_maps(dfs_obj, configs_obj, map_type: str, show: bool):
     if map_type.upper() in ('MAPBOX', 'ALL'):
         px.set_mapbox_access_token(configs_obj.access_tokens['mapbox'])
         fig_air_quality_values = px.scatter_mapbox(dfs_obj.geopandas_dict['df_fact_air_data_proj']
-                                                   , lat=dfs_obj.geopandas_dict['df_fact_air_data_proj'].geom.y
-                                                   , lon=dfs_obj.geopandas_dict['df_fact_air_data_proj'].geom.x
-                                                   , hover_name="air_quality_value"
-                                                   , height=500, zoom=10)
+                                    , lat=dfs_obj.geopandas_dict['df_fact_air_data_proj'].geom.y
+                                    , lon=dfs_obj.geopandas_dict['df_fact_air_data_proj'].geom.x
+                                    , hover_name="air_quality_value"
+                                    , height=500, zoom=10)
         fig_air_quality_values.update_layout(mapbox_style="open-street-map")
         fig_air_quality_values.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
@@ -91,31 +89,31 @@ def create_maps(dfs_obj, configs_obj, map_type: str, show: bool):
 
         fig_air_quality_values.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Air_Quality.html')
 
-        fig_vehicle_heatmap = px.density_mapbox(dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'],
-                                                lat=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.y,
-                                                lon=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.x,
-                                                z='f8hr_vehicle_volume',
-                                                mapbox_style="open-street-map")
+        fig_vehicle_heatmap = px.density_mapbox(dfs_obj.geopandas_dict['df_fact_gta_traffic_proj']
+                                    , lat=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.y
+                                    , lon=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.x
+                                    , z='f8hr_vehicle_volume'
+                                    , mapbox_style="open-street-map")
         if show:
             fig_vehicle_heatmap.show()
 
         fig_vehicle_heatmap.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Vehicle_HeatMap.html')
 
-        fig_pedestrian_heatmap = px.density_mapbox(dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'],
-                                                   lat=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.y,
-                                                   lon=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.x,
-                                                   z='f8hr_pedestrian_volume',
-                                                   mapbox_style="open-street-map")
+        fig_pedestrian_heatmap = px.density_mapbox(dfs_obj.geopandas_dict['df_fact_gta_traffic_proj']
+                                    , lat=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.y
+                                    , lon=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.x
+                                    , z='f8hr_pedestrian_volume'
+                                    , mapbox_style="open-street-map")
         if show:
             fig_pedestrian_heatmap.show()
 
         fig_pedestrian_heatmap.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Pedestrian_HeatMap.html')
 
-        fig_traffic_volume = px.scatter_mapbox(dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].dropna(),
-                                               lat=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].dropna().geom.y,
-                                               lon=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].dropna().geom.x,
-                                               hover_name='f8hr_vehicle_volume',
-                                               height=500, zoom=10)
+        fig_traffic_volume = px.scatter_mapbox(dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].dropna()
+                                        , lat=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].dropna().geom.y
+                                        , lon=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].dropna().geom.x
+                                        , hover_name='f8hr_vehicle_volume'
+                                        , height=500, zoom=10)
         if show:
             fig_traffic_volume.show()
 

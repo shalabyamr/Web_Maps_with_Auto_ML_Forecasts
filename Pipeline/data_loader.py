@@ -7,7 +7,9 @@ from data_extractor import configs_obj
 from data_transformer import transform_monthly_data, create_postgis_proj_tables
 warnings.filterwarnings("ignore")
 
-
+# This function creates the staging layer of the extracted data. There are no
+# data filters injected into Staging Layer as it only grabs the scraped data from
+# the web.
 def create_staging_tables(sqlalchemy_engine):
     master_list = []
     # to execute loading the monthly data into staging layer
@@ -36,6 +38,9 @@ def create_staging_tables(sqlalchemy_engine):
     master_list.append(transform_monthly_step)
     return master_list
 
+# Processes the intermediate SQL Queries that eliminate data redundacy and 3:1 duplication
+# rate (3 duplicated rows to 1 unique record) as there are 4 measures taken
+# per UTC Hour from the web sources.
 def create_production_tables():
     master_list = []
     a1 = datetime.datetime.now()

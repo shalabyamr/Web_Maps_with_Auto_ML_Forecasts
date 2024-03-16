@@ -15,14 +15,14 @@ import rpy2.robjects.packages as rpackages
 
 warnings.filterwarnings("ignore")
 
-
+# Generic Class is used to instantiate the Configurations Object.
 class GenericClass:
     pass
 
 
 configs_obj = GenericClass()
 
-
+# Reads the  config.ini file and stores the settings in configurations object
 def read_configs():
     start = datetime.datetime.now()
     print('*****************************\nReading Configuration File Started: {}'.format(start))
@@ -108,7 +108,9 @@ def read_configs():
         '*****************************\nDone Reading Configuration File in: {} seconds'.format(
             read_configs_total_seconds), '\n*****************************')
 
-
+# Creates the database connectors and stores the needed engines
+# this step drastically reduced execution time as the database connection is
+# initialized only once.
 def initialize_database():
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -144,7 +146,7 @@ def initialize_database():
         print('Error thrown by initialize_database()!, {} '.format(exception))
         return exception
 
-
+# Reads the monthly Air Quality Data from Government of Canada.
 def extract_monthly_data(sqlalchemy_engine):
     a = datetime.datetime.now()
     # URL from which pdfs to be downloaded
@@ -197,7 +199,8 @@ def extract_monthly_data(sqlalchemy_engine):
           "\n*****************************\n")
     return 'extract_monthly_data', delta_seconds, a, b, i
 
-
+# This is the official one-year weather forecast.  However, there is no reported
+# prediction error associated with the forecasts.
 def extract_monthly_forecasts(sqlalchemy_engine):
     a = datetime.datetime.now()
     print('Loading Monthly Forecasts as of: {}'.format(a))
@@ -251,7 +254,8 @@ def extract_monthly_forecasts(sqlalchemy_engine):
           "\n********************************\n")
     return 'extract_monthly_forecasts', delta_seconds, a, b, i
 
-
+# Extracts the Traffic Data from Toronto Open Data Portal.  Due to issues with the official
+# Python Connector, this spins up an R-thread to extract the traffic data from OpenDataToronot R Library.
 def extract_traffic_volumes():
     a = datetime.datetime.now()
     print('Loading Traffic Data as of: {}'.format(a))
@@ -285,7 +289,8 @@ def extract_traffic_volumes():
           "\n********************************\n")
     return 'extract_traffic_volumes', delta_seconds, a, b, 1
 
-
+# Prior Government of Canada Weather Source does not provide any information
+# on the weather stations coordinates, locations, activation, or decommission dates.
 def extract_geo_names_data(sqlalchemy_engine):
     a = datetime.datetime.now()
     print('Downloading Geographical Names Data as of: ', a)

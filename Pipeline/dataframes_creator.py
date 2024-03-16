@@ -7,7 +7,8 @@ from h2o.automl import H2OAutoML
 from data_extractor import configs_obj
 h2o.init()
 
-# A Generic Class to store the needed dataframes
+# A Generic Class to store the needed dataframes of three main types:
+# Pandas, GeoPandas, and H2O Dataframes for the AutoML Step.
 class GenericClass():
     def __init__(self):
         self.geopandas_dict = {}
@@ -19,6 +20,7 @@ class GenericClass():
 
 dfs_obj = GenericClass()
 
+#
 def create_dataframes(configs_obj):
     dfs_start = datetime.datetime.now()
     query_get_tables = """SELECT table_name FROM information_schema.tables
@@ -83,7 +85,7 @@ def create_dataframes(configs_obj):
     return dfs_obj
 
 
-## Auto Machine Learning Step using the previously-created dataframesl. ##
+## Auto Machine Learning Step using the previously-created data frames object.
 def auto_ml(dfs_obj):
     automl_start = datetime.datetime.now()
     print(
