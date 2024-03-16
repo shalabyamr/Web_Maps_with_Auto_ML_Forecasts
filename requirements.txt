@@ -11,3 +11,5 @@ psycopg2~=2.9.9
 turfpy~=0.0.7
 locust~=2.24.0
 h2o~=3.44.0.3
+geojson~=3.1.0
+ipyleaflet~=0.18.2

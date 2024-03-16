@@ -6,9 +6,19 @@ import dataframes_creator
 from dataframes_creator import dfs_obj
 import maps_creator
 
+# If the Tables are already created, then set maps_only = True to create
+# ONLY the maps without creating the tables.
+create_tables = False
+
+# If you want the maps to launch in browser.
+show_maps = False
+
+# To bypass Auto Machine Learning Step.
+run_auto_ml = False
+
 ## First Step is to create Staging and Production Data ##
-testing = True
-if not testing:
+## This can be bypassed if the Tables are created
+if create_tables:
     read_configs()
     initialize_database()
     start = datetime.datetime.now()
@@ -45,12 +55,13 @@ if not testing:
 ## Second Step : Create Dataframes needed for the AutoML ##
 # Create the Object Containing the Dataframes to avoid running create_dfs() function repeatedly in auto_ml() and
 # create_maps().  Also H2O Auto ML needs to save and insert Prediction Dataframes into object.
-read_configs()
-initialize_database()
-dataframes_creator.create_dataframes(configs_obj)
-#dataframes_creator.auto_ml(dfs_obj)
+else:
+    read_configs()
+    initialize_database()
+    dataframes_creator.create_dataframes(configs_obj)
+    if run_auto_ml:
+        dataframes_creator.auto_ml(dfs_obj)
+    ## Third Step: Create HTML Maps
+    maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_type='ALL', show=show_maps)
 
-## Third Step: Create HTML Maps
-maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_type='ALL', show=testing)
-
-## Fourth Step: Test Load the Created HTML Maps
+    ## Fourth Step: Test Load the Created HTML Maps

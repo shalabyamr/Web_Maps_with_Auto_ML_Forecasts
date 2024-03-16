@@ -2,7 +2,11 @@ import folium
 from folium.plugins import MarkerCluster, HeatMap, HeatMapWithTime
 import plotly.express as px
 import datetime
-import turfpy as tpy
+from turfpy.measurement import envelope
+from turfpy.transformation import voronoi
+from geojson import Feature, FeatureCollection, Point
+from ipyleaflet import Map, GeoJSON, LayersControl, Marker, WidgetControl, MarkerCluster as ipyleaflet_MarkerCluster
+from shapely import Polygon, MultiPolygon
 import gc
 
 
@@ -19,9 +23,8 @@ def create_maps(dfs_obj, configs_obj, map_type: str, show: bool):
         fg = folium.FeatureGroup(name='Air Quality Measures')
         for index, row in dfs_obj.geopandas_dict['df_fact_air_data_proj'].iterrows():
             marker_cluster.add_child(folium.Marker(
-                location=[row['latitude'], row['longitude']]
-                ,
-                popup=f"Air Quality Measure: <b>{row['air_quality_value']}</b><br>Geographical Name:<b>{row['geographical_name']}</b>.<br>CGN_ID: <b>{row['cgndb_id']}</b>"
+                  location=[row['latitude'], row['longitude']]
+                , popup=f"Air Quality Measure: <b>{row['air_quality_value']}</b><br>Geographical Name:<b>{row['geographical_name']}</b>.<br>CGN_ID: <b>{row['cgndb_id']}</b>"
                 , icon=folium.Icon(color="black", icon="info-sign")))
         fg.add_child(marker_cluster)
         toronto_map.add_child(fg)
@@ -126,6 +129,27 @@ def create_maps(dfs_obj, configs_obj, map_type: str, show: bool):
 
     # Turf Specific Code
     if map_type.upper() in ('TURF', 'ALL'):
+        points = []
+        for index, row in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].iterrows():
+            point = [row['longitude'], row['latitude']]
+            points.append(point)
+
+        bbox = [dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['longitude'].min()
+                , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude'].min()
+                , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['longitude'].max()
+                , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude'].max()]
+        #points_and_bbox = voronoi(points=points, bbox=bbox)
+        m = Map(scroll_wheel_zoom=True
+                , center=[dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude'].mean()
+                , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['longitude'].mean()]
+                , zoom=14
+                , touch_zoom=True)
+        for point in points:
+            marker = Marker(location=[point[1], point[0]])
+            m.add_layer(marker)
+        #gta_traffic_stations = GeoJSON(name="GTA Traffic", data=points_and_bbox, style={"color": "blue"})
+        #m.add_layer(gta_traffic_stations)
+        m.save(outfile=configs_obj.parent_dir+'/Maps/Turf_gta_traffic.html')
         end_turf_time = datetime.datetime.now()
         turf_total_seconds = (end_turf_time - start).total_seconds()
         print('Done Generating Turf Map in {} seconds as of {}'.format(turf_total_seconds, end_turf_time))
