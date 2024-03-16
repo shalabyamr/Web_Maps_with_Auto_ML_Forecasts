@@ -40,7 +40,18 @@ def read_configs():
     configs_obj.save_locally = eval(config['save_files']['save_locally_flag'])
     configs_obj.parent_dir = str(config['save_files']['parent_dir'])
 
-    # AutoML Configurations
+    # Access Tokens needed for Mapbox. Here Access Tokens are a dictionary to allow for more
+    # Tokens to be added later with better readability. It is stored as
+    # " Platform : Token "
+    try:
+        mapbox_access_token = str(config['api_tokens']['mapbox'])
+        configs_obj.access_tokens = {'mapbox': mapbox_access_token}
+    except Exception as e:
+        print('Error! Config.ini does not contain Mapbox Access Token!')
+        sys.exit(1)
+
+    # AutoML Configurations setting Machine Learning Duration (Seconds), Forecast Horizon, and Forecast Frequency
+    # that can be hourly, daily, monthly, quarterly, or yearly.
     try:
         configs_obj.run_time_seconds = int(config['auto_ml']['run_time_seconds'])
     except Exception as e:
@@ -85,13 +96,12 @@ def read_configs():
                 config['auto_ml']['forecast_frequency']))
         sys.exit(1)
 
-    print('Parent Directory: ', configs_obj.parent_dir)
-    print('Save Locally Flag is set to: {}'.format(configs_obj.save_locally))
-    print('AutoML Runtime is set to: {} Seconds'.format(configs_obj.run_time_seconds))
-    print('AutoML Forecast Horizon is set to: {}'.format(configs_obj.forecast_horizon))
-    print(
-        "AutoML Forecast Frequency is set to: '{}' - {}".format(
-            configs_obj.forecast_frequency, configs_obj.forecast_description))
+    for platform, token in configs_obj.access_tokens.items(): print(f'Platform: {platform}: Token: {token}')
+    print(f'Parent Directory: {configs_obj.parent_dir}')
+    print(f'Save Locally Flag is set to: {configs_obj.save_locally}')
+    print(f'AutoML Runtime is set to: {configs_obj.run_time_seconds} Seconds')
+    print(f'AutoML Forecast Horizon is set to: {configs_obj.forecast_horizon}')
+    print(f"AutoML Forecast Frequency is set to: '{configs_obj.forecast_frequency}' - {configs_obj.forecast_description}")
     end = datetime.datetime.now()
     read_configs_total_seconds = (end - start).total_seconds()
     print(

@@ -74,7 +74,7 @@ def create_maps(dfs_obj, configs_obj, map_type: str, show: bool):
 
     # Mapbox Specific Code
     if map_type.upper() in ('MAPBOX', 'ALL'):
-        px.set_mapbox_access_token(open(configs_obj.parent_dir + "/Data/.mapbox_token").read())
+        px.set_mapbox_access_token(configs_obj.access_tokens['mapbox'])
         fig_air_quality_values = px.scatter_mapbox(dfs_obj.geopandas_dict['df_fact_air_data_proj']
                                                    , lat=dfs_obj.geopandas_dict['df_fact_air_data_proj'].geom.y
                                                    , lon=dfs_obj.geopandas_dict['df_fact_air_data_proj'].geom.x

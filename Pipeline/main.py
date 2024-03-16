@@ -7,7 +7,7 @@ from dataframes_creator import dfs_obj
 import maps_creator
 
 ## First Step is to create Staging and Production Data ##
-testing = False
+testing = True
 if not testing:
     read_configs()
     initialize_database()
@@ -48,9 +48,9 @@ if not testing:
 read_configs()
 initialize_database()
 dataframes_creator.create_dataframes(configs_obj)
-dataframes_creator.auto_ml(dfs_obj)
+#dataframes_creator.auto_ml(dfs_obj)
 
 ## Third Step: Create HTML Maps
-maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_type='ALL', show=False)
+maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_type='ALL', show=testing)
 
 ## Fourth Step: Test Load the Created HTML Maps
