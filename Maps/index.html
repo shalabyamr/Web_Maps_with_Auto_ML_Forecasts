@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>GGR472-Lab2: Folium-vs-Mapbox</title>
+    <!-- Bootstrap stylesheet link -->
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" rel="stylesheet">
+</head>
+<body>
+<!-- Navigation bar using Bootstrap -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand">GGR472</a>
+        <!-- Set navbar toggler for small screens -->
+        <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+                class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse"
+                type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Links in nav bar -->
+                <li class="nav-item">
+                    <a aria-current="page" class="nav-link active" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Folium_Toronto.html">Folium Maps</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Mapbox_Air_Quality.html">Mapbox Air Quality</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Mapbox_Pedestrian_HeatMap.html">Mapbox Pedestrian Heatmap</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Mapbox_Traffic_Volume.html">Mapbox Traffic Volume</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Mapbox_Vehicle_HeatMap.html">Mapbox Vehicle Heatmap</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Turf_gta_traffic.html">Turf GTA Traffic</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Container for main content - Centre all text inside container and set background to black and text to white -->
+<div class="container text-center p-3 mb-2 bg-black text-white">
+    <!-- Heading section -->
+    <div class="row">
+        <h1>Toronto Traffic and Air Quality Live Pipeline</h1>
+        <h2>Folium-vs-Mapbox-vs-Turf Demonstration</h2>
+    </div>
+
+    <!-- Image section - Display gif stored in Data folder in row
+            Use Bootstrap grid system to set image to a width of four columns on medium screen and larger
+            Use mx-auto to centre and img-fluid to adjust sizing-->
+    <div class="row">
+        <div class="col-md-4 mx-auto">
+            <!--
+             <img alt="Folium's Screenshot Layered" class="img-fluid" src="Data/folium_map_screenshot.jpg">
+            <img alt="Mapbox Screenshot" class="img-fluid" src="Data/mabpox_heatmap_screenshot.jpg">
+            -->
+        </div>
+    </div>
+
+
+    <!-- Link to internal geojson file stored in Data folder and view raw Data in new window -->
+    <p>
+    <p>View Folium's Multi-Layers Map with Time HeatMap Animation
+        <a href="Folium_Toronto.html" target=”_blank”>new window</a>
+    </p>
+    <p>View Python Script <a href="https://github.com/amr-y-shalaby/ggr_472_project/blob/main/Pipeline/maps_creator.py"> in .py format</a>.
+    </p>
+    <!-- Link to Single-Layered Mapbox Maps Using the Same Data Sources as Folium -->
+    <p>
+        Single-Layered Mapbox Maps Using the <b>Same Data Sources</b> as Folium:
+        <br><br>
+
+        <a href="Mapbox_Air_Quality.html">Mapbox Air Quality Measures</a><br>
+        <a href="Mapbox_Pedestrian_HeatMap.html">Mapbox Pedestrians Volume</a><br>
+        <a href="Mapbox_Traffic_Volume.html">Mapbox Traffic Volume</a><br>
+        <a href="Mapbox_Vehicle_HeatMap.html">Mapbox Vehicle Heatmap</a><br>
+        <a href="Turf_gta_traffic.html">Turf GTA Traffic Map</a><br>
+
+        <br>Which Map do you prefer? <i><br><br>Please Vote for Folium -- Thank You! :-) </i><br>
+    </p>
+
+    <!-- Voting buttons section -->
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary" id="btn-yes" type="button">Folium</button>
+            <button class="btn btn-primary" id="btn-no" type="button">Mapbox</button>
+        </div>
+    </div>
+    <p></p>
+    <div class="row">
+        <p>Total votes for Folium:
+            <!-- Display count for yes votes -->
+            <span id="count-yes">0</span>
+        </p>
+        <p>Total votes for Mapbox:
+            <!-- Display count for no votes -->
+            <span id="count-no">0</span>
+        </p>
+    </div>
+
+</div>
+
+<!-- Javascript script file -->
+<script src="script.js"></script>
+<!-- Bootstrap JavaScript -->
+<script crossorigin="anonymous"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
