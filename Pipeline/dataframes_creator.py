@@ -42,6 +42,7 @@ def create_dataframes(configs_obj):
             print(f"\tCreating Dataframe 'df_{public_table}' from Table '{public_table}'")
             pd_exec_statement = f"df_{public_table} = pd.read_sql_table(table_name='{public_table}', con=configs_obj.sqlalchemy_engine, schema='public')"
             exec(pd_exec_statement, globals())
+            exec(f"df_{public_table}.dropna(inplace=True)", globals())
             if 'fact_traffic_volume' == public_table:
                 df_fact_traffic_volume['latest_count_date'] = pd.to_datetime(df_fact_traffic_volume['latest_count_date'])
             exec(f"h_df_{public_table} = h2o.h2o.H2OFrame(df_{public_table})", globals())
@@ -60,6 +61,7 @@ def create_dataframes(configs_obj):
             print(f"\tCreating Projected Dataframe 'gpdf_{public_table}' from Table '{public_table}'")
             gpdf_exec_statement = f"gdf_{public_table} = gpd.read_postgis('SELECT * FROM public.{public_table}', con=configs_obj.sqlalchemy_engine, geom_col='geom', crs='EPSG:26917')"
             exec(gpdf_exec_statement, globals())
+            exec(f"gdf_{public_table}.dropna(inplace=True)", globals())
             exec(f"h_gdf_{public_table} = h2o.h2o.H2OFrame(gdf_{public_table})", globals())
             df_name = f"'df_{public_table}'"
             exec(f"dfs_obj.geopandas_dict[{df_name}] = gdf_{public_table}", globals())
