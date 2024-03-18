@@ -11,7 +11,8 @@ import os
 # 1. create_tables: boolean : If the Tables are already created, then set create_tables = False
 # 2. show_maps: boolean : To display maps in the browser after maps are built.
 # 3. If AutoML to be skipped.
-configs_obj.run_conditions = {'create_tables': False, 'show_maps': False, 'run_auto_ml': False}
+configs_obj.run_conditions = {'create_tables': False, 'show_maps': False, 'run_auto_ml': False
+            , 'map_types': ['folium', 'mapbox', 'turf']}
 
 # First Step is to create Staging and Production Data.  This can be bypassed if the Tables are created
 if configs_obj.run_conditions['create_tables']:
@@ -57,7 +58,7 @@ if configs_obj.run_conditions['create_tables']:
     configs_obj.pg_engine.commit()
     end = datetime.datetime.now()
     total_seconds = (end - start).total_seconds()
-    print('Done Executing Pipeline as of {} in {} seconds'.format(end, str(total_seconds)))
+    print('Done Executing Pipeline as of {} in {} Seconds'.format(end, str(total_seconds)))
     print('*****************************\n')
 # End of the First Step #
 
@@ -75,7 +76,7 @@ if configs_obj.run_conditions['run_auto_ml']:
 
 # Third Step: Create HTML Maps.  It Cannot be skipped. If AutoML was skipped, the forecast
 # layer will not be added to the map.
-maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_type='ALL'
+maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_types=configs_obj.run_conditions['map_types']
                     , show=configs_obj.run_conditions['show_maps']
                     ,  add_auto_ml=configs_obj.run_conditions['run_auto_ml'])
 

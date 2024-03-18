@@ -5,7 +5,9 @@ import pandas as pd
 import geopandas as gpd
 from h2o.automl import H2OAutoML
 from data_extractor import configs_obj
-h2o.init()
+import sys
+h2o.init()#max_mem_size="900M")
+
 
 # A Generic Class to store the needed dataframes of three main types:
 # Pandas, GeoPandas, and H2O Dataframes for the AutoML Step.
@@ -15,7 +17,7 @@ class GenericClass():
         self.pandas_dict = {}
         self.h2o_dict = {}
         self.forecasts_dict = {}
-        self.lists = list()
+        self.lists = {}
 
 
 dfs_obj = GenericClass()
@@ -74,7 +76,7 @@ def create_dataframes(configs_obj):
         data.append([[row['lat'], row['lng'], row['px']] for _, row in d.iterrows()])
 
     dfs_obj.pandas_dict['temp_df'] = temp_df
-    dfs_obj.lists.append(data)
+    dfs_obj.lists['traffic'] = data
     dfs_end = datetime.datetime.now()
     dfs_total_seconds = (dfs_end - dfs_start).total_seconds()
 
@@ -86,8 +88,8 @@ def create_dataframes(configs_obj):
     cur.execute(performance_query)
     configs_obj.pg_engine.commit()
     print(
-        "****************************\nDone Storing Public Tables in df_objs in {} Total Seconds.\n****************************".format(
-            dfs_total_seconds))
+        f"****************************\nDone Storing Public Tables in Dataframes Object 'dfs_obj' whose size is: {sys.getsizeof(dfs_obj)} Byes in {dfs_total_seconds} Seconds.\n****************************"
+    )
     del dfs_start, dfs_end, temp_df, data, dfs_total_seconds
     gc.collect()
     return dfs_obj
@@ -151,6 +153,6 @@ def auto_ml(dfs_obj):
     configs_obj.pg_engine.commit()
     print(
         f'****************************\nDone AutoML Using Configuration Runtime: {configs_obj.run_time_seconds} Seconds, Forecast '
-        f'Horizon: {configs_obj.forecast_horizon}, and Forecast Frequency: { configs_obj.forecast_description}.  '
-        f'AutoML duration in realtime is: {automl_duration} Seconds.\n****************************')
+        f'Horizon: {configs_obj.forecast_horizon}, and Forecast Frequency: { configs_obj.forecast_description}.\n'
+        f'Objects Dataframe Size is now: {sys.getsizeof(dfs_obj)} Byes.  AutoML duration in realtime is: {automl_duration} Seconds.\n****************************')
     return dfs_obj
