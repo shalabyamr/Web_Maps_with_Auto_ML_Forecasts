@@ -9,7 +9,7 @@ import os
 
 # Configure the Run Conditions:
 # 1. create_tables: boolean : If the Tables are already created, then set create_tables = False
-# 2. show_maps: boolean : To display maps in the browswer after maps are built.
+# 2. show_maps: boolean : To display maps in the browser after maps are built.
 # 3. If AutoML to be skipped.
 configs_obj.run_conditions = {'create_tables': False, 'show_maps': False, 'run_auto_ml': False}
 
@@ -68,9 +68,13 @@ if not configs_obj.run_conditions['create_tables']:
     read_configs()
     initialize_database()
 dataframes_creator.create_dataframes(configs_obj)
+
+# Auto Machine Learning can be omitted.
 if configs_obj.run_conditions['run_auto_ml']:
     dataframes_creator.auto_ml(dfs_obj)
-# Third Step: Create HTML Maps.  It Cannot be skipped.
+
+# Third Step: Create HTML Maps.  It Cannot be skipped. If AutoML was skipped, the forecast
+# layer will not be added to the map.
 maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_type='ALL'
                     , show=configs_obj.run_conditions['show_maps']
                     ,  add_auto_ml=configs_obj.run_conditions['run_auto_ml'])

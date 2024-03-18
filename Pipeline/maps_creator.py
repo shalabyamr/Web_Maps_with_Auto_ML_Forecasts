@@ -11,7 +11,7 @@ import gc
 # the previously-created dataframes object.
 # Also needs the configuration and dataframes objects.
 def create_maps(dfs_obj, configs_obj, map_type: str, show: bool, add_auto_ml: bool):
-    # Setting Up the Data for both map types
+    # For tracking function performance and later stored in public.data_model_performance_tbl
     maps_start = datetime.datetime.now()
 
     # Folium-Specific Code
@@ -20,55 +20,73 @@ def create_maps(dfs_obj, configs_obj, map_type: str, show: bool, add_auto_ml: bo
         folium_start = datetime.datetime.now()
         toronto_map = folium.Map(location=[dfs_obj.geopandas_dict['df_fact_air_data_proj']['latitude'].mean()
             , dfs_obj.geopandas_dict['df_fact_air_data_proj']['longitude'].mean()], zoom_start=10, control_scale=True)
-        f_marker_cluster = f_MarkerCluster()
+
+        # Setting up the Feature Groups for Layers Control.
+        air_quality_group = folium.FeatureGroup(name='Air Quality Measures').add_to(toronto_map)
+        traffic_volume_group = folium.FeatureGroup(name='Traffic Volume').add_to(toronto_map)
+        pedestrians_group = folium.FeatureGroup(name='Pedestrians').add_to(toronto_map)
+        air_quality_heatmap_group = folium.FeatureGroup(name='Air Quality HeatMap').add_to(toronto_map)
+        pedestrians_heatmap_group = folium.FeatureGroup(name='Pedestrians HeatMap').add_to(toronto_map)
+        pedestrians_volume_heatmap_group = folium.FeatureGroup(name='Pedestrians HeatMap').add_to(toronto_map)
+        predicted_traffic_group = folium.FeatureGroup(name='Predicted Traffic').add_to(toronto_map)
+        animated_traffic_group = folium.FeatureGroup(name='Animated Traffic').add_to(toronto_map)
+        folium.LayerControl().add_to(toronto_map)
+
+        mc = f_MarkerCluster()
         for index, row in dfs_obj.geopandas_dict['df_fact_air_data_proj'].iterrows():
-            f_marker_cluster.add_child(folium.Marker(
+                folium.Marker(
                   location=[row['latitude'], row['longitude']]
                 , popup=f"Air Quality Measure: <b>{row['air_quality_value']}</b><br>Geographical Name:<b>{row['geographical_name']}</b>.<br>CGN_ID: <b>{row['cgndb_id']}</b>"
-                , icon=folium.Icon(color="black", icon="info-sign"))).add_to(folium.FeatureGroup(name='Air Quality Measures')).add_to(toronto_map)
+                , icon=folium.Icon(color="black", icon="info-sign")).add_to(mc)
+        mc.add_to(air_quality_group)
 
+        mc = f_MarkerCluster()
         for index, row in dfs_obj.pandas_dict['df_fact_traffic_volume'].iterrows():
-            f_marker_cluster.add_child(folium.Marker(
+            folium.Marker(
                   location=[row['lat'], row['lng']]
                 , popup=f'Traffic Volume: <b>{row['px']}</b><br>Location:<b>{row['location']}</b>.<br>Location ID: <b>{row['location_id']}</b>'
-                , icon=folium.Icon(color="red", icon="car")).add_to(f_marker_cluster)).add_to(folium.FeatureGroup(name='Traffic Volume')).add_to(toronto_map)
+                , icon=folium.Icon(color="red", icon="car")).add_to(mc)
+        mc.add_to(traffic_volume_group)
 
+        mc = f_MarkerCluster()
         for index, row in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].iterrows():
-            f_marker_cluster.add_child(folium.Marker(
+            folium.Marker(
                 location=[row['latitude'], row['longitude']],
                 popup='Vehicle Volume: <b>{}</b><br>Pedestrian Volume:<b>{}</b>.<br>Main Stn: <b>{}</b>'.format(
                     row['f8hr_vehicle_volume'], row['f8hr_pedestrian_volume'], row['main']),
-                icon=folium.Icon(color="green", icon="flag"))).add_to(folium.FeatureGroup(name='Pedestrians')).add_to(toronto_map)
+                icon=folium.Icon(color="green", icon="flag")).add_to(mc)
+        mc.add_to(pedestrians_group)
+        toronto_map.save(configs_obj.parent_dir+'/Maps/toronto_map_0.html')
 
-        f_HeatMap(dfs_obj.pandas_dict['df_fact_combined_air_data'][['latitude', 'longitude', 'air_quality_value']],
+        hm = f_HeatMap(dfs_obj.pandas_dict['df_fact_combined_air_data'][['latitude', 'longitude', 'air_quality_value']],
                 min_opacity=0.4, overlay=True,
-                blur=18).add_to(folium.FeatureGroup(name='Air Quality Heatmap').add_to(toronto_map))
+                blur=18)
+        hm.add_to(air_quality_heatmap_group)
 
-        f_HeatMap(dfs_obj.pandas_dict['df_fact_combined_air_data'][['latitude', 'longitude', 'air_quality_value']],
-                min_opacity=0.4, overlay=True,
-                blur=18).add_to(folium.FeatureGroup(name='Air Quality Heatmap').add_to(toronto_map))
-
-        f_HeatMap(data=zip(dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude']
+        hm = f_HeatMap(data=zip(dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude']
                          , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['longitude'],
                          dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['f8hr_pedestrian_volume']),
                 min_opacity=0.4, overlay=True,
                 blur=18).add_to(folium.FeatureGroup(name='Pedestrian Volume')).add_to(toronto_map)
+        hm.add_to(pedestrians_volume_heatmap_group)
 
-        f_HeatMap(data=zip(dfs_obj.pandas_dict['temp_df']['lat'], dfs_obj.pandas_dict['temp_df']['lng']
+        hm = f_HeatMap(data=zip(dfs_obj.pandas_dict['temp_df']['lat'], dfs_obj.pandas_dict['temp_df']['lng']
                          , dfs_obj.pandas_dict['temp_df']['px']),
                 min_opacity=0.4, overlay=True,
-                blur=18).add_to(folium.FeatureGroup(name='Vehicle Volume')).add_to(toronto_map)
+                blur=18)
+        hm.add_to(pedestrians_heatmap_group)
 
         if add_auto_ml:
-            f_HeatMap(data=zip(dfs_obj.forecasts_dict['df_traffic_forecasts']['lat'], dfs_obj.forecasts_dict['df_traffic_forecasts']['lng']
+            hm = f_HeatMap(data=zip(dfs_obj.forecasts_dict['df_traffic_forecasts']['lat'], dfs_obj.forecasts_dict['df_traffic_forecasts']['lng']
                              , dfs_obj.forecasts_dict['df_traffic_forecasts']['predicted_traffic']),
                     min_opacity=0.4, overlay=True,
-                    blur=18).add_to(folium.FeatureGroup(name='Predicted Vehicle Volume')).add_to(toronto_map)
+                    blur=18)
+            hm.add_to(predicted_traffic_group)
 
-        f_HeatMapWithTime(dfs_obj.lists, index=dfs_obj.lists, auto_play=True).add_to(folium.FeatureGroup(
-            name='Traffic Time Heatmap')).add_to(toronto_map)
+        hm = f_HeatMapWithTime(dfs_obj.lists, index=dfs_obj.lists, auto_play=True, overlay=True)
+        hm.add_to(animated_traffic_group)
+        toronto_map.save(configs_obj.parent_dir+'/Maps/Folium_Toronto.html')
 
-        toronto_map.add_child(folium.LayerControl())
         folium_end = datetime.datetime.now()
         folium_duration = (folium_end - folium_start).total_seconds()
         performance_query = f"""UPDATE public.data_model_performance_tbl
@@ -183,3 +201,5 @@ def create_maps(dfs_obj, configs_obj, map_type: str, show: bool, add_auto_ml: bo
     maps_end = datetime.datetime.now()
     maps_duration = (maps_end - maps_start).total_seconds()
     print(f'Done Generating All Maps in {maps_duration} Seconds.')
+    del maps_start, maps_end
+    gc.collect()
