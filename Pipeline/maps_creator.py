@@ -31,6 +31,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             pedestrians_heatmap_group = folium.FeatureGroup(name='Pedestrians HeatMap').add_to(toronto_map)
             # End of Feature Groups ##
             folium.LayerControl().add_to(toronto_map)
+            folium.plugins.LocateControl(auto_start=False).add_to(toronto_map)
             # Start of Populating the Map ##
 
             mc = f_MarkerCluster()
