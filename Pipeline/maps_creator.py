@@ -1,80 +1,91 @@
 import folium
-from folium.plugins import MarkerCluster, HeatMap, HeatMapWithTime
+from folium.plugins import MarkerCluster as f_MarkerCluster, HeatMap as f_HeatMap, HeatMapWithTime as f_HeatMapWithTime
 import plotly.express as px
 import datetime
 from turfpy.measurement import envelope
-from turfpy.transformation import voronoi
-from geojson import Feature, FeatureCollection, Point
-from ipyleaflet import Map, GeoJSON, LayersControl, Marker, WidgetControl, MarkerCluster as ipyleaflet_MarkerCluster
-from shapely import Polygon, MultiPolygon
+from ipyleaflet import Map as i_Map, GeoJSON as i_GeoJSON, LayersControl as i_LayersControl, Marker as i_Marker, WidgetControl as i_WidgetControl, MarkerCluster as i_MarkerCluster
+from shapely import Polygon as s_Polygon, MultiPolygon as s_MultiPolygon
 import gc
 
 # Creates the three map types (Mapbox, Turf, and Folium) using
 # the previously-created dataframes object.
 # Also needs the configuration and dataframes objects.
-def create_maps(dfs_obj, configs_obj, map_type: str, show: bool):
+def create_maps(dfs_obj, configs_obj, map_type: str, show: bool, add_auto_ml: bool):
     # Setting Up the Data for both map types
-    start = datetime.datetime.now()
+    maps_start = datetime.datetime.now()
 
     # Folium-Specific Code
     if map_type.upper() in ('FOLIUM', 'ALL'):
         # Load map centred
+        folium_start = datetime.datetime.now()
         toronto_map = folium.Map(location=[dfs_obj.geopandas_dict['df_fact_air_data_proj']['latitude'].mean()
             , dfs_obj.geopandas_dict['df_fact_air_data_proj']['longitude'].mean()], zoom_start=10, control_scale=True)
-        marker_cluster = MarkerCluster()
-        fg = folium.FeatureGroup(name='Air Quality Measures')
+        f_marker_cluster = f_MarkerCluster()
         for index, row in dfs_obj.geopandas_dict['df_fact_air_data_proj'].iterrows():
-            marker_cluster.add_child(folium.Marker(
+            f_marker_cluster.add_child(folium.Marker(
                   location=[row['latitude'], row['longitude']]
                 , popup=f"Air Quality Measure: <b>{row['air_quality_value']}</b><br>Geographical Name:<b>{row['geographical_name']}</b>.<br>CGN_ID: <b>{row['cgndb_id']}</b>"
-                , icon=folium.Icon(color="black", icon="info-sign")))
-        fg.add_child(marker_cluster)
-        toronto_map.add_child(fg)
+                , icon=folium.Icon(color="black", icon="info-sign"))).add_to(folium.FeatureGroup(name='Air Quality Measures')).add_to(toronto_map)
 
         for index, row in dfs_obj.pandas_dict['df_fact_traffic_volume'].iterrows():
-            folium.Marker(
+            f_marker_cluster.add_child(folium.Marker(
                   location=[row['lat'], row['lng']]
                 , popup=f'Traffic Volume: <b>{row['px']}</b><br>Location:<b>{row['location']}</b>.<br>Location ID: <b>{row['location_id']}</b>'
-                , icon=folium.Icon(color="red", icon="car")).add_to(marker_cluster)
+                , icon=folium.Icon(color="red", icon="car")).add_to(f_marker_cluster)).add_to(folium.FeatureGroup(name='Traffic Volume')).add_to(toronto_map)
 
         for index, row in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].iterrows():
-            folium.Marker(
+            f_marker_cluster.add_child(folium.Marker(
                 location=[row['latitude'], row['longitude']],
                 popup='Vehicle Volume: <b>{}</b><br>Pedestrian Volume:<b>{}</b>.<br>Main Stn: <b>{}</b>'.format(
                     row['f8hr_vehicle_volume'], row['f8hr_pedestrian_volume'], row['main']),
-                icon=folium.Icon(color="green", icon="flag")).add_to(marker_cluster)
+                icon=folium.Icon(color="green", icon="flag"))).add_to(folium.FeatureGroup(name='Pedestrians')).add_to(toronto_map)
 
-        HeatMap(dfs_obj.pandas_dict['df_fact_combined_air_data'][['latitude', 'longitude', 'air_quality_value']],
-                min_opacity=0.4,
+        f_HeatMap(dfs_obj.pandas_dict['df_fact_combined_air_data'][['latitude', 'longitude', 'air_quality_value']],
+                min_opacity=0.4, overlay=True,
                 blur=18).add_to(folium.FeatureGroup(name='Air Quality Heatmap').add_to(toronto_map))
 
-        HeatMap(dfs_obj.pandas_dict['df_fact_combined_air_data'][['latitude', 'longitude', 'air_quality_value']],
-                min_opacity=0.4,
+        f_HeatMap(dfs_obj.pandas_dict['df_fact_combined_air_data'][['latitude', 'longitude', 'air_quality_value']],
+                min_opacity=0.4, overlay=True,
                 blur=18).add_to(folium.FeatureGroup(name='Air Quality Heatmap').add_to(toronto_map))
 
-        HeatMap(data=zip(dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude']
+        f_HeatMap(data=zip(dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude']
                          , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['longitude'],
                          dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['f8hr_pedestrian_volume']),
-                min_opacity=0.4,
-                blur=18).add_to(folium.FeatureGroup(name='Pedestrian Volume').add_to(toronto_map))
+                min_opacity=0.4, overlay=True,
+                blur=18).add_to(folium.FeatureGroup(name='Pedestrian Volume')).add_to(toronto_map)
 
-        HeatMap(data=zip(dfs_obj.pandas_dict['temp_df']['lat'], dfs_obj.pandas_dict['temp_df']['lng']
+        f_HeatMap(data=zip(dfs_obj.pandas_dict['temp_df']['lat'], dfs_obj.pandas_dict['temp_df']['lng']
                          , dfs_obj.pandas_dict['temp_df']['px']),
-                min_opacity=0.4,
-                blur=18).add_to(folium.FeatureGroup(name='Vehicle Volume').add_to(toronto_map))
+                min_opacity=0.4, overlay=True,
+                blur=18).add_to(folium.FeatureGroup(name='Vehicle Volume')).add_to(toronto_map)
 
-        HeatMapWithTime(dfs_obj.lists, index=dfs_obj.lists, auto_play=True).add_to(folium.FeatureGroup(
+        if add_auto_ml:
+            f_HeatMap(data=zip(dfs_obj.forecasts_dict['df_traffic_forecasts']['lat'], dfs_obj.forecasts_dict['df_traffic_forecasts']['lng']
+                             , dfs_obj.forecasts_dict['df_traffic_forecasts']['predicted_traffic']),
+                    min_opacity=0.4, overlay=True,
+                    blur=18).add_to(folium.FeatureGroup(name='Predicted Vehicle Volume')).add_to(toronto_map)
+
+        f_HeatMapWithTime(dfs_obj.lists, index=dfs_obj.lists, auto_play=True).add_to(folium.FeatureGroup(
             name='Traffic Time Heatmap')).add_to(toronto_map)
-        folium.LayerControl().add_to(toronto_map)
-        end_folium = datetime.datetime.now()
-        folium_total_seconds = (end_folium - start).total_seconds()
-        print('Done Generating the Folium Map in {} seconds as of {}'.format(folium_total_seconds, end_folium))
-        del end_folium, folium_total_seconds
+
+        toronto_map.add_child(folium.LayerControl())
+        folium_end = datetime.datetime.now()
+        folium_duration = (folium_end - folium_start).total_seconds()
+        performance_query = f"""UPDATE public.data_model_performance_tbl
+            SET duration_seconds = {folium_duration} , files_processed = {9}
+            , start_time = '{folium_start}', end_time = '{folium_end}'
+            WHERE step_name = 'folium';"""
+        cur = configs_obj.pg_engine.cursor()
+        cur.execute(performance_query)
+        configs_obj.pg_engine.commit()
+        print(f'Done Generating the Folium Map in {folium_duration} Seconds')
+        del folium_end, folium_duration, folium_start, performance_query
         toronto_map.save(configs_obj.parent_dir + '/Maps/Folium_Toronto.html')
         gc.collect()
 
     # Mapbox Specific Code
     if map_type.upper() in ('MAPBOX', 'ALL'):
+        mapbox_start = datetime.datetime.now()
         px.set_mapbox_access_token(configs_obj.access_tokens['mapbox'])
         fig_air_quality_values = px.scatter_mapbox(dfs_obj.geopandas_dict['df_fact_air_data_proj']
                                     , lat=dfs_obj.geopandas_dict['df_fact_air_data_proj'].geom.y
@@ -119,14 +130,22 @@ def create_maps(dfs_obj, configs_obj, map_type: str, show: bool):
 
         fig_traffic_volume.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Traffic_Volume.html')
 
-        end_mapbox = datetime.datetime.now()
-        mapbox_total_seconds = (end_mapbox - start).total_seconds()
-        print('Done Generating the Mapbox Map in {} seconds as of {}'.format(mapbox_total_seconds, end_mapbox))
-        del end_mapbox, mapbox_total_seconds
+        mapbox_end = datetime.datetime.now()
+        mapbox_duration = (mapbox_end - mapbox_start).total_seconds()
+        performance_query = f"""UPDATE public.data_model_performance_tbl
+            SET duration_seconds = {mapbox_duration} , files_processed = {9}
+            , start_time = '{mapbox_start}', end_time = '{mapbox_end}'
+            WHERE step_name = 'mapbox';"""
+        cur = configs_obj.pg_engine.cursor()
+        cur.execute(performance_query)
+        configs_obj.pg_engine.commit()
+        print(f'Done Generating the Mapbox Map in {mapbox_duration} Seconds.')
+        del mapbox_end, mapbox_duration, mapbox_start, performance_query
         gc.collect()
 
     # Turf Specific Code
     if map_type.upper() in ('TURF', 'ALL'):
+        turf_start = datetime.datetime.now()
         points = []
         for index, row in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].iterrows():
             point = [row['longitude'], row['latitude']]
@@ -137,18 +156,30 @@ def create_maps(dfs_obj, configs_obj, map_type: str, show: bool):
                 , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['longitude'].max()
                 , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude'].max()]
         #points_and_bbox = voronoi(points=points, bbox=bbox)
-        m = Map(scroll_wheel_zoom=True
+        m = i_Map(scroll_wheel_zoom=True
                 , center=[dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude'].mean()
                 , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['longitude'].mean()]
                 , zoom=14
                 , touch_zoom=True)
         for point in points:
-            marker = Marker(location=[point[1], point[0]])
+            marker = i_Marker(location=[point[1], point[0]])
             m.add_layer(marker)
-        #gta_traffic_stations = GeoJSON(name="GTA Traffic", data=points_and_bbox, style={"color": "blue"})
-        #m.add_layer(gta_traffic_stations)
         m.save(outfile=configs_obj.parent_dir+'/Maps/Turf_gta_traffic.html')
-        end_turf_time = datetime.datetime.now()
-        turf_total_seconds = (end_turf_time - start).total_seconds()
-        print('Done Generating Turf Map in {} seconds as of {}'.format(turf_total_seconds, end_turf_time))
+        turf_end = datetime.datetime.now()
+        turf_total_seconds = (turf_end - turf_start).total_seconds()
+        print(f'Done Generating Turf Map in {turf_total_seconds} Seconds.')
+        turf_end = datetime.datetime.now()
+        turf_duration = (turf_end - turf_start).total_seconds()
+        performance_query = f"""UPDATE public.data_model_performance_tbl
+        SET duration_seconds = {turf_duration} , files_processed = {9}
+        , start_time = '{turf_start}', end_time = '{turf_end}'
+        WHERE step_name = 'turf';"""
+        cur = configs_obj.pg_engine.cursor()
+        cur.execute(performance_query)
+        configs_obj.pg_engine.commit()
+        del turf_start, turf_end, turf_duration, performance_query
         gc.collect()
+
+    maps_end = datetime.datetime.now()
+    maps_duration = (maps_end - maps_start).total_seconds()
+    print(f'Done Generating All Maps in {maps_duration} Seconds.')

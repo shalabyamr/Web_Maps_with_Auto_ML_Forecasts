@@ -77,6 +77,14 @@ def create_dataframes(configs_obj):
     dfs_obj.lists.append(data)
     dfs_end = datetime.datetime.now()
     dfs_total_seconds = (dfs_end - dfs_start).total_seconds()
+
+    performance_query = f"""UPDATE public.data_model_performance_tbl
+        SET duration_seconds = {dfs_total_seconds} , files_processed = {len(public_tables)}
+        , start_time = '{dfs_start}', end_time = '{dfs_end}'
+        WHERE step_name = 'create_dataframes';"""
+    cur = configs_obj.pg_engine.cursor()
+    cur.execute(performance_query)
+    configs_obj.pg_engine.commit()
     print(
         "****************************\nDone Storing Public Tables in df_objs in {} Total Seconds.\n****************************".format(
             dfs_total_seconds))
@@ -92,7 +100,7 @@ def auto_ml(dfs_obj):
         f"Starting AutoML with Runtime: {configs_obj.run_time_seconds} Seconds, "
         f"Forecast Horizon: {configs_obj.forecast_horizon}, and Forecast Frequency: "
         f"{configs_obj.forecast_description}.")
-    X = ['location_id', '_id', 'latest_count_date']
+    X = ['location_id', '_id', 'latest_count_date', 'lat', 'lng']
     y = 'px'
     aml = H2OAutoML(max_runtime_secs=configs_obj.run_time_seconds)
     aml.train(x=X, y=y, training_frame=dfs_obj.h_df_fact_traffic_volume, leaderboard_frame=dfs_obj.h_df_fact_traffic_volume)
@@ -108,6 +116,8 @@ def auto_ml(dfs_obj):
         df_preds['latest_count_date'] = future_dates
         df_preds['location_id'] = location_id
         df_preds['_id'] = dfs_obj.df_fact_traffic_volume['_id'].unique()[0]
+        latitude = dfs_obj.df_fact_traffic_volume['lat'][dfs_obj.df_fact_traffic_volume['location_id'] == location_id].unique()[0]
+        longitude = dfs_obj.df_fact_traffic_volume['lng'][dfs_obj.df_fact_traffic_volume['location_id'] == location_id].unique()[0]
         df_preds = df_preds[['location_id', '_id', 'latest_count_date']]
         h_df_preds = h2o.H2OFrame(df_preds)
         h_df_preds['location_id'] = h_df_preds['location_id'].asfactor()
@@ -117,6 +127,9 @@ def auto_ml(dfs_obj):
         h_df_preds['predicted_traffic'] = predicted_traffic
         df_preds = h_df_preds.as_data_frame()
         df_preds['latest_count_date'] = pd.to_datetime(df_preds['latest_count_date'], unit='ms')
+        df_preds['lat'] = latitude
+        df_preds['lng'] = longitude
+        df_preds = df_preds[['location_id', '_id', 'lat', 'lng', 'predicted_traffic']]
         df_traffic_forecasts = df_traffic_forecasts._append(df_preds)
 
     df_traffic_forecasts['last_updated'] = datetime.datetime.now()
@@ -129,6 +142,13 @@ def auto_ml(dfs_obj):
     h2o.cluster().shutdown()
     automl_end = datetime.datetime.now()
     automl_duration = (automl_end - automl_start).total_seconds()
+    performance_query = f"""UPDATE public.data_model_performance_tbl
+        SET duration_seconds = {automl_duration} , files_processed = {1}
+        , start_time = '{automl_start}', end_time = '{automl_end}'
+        WHERE step_name = 'auto_ml';"""
+    cur = configs_obj.pg_engine.cursor()
+    cur.execute(performance_query)
+    configs_obj.pg_engine.commit()
     print(
         f'****************************\nDone AutoML Using Configuration Runtime: {configs_obj.run_time_seconds} Seconds, Forecast '
         f'Horizon: {configs_obj.forecast_horizon}, and Forecast Frequency: { configs_obj.forecast_description}.  '
