@@ -130,16 +130,17 @@ def auto_ml(dfs_obj):
         predicted_traffic = leader_model.predict(h_df_preds)
         h_df_preds['predicted_traffic'] = predicted_traffic
         df_preds = h_df_preds.as_data_frame()
-        df_preds['latest_count_date'] = pd.to_datetime(df_preds['latest_count_date'], unit='ms')
+        df_preds['future_date'] = pd.to_datetime(df_preds['latest_count_date'], unit='ms').dt.date
         df_preds['lat'] = latitude
         df_preds['lng'] = longitude
-        df_preds = df_preds[['location_id', '_id', 'lat', 'lng', 'predicted_traffic']]
+        df_preds['predicted_traffic'] = int(round(df_preds['predicted_traffic'],0))
+        df_preds = df_preds[['location_id', '_id' ,'lat', 'lng', 'future_date', 'predicted_traffic']]
         df_traffic_forecasts = df_traffic_forecasts._append(df_preds)
 
-    df_traffic_forecasts['last_updated'] = datetime.datetime.now()
+    df_traffic_forecasts['last_inserted'] = datetime.datetime.now()
     dfs_obj.forecasts_dict['df_traffic_forecasts'] = df_traffic_forecasts
     df_traffic_forecasts.to_sql(name='fact_h2o_traffic_forecasts', con=configs_obj.sqlalchemy_engine
-                                , schema='public', if_exists='replace')
+                                , schema='public', if_exists='replace', index=False, index_label=False)
     print(f'Saved Forecasts to Database as of: {datetime.datetime.now()}')
     del df_traffic_forecasts, dfs_obj.df_fact_traffic_volume, dfs_obj.h_df_fact_traffic_volume
     gc.collect()

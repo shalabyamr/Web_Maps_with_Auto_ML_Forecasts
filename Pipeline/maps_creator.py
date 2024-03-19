@@ -6,6 +6,7 @@ from turfpy.measurement import envelope
 from ipyleaflet import Map as i_Map, GeoJSON as i_GeoJSON, LayersControl as i_LayersControl, Marker as i_Marker, WidgetControl as i_WidgetControl, MarkerCluster as i_MarkerCluster
 from shapely import Polygon as s_Polygon, MultiPolygon as s_MultiPolygon
 import gc
+import pandas as pd
 
 # Creates the three map types (Mapbox, Turf, and Folium) using
 # the previously-created dataframes object.
@@ -29,6 +30,8 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             animated_traffic_group = folium.FeatureGroup(name='Animated Traffic').add_to(toronto_map)
             pedestrians_group = folium.FeatureGroup(name='Pedestrians').add_to(toronto_map)
             pedestrians_heatmap_group = folium.FeatureGroup(name='Pedestrians HeatMap').add_to(toronto_map)
+            predicted_traffic_group = folium.FeatureGroup(name='Predicted Traffic').add_to(toronto_map)
+            predicted_traffic_hm_group = folium.FeatureGroup(name='Predicted Traffic HeatMap').add_to(toronto_map)
             # End of Feature Groups ##
             folium.plugins.LocateControl(auto_start=False).add_to(toronto_map)
             folium.LayerControl().add_to(toronto_map)
@@ -71,20 +74,19 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                              , dfs_obj.pandas_dict['df_fact_traffic_volume'].dropna()['px'])
                       , min_opacity=0.4, overlay=True, blur=18).add_to(traffic_heatmap_group)
 
+            # Insert another Feature Group from H2O AutoML Predictions.
             if add_auto_ml:
-                pass
-                predicted_traffic_group = folium.FeatureGroup(name='Predicted Traffic').add_to(toronto_map)
-                predicted_traffic_hm_group = folium.FeatureGroup(name='Predicted Traffic HeatMap').add_to(toronto_map)
+                dfs_obj.forecasts_dict['df_traffic_forecasts'] = pd.read_sql_table(table_name='fact_h2o_traffic_forecasts', schema='public', con=configs_obj.sqlalchemy_engine, parse_dates=True)
                 f_HeatMap(data=zip(dfs_obj.forecasts_dict['df_traffic_forecasts']['lat'], dfs_obj.forecasts_dict['df_traffic_forecasts']['lng']
                                  , dfs_obj.forecasts_dict['df_traffic_forecasts']['predicted_traffic']),
                         min_opacity=0.4, overlay=True, blur=18).add_to(predicted_traffic_hm_group)
                 mc = f_MarkerCluster()
                 for index, row in dfs_obj.forecasts_dict['df_traffic_forecasts'].iterrows():
                     folium.Marker(location=[row['lat'], row['lng']],
-                          popup=f'Predicted Traffic: <b>{row['predicted_traffic']}</b><br>Location ID:<b>{row['location_id']}</b>'
+                          popup=f'Predicted Traffic: <b>{row['predicted_traffic']}</b><br>Future Date: <b>{row['future_date']}</b><br>Location ID:<br><b>{row['location_id']}</b>'
                         , icon=folium.Icon(color="green", icon="flag")).add_to(mc)
                 mc.add_to(predicted_traffic_group)
-
+                # end of AutoML Insertion
             f_HeatMapWithTime(dfs_obj.lists['traffic'], index=dfs_obj.lists['traffic'],
                               min_speed=5, position="topleft", auto_play=True, overlay=True
                               , display_index=True, show=True, control=True, name='Animated Traffic').add_to(animated_traffic_group).add_to(toronto_map)
