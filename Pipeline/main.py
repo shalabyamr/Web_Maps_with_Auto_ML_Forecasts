@@ -11,7 +11,7 @@ import os
 # 1. create_tables: boolean : If the Tables are already created, then set create_tables = False
 # 2. show_maps: boolean : To display maps in the browser after maps are built.
 # 3. If AutoML to be skipped.
-configs_obj.run_conditions = {'create_tables': False, 'show_maps': False, 'run_auto_ml': True
+configs_obj.run_conditions = {'create_tables': False, 'show_maps': False, 'run_auto_ml': False
             , 'map_types': ['folium', 'mapbox', 'turf']}
 
 # First Step is to create Staging and Production Data.  This can be bypassed if the Tables are created
