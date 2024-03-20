@@ -166,7 +166,7 @@ def auto_ml(dfs_obj):
         df_preds = pd.DataFrame()
         df_location = dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'][dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['objectid'] == objectid]
         df_location['count_date'] = pd.to_datetime(df_location['count_date'])
-        start = pd.to_datetime(dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['count_date'].max() + pd.Timedelta(days=7))
+        start = pd.to_datetime(dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['count_date'].max() + pd.offsets.DateOffset(years=9))
         future_dates = pd.date_range(start=start, freq=configs_obj.forecast_frequency,periods=configs_obj.forecast_horizon)
         df_preds['count_date'] = future_dates
         df_preds['objectid'] = objectid
