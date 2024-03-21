@@ -106,7 +106,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 # End of Part 2.
                 # end of AutoML Insertion
             f_HeatMapWithTime(dfs_obj.lists['traffic'], index=dfs_obj.lists['traffic'],
-                              min_speed=5, position="topleft", auto_play=False, overlay=True
+                              min_speed=5, position="topleft", auto_play=True, overlay=True
                               , display_index=False, show=True, control=True, name='Animated Traffic').add_to(animated_traffic_group).add_to(toronto_map)
             # End of Populating the Map ##
             toronto_map.save(configs_obj.parent_dir+'/Maps/Folium_Toronto.html')
