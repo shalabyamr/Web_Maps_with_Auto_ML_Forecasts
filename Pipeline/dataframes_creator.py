@@ -68,14 +68,14 @@ def create_dataframes(configs_obj):
             exec(f"dfs_obj.h2o_dict[{df_name}] = h_gdf_{public_table}", globals())
         i = i + 1
 
-    temp_df = df_fact_traffic_volume.dropna()
-    temp_df['latest_count_date'] = pd.to_datetime(temp_df['latest_count_date'])
-    temp_df.sort_values(by=['latest_count_date'], inplace=True)
-    temp_df.set_index('latest_count_date', inplace=True)
+    temp_df = df_fact_gta_traffic_arcgis.dropna()
+    temp_df['count_date'] = pd.to_datetime(temp_df['count_date'])
+    temp_df.sort_values(by=['count_date'], inplace=True)
+    temp_df.set_index('count_date', inplace=True)
 
     data = []
-    for _, d in temp_df.groupby('latest_count_date'):
-        data.append([[row['lat'], row['lng'], row['px']] for _, row in d.iterrows()])
+    for _, d in temp_df.groupby('count_date'):
+        data.append([[row['latitude'], row['longitude'], row['f8hr_vehicle_volume']] for _, row in d.iterrows()])
 
     dfs_obj.pandas_dict['temp_df'] = temp_df
     dfs_obj.lists['traffic'] = data

@@ -76,8 +76,9 @@ if configs_obj.run_conditions['run_auto_ml']:
 
 # Third Step: Create HTML Maps.  It Cannot be skipped. If AutoML was skipped, the forecast
 # layer will not be added to the map.
-maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj, map_types=configs_obj.run_conditions['map_types']
+maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj
+                    , map_types=configs_obj.run_conditions['map_types']
                     , show=configs_obj.run_conditions['show_maps']
-                    ,  add_auto_ml=configs_obj.run_conditions['run_auto_ml'])
+                    , add_auto_ml=configs_obj.run_conditions['run_auto_ml'])
 
 # Fourth Step: Test Load the Created HTML Maps

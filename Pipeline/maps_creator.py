@@ -27,13 +27,15 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             air_quality_heatmap_group = folium.FeatureGroup(name='Air Quality HeatMap').add_to(toronto_map)
             traffic_volume_group = folium.FeatureGroup(name='Traffic Volume').add_to(toronto_map)
             traffic_heatmap_group = folium.FeatureGroup(name='Traffic HeatMap').add_to(toronto_map)
-            animated_traffic_group = folium.FeatureGroup(name='Animated Traffic').add_to(toronto_map)
-            predicted_traffic_group = folium.FeatureGroup(name='Predicted Traffic').add_to(toronto_map)
-            predicted_traffic_hm_group = folium.FeatureGroup(name='Predicted Traffic HeatMap').add_to(toronto_map)
+            animated_traffic_group = folium.FeatureGroup(name='Traffic Animation').add_to(toronto_map)
+            if add_auto_ml:
+                predicted_traffic_group = folium.FeatureGroup(name='Predicted Traffic').add_to(toronto_map)
+                predicted_traffic_hm_group = folium.FeatureGroup(name='Predicted Traffic HeatMap').add_to(toronto_map)
             pedestrians_group = folium.FeatureGroup(name='Pedestrians').add_to(toronto_map)
             pedestrians_heatmap_group = folium.FeatureGroup(name='Pedestrians HeatMap').add_to(toronto_map)
-            predicted_pedestrians_group = folium.FeatureGroup(name='Predicted Pedestrians').add_to(toronto_map)
-            predicted_pedestrians_hm_group = folium.FeatureGroup(name='Predicted Pedestrians HeatMap').add_to(toronto_map)
+            if add_auto_ml:
+                predicted_pedestrians_group = folium.FeatureGroup(name='Predicted Pedestrians').add_to(toronto_map)
+                predicted_pedestrians_hm_group = folium.FeatureGroup(name='Predicted Pedestrians HeatMap').add_to(toronto_map)
             # End of Feature Groups ##
             folium.plugins.LocateControl(auto_start=False).add_to(toronto_map)
             folium.LayerControl().add_to(toronto_map)
@@ -43,26 +45,24 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             for index, row in dfs_obj.geopandas_dict['df_fact_air_data_proj'].dropna().iterrows():
                     folium.Marker(
                       location=[row['latitude'], row['longitude']]
-                    , popup=f"Air Quality Measure: <b>{row['air_quality_value']}</b><br>Geographical Name:<b>{row['geographical_name']}</b>.<br>CGN_ID: <b>{row['cgndb_id']}</b>"
+                    , popup=f"Air Quality Measure:<br><b>{row['air_quality_value']}</b><br>Name:<br><b>{row['geographical_name']}</b><br>Date:<br><b>{str(row['the_date']).split(' ')[0]}</b><br>Phase:<br><b>{row['phase_hour_utc']}"
                     , icon=folium.Icon(color="black", icon="info-sign")).add_to(mc)
             mc.add_to(air_quality_group)
 
             mc = f_MarkerCluster()
-            for index, row in dfs_obj.pandas_dict['df_fact_traffic_volume'].iterrows():
-                if row['location_id'] != 5178:
+            for index, row in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].iterrows():
                     folium.Marker(
-                          location=[row['lat'], row['lng']]
-                        , popup=f'Traffic Volume: <b>{row['px']}</b><br>Location:<b>{row['location']}</b>.<br>Location ID: <b>{row['location_id']}</b>'
+                          location=[row['latitude'], row['longitude']]
+                        , popup=f'Traffic Volume:<br><b>{int(round(row['f8hr_vehicle_volume'],0))}</b><br>Date:<br><b>{str(row['count_date']).split(' ')[0]}</b><br>Main Stn:<br><b>{row['main']}</b>'
                         , icon=folium.Icon(color="red", icon="car")).add_to(mc)
             mc.add_to(traffic_volume_group)
 
             mc = f_MarkerCluster()
             for index, row in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].iterrows():
                 folium.Marker(
-                    location=[row['latitude'], row['longitude']],
-                    popup='Vehicle Volume: <b>{}</b><br>Pedestrian Volume:<b>{}</b>.<br>Main Stn: <b>{}</b>'.format(
-                        row['f8hr_vehicle_volume'], row['f8hr_pedestrian_volume'], row['main']),
-                    icon=folium.Icon(color="green", icon="flag")).add_to(mc)
+                      location=[row['latitude'], row['longitude']]
+                        , popup=f'Pedestrian Volume:<b><br>{int(round(row['f8hr_pedestrian_volume'], 0))}</b><br>Date:<br><b>{str(row['count_date']).split(' ')[0]}</b><br>Main Stn: <b>{row['main']}</b>'
+                    , icon=folium.Icon(color="green", icon="flag")).add_to(mc)
             mc.add_to(pedestrians_group)
 
             f_HeatMap(dfs_obj.pandas_dict['df_fact_combined_air_data'][['latitude', 'longitude', 'air_quality_value']],
@@ -73,14 +73,15 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                              , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].dropna()['f8hr_pedestrian_volume'])
                       , min_opacity=0.4, overlay=True, blur=18).add_to(pedestrians_heatmap_group)
 
-            f_HeatMap(data=zip(dfs_obj.pandas_dict['df_fact_traffic_volume'].dropna()['lat'], dfs_obj.pandas_dict['df_fact_traffic_volume'].dropna()['lng']
-                             , dfs_obj.pandas_dict['df_fact_traffic_volume'].dropna()['px'])
+            f_HeatMap(data=zip(dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].dropna()['latitude'], dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].dropna()['longitude']
+                             , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].dropna()['f8hr_vehicle_volume'])
                       , min_opacity=0.4, overlay=True, blur=18).add_to(traffic_heatmap_group)
 
             # Insert another Feature Group from H2O AutoML Predictions.
             if add_auto_ml:
                 # Part 1: Add Predicted Traffic
                 dfs_obj.forecasts_dict['df_traffic_forecasts'] = pd.read_sql_table(table_name='fact_h2o_traffic_forecasts', schema='public', con=configs_obj.sqlalchemy_engine, parse_dates=True)
+                dfs_obj.forecasts_dict['df_traffic_forecasts']['future_date'] = dfs_obj.forecasts_dict['df_traffic_forecasts']['future_date'].dt.date
                 f_HeatMap(data=zip(dfs_obj.forecasts_dict['df_traffic_forecasts']['lat'], dfs_obj.forecasts_dict['df_traffic_forecasts']['lng']
                                  , dfs_obj.forecasts_dict['df_traffic_forecasts']['predicted_traffic']),
                         min_opacity=0.4, overlay=True, blur=18).add_to(predicted_traffic_hm_group)
@@ -94,6 +95,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
 
                 # Part 2: Add Predicted Pedestrians.
                 dfs_obj.forecasts_dict['df_pedestrians_forecasts'] = pd.read_sql_table(table_name='fact_h2o_pedestrians_forecasts', schema='public', con=configs_obj.sqlalchemy_engine, parse_dates=True)
+                dfs_obj.forecasts_dict['df_pedestrians_forecasts']['future_date'] = dfs_obj.forecasts_dict['df_pedestrians_forecasts']['future_date'].dt.date
                 f_HeatMap(data=zip(dfs_obj.forecasts_dict['df_pedestrians_forecasts']['latitude'], dfs_obj.forecasts_dict['df_pedestrians_forecasts']['longitude']
                                  , dfs_obj.forecasts_dict['df_pedestrians_forecasts']['predicted_pedestrians']),
                         min_opacity=0.4, overlay=True, blur=18).add_to(predicted_pedestrians_hm_group)
@@ -106,8 +108,8 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 # End of Part 2.
                 # end of AutoML Insertion
             f_HeatMapWithTime(dfs_obj.lists['traffic'], index=dfs_obj.lists['traffic'],
-                              min_speed=5, position="topleft", auto_play=True, overlay=True
-                              , display_index=False, show=True, control=True, name='Animated Traffic').add_to(animated_traffic_group).add_to(toronto_map)
+                              min_speed=1, position="topleft", auto_play=True, overlay=True
+                              , display_index=False, show=True, control=True, name='Traffic Animation').add_to(animated_traffic_group).add_to(toronto_map)
             # End of Populating the Map ##
             toronto_map.save(configs_obj.parent_dir+'/Maps/Folium_Toronto.html')
             folium_end = datetime.datetime.now()
