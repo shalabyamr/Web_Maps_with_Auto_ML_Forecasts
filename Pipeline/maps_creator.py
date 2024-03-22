@@ -2,9 +2,7 @@ import folium
 from folium.plugins import MarkerCluster as f_MarkerCluster, HeatMap as f_HeatMap, HeatMapWithTime as f_HeatMapWithTime
 import plotly.express as px
 import datetime
-from turfpy.measurement import envelope
 from ipyleaflet import Map as i_Map, GeoJSON as i_GeoJSON, LayersControl as i_LayersControl, Marker as i_Marker, WidgetControl as i_WidgetControl, MarkerCluster as i_MarkerCluster
-from shapely import Polygon as s_Polygon, MultiPolygon as s_MultiPolygon
 import gc
 import pandas as pd
 import altair as alt
@@ -46,9 +44,9 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             mc = f_MarkerCluster()
             for index, row in dfs_obj.geopandas_dfs['fact_air_data_proj'].iterrows():
                     color = 'black'
-                    if row['air_quality_value'] > dfs_obj.geopandas_dfs['fact_air_data_proj']['air_quality_value'].mean():
+                    if row['air_quality_value'] > int(dfs_obj.geopandas_dfs['fact_air_data_proj']['air_quality_value'].mean()):
                         color = 'red'
-                    if row['air_quality_value'] < dfs_obj.geopandas_dfs['fact_air_data_proj']['air_quality_value'].mean():
+                    if row['air_quality_value'] < int(dfs_obj.geopandas_dfs['fact_air_data_proj']['air_quality_value'].mean()):
                         color = 'green'
                     folium.Marker(
                       location=[row['latitude'], row['longitude']]
@@ -96,26 +94,28 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             mc = f_MarkerCluster()
             for index, row in dfs_obj.pandas_dfs['fact_gta_traffic_arcgis'].iterrows():
                 color = 'black'
-                if row['f8hr_vehicle_volume'] > dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean():
+                if row['f8hr_vehicle_volume'] > int(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean()):
                     color = 'red'
-                if row['f8hr_vehicle_volume'] < dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean():
+                if row['f8hr_vehicle_volume'] < int(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean()):
                     color = 'green'
                 folium.Marker(
                           location=[row['latitude'], row['longitude']]
-                        , popup=folium.Popup(f"<font color={color}>Traffic Volume:<br><b>{int(round(row['f8hr_vehicle_volume'],0))}</b><br>Date:<br><b>{str(row['count_date']).split(' ')[0]}</b><br>Main Stn:<br><b>{row['main']}</b></font>")
+                        , popup=folium.Popup(f"<font color={color}>Traffic Volume:<b>{int(round(row['f8hr_vehicle_volume'],0))}</b><br>Date:<b>{str(row['count_date']).split(' ')[0]}</b><br>Main Stn:<b>{row['main']}</b></font>"
+                                    , min_width=200, max_width=200)
                         , icon=folium.Icon(color=color, icon="car")).add_to(mc)
             mc.add_to(traffic_volume_group)
 
             mc = f_MarkerCluster()
             for index, row in dfs_obj.pandas_dfs['fact_gta_traffic_arcgis'].iterrows():
                 color = 'black'
-                if row['f8hr_vehicle_volume'] >= dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean():
+                if row['f8hr_vehicle_volume'] >= int(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean()):
                     color = 'red'
-                if row['f8hr_vehicle_volume'] < dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean():
+                if row['f8hr_vehicle_volume'] < int(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean()):
                     color = 'green'
                 folium.Marker(
                       location=[row['latitude'], row['longitude']]
-                        , popup=f"<font color={color}>Pedestrian Volume:<b><br>{int(round(row['f8hr_pedestrian_volume'], 0))}</b><br>Date:<br><b>{str(row['count_date']).split(' ')[0]}</b><br>Main Stn: <b>{row['main']}</b></font>"
+                        , popup=folium.Popup(f"<font color={color}>Pedestrian Volume:<b><br>{int(round(row['f8hr_pedestrian_volume'], 0))}</b><br>Date:<br><b>{str(row['count_date']).split(' ')[0]}</b><br>Main Stn: <b>{row['main']}</b></font>"
+                                            , min_width=200, max_width=200)
                     , icon=folium.Icon(color=color, icon="flag")).add_to(mc)
             mc.add_to(pedestrians_group)
 
@@ -140,12 +140,13 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 mc = f_MarkerCluster()
                 for index, row in dfs_obj.forecasts_dict['traffic_forecast'].iterrows():
                     color = 'black'
-                    if row['predicted_traffic'] > dfs_obj.forecasts_dict['traffic_forecast']['predicted_traffic'].mean():
+                    if row['predicted_traffic'] > int(dfs_obj.forecasts_dict['traffic_forecast']['predicted_traffic'].mean()):
                         color = 'red'
-                    if row['predicted_traffic'] < dfs_obj.forecasts_dict['traffic_forecast']['predicted_traffic'].mean():
+                    if row['predicted_traffic'] < int(dfs_obj.forecasts_dict['traffic_forecast']['predicted_traffic'].mean()):
                         color = 'green'
                     folium.Marker(location=[row['latitude'], row['longitude']],
-                          popup=f"<font color={color}>Predicted Traffic: <b>{row['predicted_traffic']}</b><br>Future Date: <b><br>{row['future_date']}</b><br>Name:<br><b>{row['main']}</b></font>"
+                          popup=folium.Popup(f"<font color={color}>Predicted Traffic: <b>{row['predicted_traffic']}</b><br>Future Date: <b><br>{row['future_date']}</b><br>Name:<br><b>{row['main']}</b></font>"
+                                             , min_width=200, max_width=200)
                         , icon=folium.Icon(color=color, icon="flag")).add_to(mc)
                 mc.add_to(predicted_traffic_group)
 
@@ -156,13 +157,14 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 mc = f_MarkerCluster()
                 for index, row in dfs_obj.forecasts_dict['pedestrians_forecast'].iterrows():
                     color = 'black'
-                    if row['predicted_pedestrians'] > dfs_obj.forecasts_dict['pedestrians_forecast']['predicted_pedestrians'].mean():
+                    if row['predicted_pedestrians'] > int(dfs_obj.forecasts_dict['pedestrians_forecast']['predicted_pedestrians'].mean()):
                         color = 'red'
-                    if row['predicted_pedestrians'] < dfs_obj.forecasts_dict['pedestrians_forecast']['predicted_pedestrians'].mean():
+                    if row['predicted_pedestrians'] < int(dfs_obj.forecasts_dict['pedestrians_forecast']['predicted_pedestrians'].mean()):
                         color = 'green'
 
                     folium.Marker(location=[row['latitude'], row['longitude']],
-                          popup=f"<font color={color}>Predicted Pedestrians: <b>{row['predicted_pedestrians']}</b><br>Future Date: <b>{row['future_date']}</b><br>Location Name:<br><b>{row['main']}</b></font>"
+                          popup=folium.Popup(f"<font color={color}>Predicted Pedestrians: <b>{row['predicted_pedestrians']}</b><br>Future Date: <b>{row['future_date']}</b><br>Location Name:<br><b>{row['main']}</b></font>"
+                                             , min_width=200, max_width=200)
                         , icon=folium.Icon(color="green", icon="flag")).add_to(mc)
                 mc.add_to(predicted_pedestrians_group)
                 # End of Part 2.

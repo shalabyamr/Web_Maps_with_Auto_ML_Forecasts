@@ -21,3 +21,25 @@ CREATE TABLE PUBLIC.FACT_GTA_TRAFFIC_ARCGIS AS(
       SELECT *
            , ROW_NUMBER() over (PARTITION BY objectid ORDER BY COUNT_DATE DESC) AS RN
       FROM STAGE.stg_gta_traffic_arcgis) A WHERE RN = 1);
+
+DROP TABLE IF EXISTS PUBLIC.fact_gta_traffic_arcgis_avg;
+CREATE TABLE PUBLIC.fact_gta_traffic_arcgis_avg AS(
+    SELECT
+     "main"
+   , latitude
+   , longitude
+   , INITCAP(TO_CHAR(count_date,'DAY'))
+   , CAST(AVG(f8hr_vehicle_volume) AS INT) AS VEHCILE_VOLUME_AVG
+FROM PUBLIC.FACT_GTA_TRAFFIC_ARCGIS
+GROUP BY 1,2,3,4);
+
+DROP TABLE IF EXISTS PUBLIC.fact_gta_pedestrians_arcgis_avg;
+CREATE TABLE PUBLIC.fact_gta_pedestrians_arcgis_avg AS(
+    SELECT
+     "main"
+   , latitude
+   , longitude
+   , INITCAP(TO_CHAR(count_date,'DAY'))
+   , CAST(AVG(f8hr_pedestrian_volume) AS INT) AS VEHCILE_VOLUME_AVG
+FROM PUBLIC.FACT_GTA_TRAFFIC_ARCGIS
+GROUP BY 1,2,3,4);
