@@ -13,9 +13,9 @@ h2o.init()
 # Pandas, GeoPandas, and H2O Dataframes for the AutoML Step.
 class GenericClass():
     def __init__(self):
-        self.geopandas_dict = {}
-        self.pandas_dict = {}
-        self.h2o_dict = {}
+        self.geopandas_dfs = {}
+        self.pandas_dfs = {}
+        self.h2o_dfs = {}
         self.forecasts_dict = {}
         self.lists = {}
 
@@ -26,7 +26,7 @@ dfs_obj = GenericClass()
 def create_dataframes(configs_obj):
     dfs_start = datetime.datetime.now()
     query_get_tables = """SELECT table_name FROM information_schema.tables
-            WHERE (table_schema = 'public') and (table_name not in(
+            WHERE (table_schema = 'public') and (table_name not like '%h2o%') and (table_name not like '%forecast%') and (table_name not in(
             'spatial_ref_sys','geography_columns','geometry_columns','data_model_performance_tbl'))"""
     cur = configs_obj.pg_engine.cursor()
     cur.execute(query_get_tables)
@@ -46,26 +46,17 @@ def create_dataframes(configs_obj):
             if 'fact_traffic_volume' == public_table:
                 df_fact_traffic_volume['latest_count_date'] = pd.to_datetime(df_fact_traffic_volume['latest_count_date'])
             exec(f"h_df_{public_table} = h2o.h2o.H2OFrame(df_{public_table})", globals())
-            df_name = f"'df_{public_table}'"
-            exec(f"dfs_obj.pandas_dict[{df_name}] = df_{public_table}", globals())
-            exec(f"dfs_obj.h2o_dict[{df_name}] = h_df_{public_table}", globals())
-            if 'fact_traffic_volume' in public_table:
-                df_fact_traffic_volume['latest_count_date'] = pd.to_datetime(df_fact_traffic_volume['latest_count_date'])
-                dfs_obj.df_fact_traffic_volume = df_fact_traffic_volume.dropna()
-                dfs_obj.h_df_fact_traffic_volume = h2o.h2o.H2OFrame(dfs_obj.df_fact_traffic_volume)
-                dfs_obj.h_df_fact_traffic_volume['_id'] = dfs_obj.h_df_fact_traffic_volume['_id'].asfactor()
-                dfs_obj.h_df_fact_traffic_volume['location_id'] = dfs_obj.h_df_fact_traffic_volume['location_id'].asfactor()
-                dfs_obj.h_df_fact_traffic_volume['location'] = dfs_obj.h_df_fact_traffic_volume['location'].asfactor()
+            exec(f"dfs_obj.h2o_dfs['{public_table}'] = h_df_{public_table}", globals())
+            exec(f"dfs_obj.pandas_dfs['{public_table}'] = df_{public_table}", globals())
 
         if 'proj' in public_table:
-            print(f"\tCreating Projected Dataframe 'gpdf_{public_table}' from Table '{public_table}'")
-            gpdf_exec_statement = f"gdf_{public_table} = gpd.read_postgis('SELECT * FROM public.{public_table}', con=configs_obj.sqlalchemy_engine, geom_col='geom', crs='EPSG:26917')"
+            print(f"\tCreating Projected Dataframe 'df_{public_table}' from Table '{public_table}'")
+            gpdf_exec_statement = f"df_{public_table} = gpd.read_postgis('SELECT * FROM public.{public_table}', con=configs_obj.sqlalchemy_engine, geom_col='geom', crs='EPSG:26917')"
             exec(gpdf_exec_statement, globals())
-            exec(f"gdf_{public_table}.dropna(inplace=True)", globals())
-            exec(f"h_gdf_{public_table} = h2o.h2o.H2OFrame(gdf_{public_table})", globals())
-            df_name = f"'df_{public_table}'"
-            exec(f"dfs_obj.geopandas_dict[{df_name}] = gdf_{public_table}", globals())
-            exec(f"dfs_obj.h2o_dict[{df_name}] = h_gdf_{public_table}", globals())
+            exec(f"df_{public_table}.dropna(inplace=True)", globals())
+            exec(f"h_gdf_{public_table} = h2o.h2o.H2OFrame(df_{public_table})", globals())
+            exec(f"dfs_obj.geopandas_dfs['{public_table}'] = df_{public_table}", globals())
+            exec(f"dfs_obj.h2o_dfs['{public_table}'] = h_gdf_{public_table}", globals())
         i = i + 1
 
     temp_df = df_fact_gta_traffic_arcgis.dropna()
@@ -77,7 +68,7 @@ def create_dataframes(configs_obj):
     for _, d in temp_df.groupby('count_date'):
         data.append([[row['latitude'], row['longitude'], row['f8hr_vehicle_volume']] for _, row in d.iterrows()])
 
-    dfs_obj.pandas_dict['temp_df'] = temp_df
+    dfs_obj.pandas_dfs['temp_df'] = temp_df
     dfs_obj.lists['traffic'] = data
     dfs_end = datetime.datetime.now()
     dfs_total_seconds = (dfs_end - dfs_start).total_seconds()
@@ -106,45 +97,48 @@ def auto_ml(dfs_obj):
         f"Starting Traffic AutoML with Runtime: {configs_obj.run_time_seconds} Seconds, "
         f"Traffic Forecast Horizon: {configs_obj.forecast_horizon}, and Traffic Forecast Frequency: "
         f"{configs_obj.forecast_description}.")
-    X = ['location_id', '_id', 'latest_count_date', 'lat', 'lng']
-    y = 'px'
+    X = ['objectid', 'tcs__', 'main', 'latitude', 'longitude', 'count_date']
+    y = 'f8hr_vehicle_volume'
     aml = H2OAutoML(max_runtime_secs=configs_obj.run_time_seconds)
-    aml.train(x=X, y=y, training_frame=dfs_obj.h_df_fact_traffic_volume, leaderboard_frame=dfs_obj.h_df_fact_traffic_volume)
+    dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['objectid'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['objectid'].asfactor()
+    dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['tcs__'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['tcs__'].asfactor()
+    dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['main'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['main'].asfactor()
+    aml.train(x=X, y=y, training_frame=dfs_obj.h2o_dfs['fact_gta_traffic_arcgis'], leaderboard_frame=dfs_obj.h2o_dfs['fact_gta_traffic_arcgis'])
     leader_model = aml.leader
     df_traffic_forecasts = pd.DataFrame()
-     
-    for location_id in dfs_obj.df_fact_traffic_volume['location_id'].unique():
+
+    for objectid in dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['objectid'].unique():
         df_preds = pd.DataFrame()
-        df_location = dfs_obj.df_fact_traffic_volume[dfs_obj.df_fact_traffic_volume['location_id'] == location_id]
-        df_location['latest_count_date'] = pd.to_datetime(dfs_obj.df_fact_traffic_volume['latest_count_date'])
-        start = pd.to_datetime(dfs_obj.df_fact_traffic_volume['latest_count_date'].max() + pd.Timedelta(days=7))
+        df_location = dfs_obj.pandas_dfs['fact_gta_traffic_arcgis'][dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['objectid'] == objectid]
+        df_location['count_date'] = pd.to_datetime(df_location['count_date'])
+        start = pd.to_datetime(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['count_date'].max() + pd.offsets.DateOffset(years=9))
         future_dates = pd.date_range(start=start, freq=configs_obj.forecast_frequency,periods=configs_obj.forecast_horizon)
-        df_preds['latest_count_date'] = future_dates
-        df_preds['location_id'] = location_id
-        df_preds['_id'] = dfs_obj.df_fact_traffic_volume['_id'].unique()[0]
-        latitude = dfs_obj.df_fact_traffic_volume['lat'][dfs_obj.df_fact_traffic_volume['location_id'] == location_id].unique()[0]
-        longitude = dfs_obj.df_fact_traffic_volume['lng'][dfs_obj.df_fact_traffic_volume['location_id'] == location_id].unique()[0]
-        df_preds = df_preds[['location_id', '_id', 'latest_count_date']]
+        df_preds['count_date'] = future_dates
+        df_preds['objectid'] = objectid
+        df_preds['tcs__'] = dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['tcs__'].unique()[0]
+        df_preds['latitude'] = df_location['latitude'][df_location['objectid'] == objectid].unique()[0]
+        df_preds['longitude'] = df_location['longitude'][df_location['objectid'] == objectid].unique()[0]
+        df_preds['main'] = df_location['main'][df_location['objectid'] == objectid].unique()[0]
+        df_preds = df_preds[['objectid', 'tcs__', 'main', 'latitude', 'longitude', 'count_date']]
         h_df_preds = h2o.H2OFrame(df_preds)
-        h_df_preds['location_id'] = h_df_preds['location_id'].asfactor()
-        h_df_preds['_id'] = h_df_preds['_id'].asfactor()
+        h_df_preds['objectid'] = h_df_preds['objectid'].asfactor()
+        h_df_preds['tcs__'] = h_df_preds['tcs__'].asfactor()
+        h_df_preds['main'] = h_df_preds['main'].asfactor()
         df_location.reset_index(drop=True, inplace=True)
         predicted_traffic = leader_model.predict(h_df_preds)
         h_df_preds['predicted_traffic'] = predicted_traffic
         df_preds = h_df_preds.as_data_frame()
-        df_preds['future_date'] = pd.to_datetime(df_preds['latest_count_date'], unit='ms').dt.date
-        df_preds['lat'] = latitude
-        df_preds['lng'] = longitude
+        df_preds['future_date'] = pd.to_datetime(df_preds['count_date'], unit='ms').dt.date
         df_preds['predicted_traffic'] = int(round(df_preds['predicted_traffic'],0))
-        df_preds = df_preds[['location_id', '_id' ,'lat', 'lng', 'future_date', 'predicted_traffic']]
+        df_preds = df_preds[['objectid', 'tcs__' , 'main', 'latitude', 'longitude', 'future_date', 'predicted_traffic']]
         df_traffic_forecasts = df_traffic_forecasts._append(df_preds)
 
     df_traffic_forecasts['last_inserted'] = datetime.datetime.now()
-    dfs_obj.forecasts_dict['df_traffic_forecasts'] = df_traffic_forecasts
-    df_traffic_forecasts.to_sql(name='fact_h2o_traffic_forecasts', con=configs_obj.sqlalchemy_engine
+    dfs_obj.forecasts_dict['traffic_forecast'] = df_traffic_forecasts
+    df_traffic_forecasts.to_sql(name='fact_h2o_traffic_forecast', con=configs_obj.sqlalchemy_engine
                                 , schema='public', if_exists='replace', index=False, index_label=False)
-    print(f'Saved Forecasts to Database in : {(datetime.datetime.now()-automl_start).total_seconds()} Seconds')
-    del df_traffic_forecasts, dfs_obj.df_fact_traffic_volume, dfs_obj.h_df_fact_traffic_volume
+    print(f'Saved Traffic Forecast to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds')
+    del df_traffic_forecasts
     # End of Part 1 Traffic Prediction.
 
     # Part 2: Pedestrians Prediction
@@ -155,22 +149,22 @@ def auto_ml(dfs_obj):
     X = ['objectid', 'tcs__', 'main', 'latitude', 'longitude', 'count_date']
     y = 'f8hr_pedestrian_volume'
     aml = H2OAutoML(max_runtime_secs=configs_obj.run_time_seconds)
-    dfs_obj.h2o_dict['df_fact_gta_traffic_arcgis']['objectid'] = dfs_obj.h2o_dict['df_fact_gta_traffic_arcgis']['objectid'].asfactor()
-    dfs_obj.h2o_dict['df_fact_gta_traffic_arcgis']['tcs__'] = dfs_obj.h2o_dict['df_fact_gta_traffic_arcgis']['tcs__'].asfactor()
-    dfs_obj.h2o_dict['df_fact_gta_traffic_arcgis']['main'] = dfs_obj.h2o_dict['df_fact_gta_traffic_arcgis']['main'].asfactor()
-    aml.train(x=X, y=y, training_frame=dfs_obj.h2o_dict['df_fact_gta_traffic_arcgis'], leaderboard_frame=dfs_obj.h2o_dict['df_fact_gta_traffic_arcgis'])
+    dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['objectid'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['objectid'].asfactor()
+    dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['tcs__'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['tcs__'].asfactor()
+    dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['main'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['main'].asfactor()
+    aml.train(x=X, y=y, training_frame=dfs_obj.h2o_dfs['fact_gta_traffic_arcgis'], leaderboard_frame=dfs_obj.h2o_dfs['fact_gta_traffic_arcgis'])
     leader_model = aml.leader
     df_pedestrians_forecasts = pd.DataFrame()
 
-    for objectid in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['objectid'].unique():
+    for objectid in dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['objectid'].unique():
         df_preds = pd.DataFrame()
-        df_location = dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'][dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['objectid'] == objectid]
+        df_location = dfs_obj.pandas_dfs['fact_gta_traffic_arcgis'][dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['objectid'] == objectid]
         df_location['count_date'] = pd.to_datetime(df_location['count_date'])
-        start = pd.to_datetime(dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['count_date'].max() + pd.offsets.DateOffset(years=9))
+        start = pd.to_datetime(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['count_date'].max() + pd.offsets.DateOffset(years=9))
         future_dates = pd.date_range(start=start, freq=configs_obj.forecast_frequency,periods=configs_obj.forecast_horizon)
         df_preds['count_date'] = future_dates
         df_preds['objectid'] = objectid
-        df_preds['tcs__'] = dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['tcs__'].unique()[0]
+        df_preds['tcs__'] = dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['tcs__'].unique()[0]
         df_preds['latitude'] = df_location['latitude'][df_location['objectid'] == objectid].unique()[0]
         df_preds['longitude'] = df_location['longitude'][df_location['objectid'] == objectid].unique()[0]
         df_preds['main'] = df_location['main'][df_location['objectid'] == objectid].unique()[0]
@@ -189,8 +183,8 @@ def auto_ml(dfs_obj):
         df_pedestrians_forecasts = df_pedestrians_forecasts._append(df_preds)
 
     df_pedestrians_forecasts['last_inserted'] = datetime.datetime.now()
-    dfs_obj.forecasts_dict['df_pedestrians_forecasts'] = df_pedestrians_forecasts
-    df_pedestrians_forecasts.to_sql(name='fact_h2o_pedestrians_forecasts', con=configs_obj.sqlalchemy_engine
+    dfs_obj.forecasts_dict['pedestrians_forecast'] = df_pedestrians_forecasts
+    df_pedestrians_forecasts.to_sql(name='fact_h2o_pedestrians_forecast', con=configs_obj.sqlalchemy_engine
                                 , schema='public', if_exists='replace', index=False, index_label=False)
     print(f'Saved Pedestrians Forecasts to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds')
     del df_pedestrians_forecasts

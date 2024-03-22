@@ -7,6 +7,7 @@ from ipyleaflet import Map as i_Map, GeoJSON as i_GeoJSON, LayersControl as i_La
 from shapely import Polygon as s_Polygon, MultiPolygon as s_MultiPolygon
 import gc
 import pandas as pd
+import altair as alt
 
 # Creates the three map types (Mapbox, Turf, and Folium) using
 # the previously-created dataframes object.
@@ -19,12 +20,13 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
         if map_type.upper() == 'FOLIUM':
             # Load map centred
             folium_start = datetime.datetime.now()
-            toronto_map = folium.Map(location=[dfs_obj.geopandas_dict['df_fact_air_data_proj']['latitude'].mean()
-                , dfs_obj.geopandas_dict['df_fact_air_data_proj']['longitude'].mean()], zoom_start=10, control_scale=True)
+            toronto_map = folium.Map(location=[dfs_obj.geopandas_dfs['fact_air_data_proj']['latitude'].mean()
+                , dfs_obj.geopandas_dfs['fact_air_data_proj']['longitude'].mean()], zoom_start=10, control_scale=True)
 
             # Setting up the Feature Groups for Layers Control.
             air_quality_group = folium.FeatureGroup(name='Air Quality Measures').add_to(toronto_map)
             air_quality_heatmap_group = folium.FeatureGroup(name='Air Quality HeatMap').add_to(toronto_map)
+            air_quality_chart_group = folium.FeatureGroup(name='Air Quality Charts').add_to(toronto_map)
             traffic_volume_group = folium.FeatureGroup(name='Traffic Volume').add_to(toronto_map)
             traffic_heatmap_group = folium.FeatureGroup(name='Traffic HeatMap').add_to(toronto_map)
             animated_traffic_group = folium.FeatureGroup(name='Traffic Animation').add_to(toronto_map)
@@ -42,67 +44,125 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             # Start of Populating the Map ##
 
             mc = f_MarkerCluster()
-            for index, row in dfs_obj.geopandas_dict['df_fact_air_data_proj'].dropna().iterrows():
+            for index, row in dfs_obj.geopandas_dfs['fact_air_data_proj'].iterrows():
+                    color = 'black'
+                    if row['air_quality_value'] > dfs_obj.geopandas_dfs['fact_air_data_proj']['air_quality_value'].mean():
+                        color = 'red'
+                    if row['air_quality_value'] < dfs_obj.geopandas_dfs['fact_air_data_proj']['air_quality_value'].mean():
+                        color = 'green'
                     folium.Marker(
                       location=[row['latitude'], row['longitude']]
-                    , popup=f"Air Quality Measure:<br><b>{row['air_quality_value']}</b><br>Name:<br><b>{row['geographical_name']}</b><br>Date:<br><b>{str(row['the_date']).split(' ')[0]}</b><br>Phase:<br><b>{row['phase_hour_utc']}"
-                    , icon=folium.Icon(color="black", icon="info-sign")).add_to(mc)
+                    , popup=folium.Popup(f"<font color={color}>Air Quality Measure: <b>{row['air_quality_value']}</b><br>Name: <b>{row['geographical_name']}</b><br>Date :<b>{str(row['the_date']).split(' ')[0]}</b><br>Phase :<b>{row['phase_hour_utc']}</font>",
+                                        min_width=200, max_width=200)
+                    , icon=folium.Icon(color=color, icon="info-sign")).add_to(mc)
             mc.add_to(air_quality_group)
 
+            # Here. Adding Graph for Air Quality Measures.
+            for index, row in dfs_obj.pandas_dfs['fact_weekdays_avg'].iterrows():
+                df = dfs_obj.pandas_dfs['fact_weekdays_avg'][dfs_obj.pandas_dfs['fact_weekdays_avg']['cgndb_id'] == row['cgndb_id']]
+                weekday_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                weekday_avgs = []
+                for index, row in df.iterrows():
+                    weekday_avgs.append(row['monday_avg'])
+                    weekday_avgs.append(row['tuesday_avg'])
+                    weekday_avgs.append(row['wednesday_avg'])
+                    weekday_avgs.append(row['thursday_avg'])
+                    weekday_avgs.append(row['friday_avg'])
+                    weekday_avgs.append(row['saturday_av'])
+                    weekday_avgs.append(row['sunday_avg'])
+
+                df1 = pd.DataFrame({'weekday':weekday_names, 'weekday_avg':weekday_avgs}, index=weekday_names)
+                df1['weekday'] = pd.Categorical(df1['weekday'], categories=weekday_names, ordered=True)
+                del weekday_names, weekday_avgs
+                chart = alt.Chart(df1).mark_bar().encode(x='weekday', y='weekday_avg')
+                vis1 = chart.to_json()
+                # create a marker, with altair graphic as popup
+                circ_mkr = folium.CircleMarker(
+                    location=[row['latitude'], row['longitude']],
+                    radius=15,
+                    color='grey',
+                    fill=True,
+                    fill_color='grey',
+                    fillOpacity=1.0,
+                    opacity=1.0,
+                    tooltip=f"Air Station ID:<b>{df['cgndb_id'].unique()[0]}.</b>",
+                    popup=folium.Popup(max_width=200).add_child(folium.VegaLite(vis1, width=400, height=300)),
+                )
+                # add to map
+                circ_mkr.add_to(air_quality_chart_group)
+                # end here
+
+
             mc = f_MarkerCluster()
-            for index, row in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].iterrows():
-                    folium.Marker(
+            for index, row in dfs_obj.pandas_dfs['fact_gta_traffic_arcgis'].iterrows():
+                color = 'black'
+                if row['f8hr_vehicle_volume'] > dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean():
+                    color = 'red'
+                if row['f8hr_vehicle_volume'] < dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean():
+                    color = 'green'
+                folium.Marker(
                           location=[row['latitude'], row['longitude']]
-                        , popup=f'Traffic Volume:<br><b>{int(round(row['f8hr_vehicle_volume'],0))}</b><br>Date:<br><b>{str(row['count_date']).split(' ')[0]}</b><br>Main Stn:<br><b>{row['main']}</b>'
-                        , icon=folium.Icon(color="red", icon="car")).add_to(mc)
+                        , popup=folium.Popup(f"<font color={color}>Traffic Volume:<br><b>{int(round(row['f8hr_vehicle_volume'],0))}</b><br>Date:<br><b>{str(row['count_date']).split(' ')[0]}</b><br>Main Stn:<br><b>{row['main']}</b></font>")
+                        , icon=folium.Icon(color=color, icon="car")).add_to(mc)
             mc.add_to(traffic_volume_group)
 
             mc = f_MarkerCluster()
-            for index, row in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].iterrows():
+            for index, row in dfs_obj.pandas_dfs['fact_gta_traffic_arcgis'].iterrows():
+                color = 'black'
+                if row['f8hr_vehicle_volume'] >= dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean():
+                    color = 'red'
+                if row['f8hr_vehicle_volume'] < dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean():
+                    color = 'green'
                 folium.Marker(
                       location=[row['latitude'], row['longitude']]
-                        , popup=f'Pedestrian Volume:<b><br>{int(round(row['f8hr_pedestrian_volume'], 0))}</b><br>Date:<br><b>{str(row['count_date']).split(' ')[0]}</b><br>Main Stn: <b>{row['main']}</b>'
-                    , icon=folium.Icon(color="green", icon="flag")).add_to(mc)
+                        , popup=f"<font color={color}>Pedestrian Volume:<b><br>{int(round(row['f8hr_pedestrian_volume'], 0))}</b><br>Date:<br><b>{str(row['count_date']).split(' ')[0]}</b><br>Main Stn: <b>{row['main']}</b></font>"
+                    , icon=folium.Icon(color=color, icon="flag")).add_to(mc)
             mc.add_to(pedestrians_group)
 
-            f_HeatMap(dfs_obj.pandas_dict['df_fact_combined_air_data'][['latitude', 'longitude', 'air_quality_value']],
+            f_HeatMap(dfs_obj.pandas_dfs['fact_combined_air_data'][['latitude', 'longitude', 'air_quality_value']],
                     min_opacity=0.4, overlay=True, blur=18).add_to(air_quality_heatmap_group)
 
-            f_HeatMap(data=zip(dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].dropna()['latitude']
-                               , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].dropna()['longitude']
-                             , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].dropna()['f8hr_pedestrian_volume'])
+            f_HeatMap(data=zip(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['latitude']
+                               , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['longitude']
+                             , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_pedestrian_volume'])
                       , min_opacity=0.4, overlay=True, blur=18).add_to(pedestrians_heatmap_group)
 
-            f_HeatMap(data=zip(dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].dropna()['latitude'], dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].dropna()['longitude']
-                             , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].dropna()['f8hr_vehicle_volume'])
+            f_HeatMap(data=zip(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['latitude'], dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['longitude']
+                             , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'])
                       , min_opacity=0.4, overlay=True, blur=18).add_to(traffic_heatmap_group)
 
             # Insert another Feature Group from H2O AutoML Predictions.
             if add_auto_ml:
                 # Part 1: Add Predicted Traffic
-                dfs_obj.forecasts_dict['df_traffic_forecasts'] = pd.read_sql_table(table_name='fact_h2o_traffic_forecasts', schema='public', con=configs_obj.sqlalchemy_engine, parse_dates=True)
-                dfs_obj.forecasts_dict['df_traffic_forecasts']['future_date'] = dfs_obj.forecasts_dict['df_traffic_forecasts']['future_date'].dt.date
-                f_HeatMap(data=zip(dfs_obj.forecasts_dict['df_traffic_forecasts']['lat'], dfs_obj.forecasts_dict['df_traffic_forecasts']['lng']
-                                 , dfs_obj.forecasts_dict['df_traffic_forecasts']['predicted_traffic']),
+                f_HeatMap(data=zip(dfs_obj.forecasts_dict['traffic_forecast']['latitude'], dfs_obj.forecasts_dict['traffic_forecast']['longitude']
+                                 , dfs_obj.forecasts_dict['traffic_forecast']['predicted_traffic']),
                         min_opacity=0.4, overlay=True, blur=18).add_to(predicted_traffic_hm_group)
                 mc = f_MarkerCluster()
-                for index, row in dfs_obj.forecasts_dict['df_traffic_forecasts'].iterrows():
-                    if row['location_id'] != 5178:
-                        folium.Marker(location=[row['lat'], row['lng']],
-                          popup=f'Predicted Traffic: <b>{row['predicted_traffic']}</b><br>Future Date: <b>{row['future_date']}</b><br>Location ID:<br><b>{row['location_id']}</b>'
-                        , icon=folium.Icon(color="green", icon="flag")).add_to(mc)
+                for index, row in dfs_obj.forecasts_dict['traffic_forecast'].iterrows():
+                    color = 'black'
+                    if row['predicted_traffic'] > dfs_obj.forecasts_dict['traffic_forecast']['predicted_traffic'].mean():
+                        color = 'red'
+                    if row['predicted_traffic'] < dfs_obj.forecasts_dict['traffic_forecast']['predicted_traffic'].mean():
+                        color = 'green'
+                    folium.Marker(location=[row['latitude'], row['longitude']],
+                          popup=f"<font color={color}>Predicted Traffic: <b>{row['predicted_traffic']}</b><br>Future Date: <b><br>{row['future_date']}</b><br>Name:<br><b>{row['main']}</b></font>"
+                        , icon=folium.Icon(color=color, icon="flag")).add_to(mc)
                 mc.add_to(predicted_traffic_group)
 
                 # Part 2: Add Predicted Pedestrians.
-                dfs_obj.forecasts_dict['df_pedestrians_forecasts'] = pd.read_sql_table(table_name='fact_h2o_pedestrians_forecasts', schema='public', con=configs_obj.sqlalchemy_engine, parse_dates=True)
-                dfs_obj.forecasts_dict['df_pedestrians_forecasts']['future_date'] = dfs_obj.forecasts_dict['df_pedestrians_forecasts']['future_date'].dt.date
-                f_HeatMap(data=zip(dfs_obj.forecasts_dict['df_pedestrians_forecasts']['latitude'], dfs_obj.forecasts_dict['df_pedestrians_forecasts']['longitude']
-                                 , dfs_obj.forecasts_dict['df_pedestrians_forecasts']['predicted_pedestrians']),
+                f_HeatMap(data=zip(dfs_obj.forecasts_dict['pedestrians_forecast']['latitude'], dfs_obj.forecasts_dict['pedestrians_forecast']['longitude']
+                                 , dfs_obj.forecasts_dict['pedestrians_forecast']['predicted_pedestrians']),
                         min_opacity=0.4, overlay=True, blur=18).add_to(predicted_pedestrians_hm_group)
                 mc = f_MarkerCluster()
-                for index, row in dfs_obj.forecasts_dict['df_pedestrians_forecasts'].iterrows():
+                for index, row in dfs_obj.forecasts_dict['pedestrians_forecast'].iterrows():
+                    color = 'black'
+                    if row['predicted_pedestrians'] > dfs_obj.forecasts_dict['pedestrians_forecast']['predicted_pedestrians'].mean():
+                        color = 'red'
+                    if row['predicted_pedestrians'] < dfs_obj.forecasts_dict['pedestrians_forecast']['predicted_pedestrians'].mean():
+                        color = 'green'
+
                     folium.Marker(location=[row['latitude'], row['longitude']],
-                          popup=f'Predicted Pedestrians: <b>{row['predicted_pedestrians']}</b><br>Future Date: <b>{row['future_date']}</b><br>Location Name:<br><b>{row['main']}</b>'
+                          popup=f"<font color={color}>Predicted Pedestrians: <b>{row['predicted_pedestrians']}</b><br>Future Date: <b>{row['future_date']}</b><br>Location Name:<br><b>{row['main']}</b></font>"
                         , icon=folium.Icon(color="green", icon="flag")).add_to(mc)
                 mc.add_to(predicted_pedestrians_group)
                 # End of Part 2.
@@ -121,18 +181,18 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             cur = configs_obj.pg_engine.cursor()
             cur.execute(performance_query)
             configs_obj.pg_engine.commit()
+            toronto_map.save(configs_obj.parent_dir + '/Maps/Folium_Toronto.html')
             print(f'Done Generating the Folium Map in {folium_duration} Seconds')
             del folium_end, folium_duration, folium_start, performance_query
-            toronto_map.save(configs_obj.parent_dir + '/Maps/Folium_Toronto.html')
             gc.collect()
 
         # Mapbox Specific Code
         if map_type.upper() == 'MAPBOX':
             mapbox_start = datetime.datetime.now()
             px.set_mapbox_access_token(configs_obj.access_tokens['mapbox'])
-            fig_air_quality_values = px.scatter_mapbox(dfs_obj.geopandas_dict['df_fact_air_data_proj']
-                                        , lat=dfs_obj.geopandas_dict['df_fact_air_data_proj'].geom.y
-                                        , lon=dfs_obj.geopandas_dict['df_fact_air_data_proj'].geom.x
+            fig_air_quality_values = px.scatter_mapbox(dfs_obj.geopandas_dfs['fact_air_data_proj']
+                                        , lat=dfs_obj.geopandas_dfs['fact_air_data_proj'].geom.y
+                                        , lon=dfs_obj.geopandas_dfs['fact_air_data_proj'].geom.x
                                         , hover_name="air_quality_value"
                                         , height=500, zoom=10)
             fig_air_quality_values.update_layout(mapbox_style="open-street-map")
@@ -143,9 +203,9 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
 
             fig_air_quality_values.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Air_Quality.html')
 
-            fig_vehicle_heatmap = px.density_mapbox(dfs_obj.geopandas_dict['df_fact_gta_traffic_proj']
-                                        , lat=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.y
-                                        , lon=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.x
+            fig_vehicle_heatmap = px.density_mapbox(dfs_obj.geopandas_dfs['fact_gta_traffic_proj']
+                                        , lat=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].geom.y
+                                        , lon=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].geom.x
                                         , z='f8hr_vehicle_volume'
                                         , mapbox_style="open-street-map")
             if show:
@@ -153,9 +213,9 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
 
             fig_vehicle_heatmap.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Vehicle_HeatMap.html')
 
-            fig_pedestrian_heatmap = px.density_mapbox(dfs_obj.geopandas_dict['df_fact_gta_traffic_proj']
-                                        , lat=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.y
-                                        , lon=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].geom.x
+            fig_pedestrian_heatmap = px.density_mapbox(dfs_obj.geopandas_dfs['fact_gta_traffic_proj']
+                                        , lat=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].geom.y
+                                        , lon=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].geom.x
                                         , z='f8hr_pedestrian_volume'
                                         , mapbox_style="open-street-map")
             if show:
@@ -163,9 +223,9 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
 
             fig_pedestrian_heatmap.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Pedestrian_HeatMap.html')
 
-            fig_traffic_volume = px.scatter_mapbox(dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].dropna()
-                                            , lat=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].dropna().geom.y
-                                            , lon=dfs_obj.geopandas_dict['df_fact_gta_traffic_proj'].dropna().geom.x
+            fig_traffic_volume = px.scatter_mapbox(dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].dropna()
+                                            , lat=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].dropna().geom.y
+                                            , lon=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].dropna().geom.x
                                             , hover_name='f8hr_vehicle_volume'
                                             , height=500, zoom=10)
             if show:
@@ -190,18 +250,18 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
         if map_type.upper() == 'TURF':
             turf_start = datetime.datetime.now()
             points = []
-            for index, row in dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis'].iterrows():
+            for index, row in dfs_obj.pandas_dfs['fact_gta_traffic_arcgis'].iterrows():
                 point = [row['longitude'], row['latitude']]
                 points.append(point)
 
-            bbox = [dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['longitude'].min()
-                    , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude'].min()
-                    , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['longitude'].max()
-                    , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude'].max()]
+            bbox = [dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['longitude'].min()
+                    , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['latitude'].min()
+                    , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['longitude'].max()
+                    , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['latitude'].max()]
             #points_and_bbox = voronoi(points=points, bbox=bbox)
             m = i_Map(scroll_wheel_zoom=True
-                    , center=[dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['latitude'].mean()
-                    , dfs_obj.pandas_dict['df_fact_gta_traffic_arcgis']['longitude'].mean()]
+                    , center=[dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['latitude'].mean()
+                    , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['longitude'].mean()]
                     , zoom=14
                     , touch_zoom=True)
             for point in points:

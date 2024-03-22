@@ -23,7 +23,7 @@ if configs_obj.run_conditions['create_tables']:
     staging_tables_list = data_loader.create_staging_tables(sqlalchemy_engine=configs_obj.sqlalchemy_engine)
     production_tables_list = data_loader.create_production_tables()
     df_production = pd.DataFrame(production_tables_list,
-                                 columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
+                        columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
     df_production['phase'] = 'production'
     df_production = df_production[
         ['phase', 'step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed']]
