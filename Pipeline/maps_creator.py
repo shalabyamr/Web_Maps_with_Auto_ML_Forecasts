@@ -140,9 +140,9 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 mc = f_MarkerCluster()
                 for index, row in dfs_obj.forecasts_dict['traffic_forecast'].iterrows():
                     color = 'black'
-                    if row['predicted_traffic'] > int(dfs_obj.forecasts_dict['traffic_forecast']['predicted_traffic'].mean()):
+                    if row['predicted_traffic'] > int(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean()):
                         color = 'red'
-                    if row['predicted_traffic'] < int(dfs_obj.forecasts_dict['traffic_forecast']['predicted_traffic'].mean()):
+                    if row['predicted_traffic'] < int(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_vehicle_volume'].mean()):
                         color = 'green'
                     folium.Marker(location=[row['latitude'], row['longitude']],
                           popup=folium.Popup(f"<font color={color}>Predicted Traffic: <b>{row['predicted_traffic']}</b><br>Future Date: <b><br>{row['future_date']}</b><br>Name:<br><b>{row['main']}</b></font>"
@@ -157,9 +157,9 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 mc = f_MarkerCluster()
                 for index, row in dfs_obj.forecasts_dict['pedestrians_forecast'].iterrows():
                     color = 'black'
-                    if row['predicted_pedestrians'] > int(dfs_obj.forecasts_dict['pedestrians_forecast']['predicted_pedestrians'].mean()):
+                    if row['predicted_pedestrians'] > int(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_pedestrian_volume'].mean()):
                         color = 'red'
-                    if row['predicted_pedestrians'] < int(dfs_obj.forecasts_dict['pedestrians_forecast']['predicted_pedestrians'].mean()):
+                    if row['predicted_pedestrians'] < int(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_pedestrian_volume'].mean()):
                         color = 'green'
 
                     folium.Marker(location=[row['latitude'], row['longitude']],
