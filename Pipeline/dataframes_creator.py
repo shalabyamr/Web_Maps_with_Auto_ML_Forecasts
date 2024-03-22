@@ -28,7 +28,7 @@ def create_dataframes(configs_obj):
     query_get_tables = """SELECT table_name FROM information_schema.tables
             WHERE (table_schema = 'public') and (table_name not like '%h2o%') and (table_name not like '%forecast%') and (table_name not in(
             'spatial_ref_sys','geography_columns','geometry_columns','data_model_performance_tbl'))"""
-    cur = configs_obj.pg_engine.cursor()
+    cur = configs_obj.database['pg_engine'].cursor()
     cur.execute(query_get_tables)
     del query_get_tables
     public_tables = [item[0] for item in cur.fetchall()]
@@ -40,7 +40,7 @@ def create_dataframes(configs_obj):
         print(f"{i} of {len(public_tables)}: Processing Public Table '{public_table}':")
         if 'proj' not in public_table:
             print(f"\tCreating Dataframe 'df_{public_table}' from Table '{public_table}'")
-            pd_exec_statement = f"df_{public_table} = pd.read_sql_table(table_name='{public_table}', con=configs_obj.sqlalchemy_engine, schema='public')"
+            pd_exec_statement = f"df_{public_table} = pd.read_sql_table(table_name='{public_table}', con=configs_obj.database['sqlalchemy_engine'], schema='public')"
             exec(pd_exec_statement, globals())
             exec(f"df_{public_table}.dropna(inplace=True)", globals())
             if 'fact_traffic_volume' == public_table:
@@ -51,7 +51,7 @@ def create_dataframes(configs_obj):
 
         if 'proj' in public_table:
             print(f"\tCreating Projected Dataframe 'df_{public_table}' from Table '{public_table}'")
-            gpdf_exec_statement = f"df_{public_table} = gpd.read_postgis('SELECT * FROM public.{public_table}', con=configs_obj.sqlalchemy_engine, geom_col='geom', crs='EPSG:26917')"
+            gpdf_exec_statement = f"df_{public_table} = gpd.read_postgis('SELECT * FROM public.{public_table}', con=configs_obj.database['sqlalchemy_engine'], geom_col='geom', crs='EPSG:26917')"
             exec(gpdf_exec_statement, globals())
             exec(f"df_{public_table}.dropna(inplace=True)", globals())
             exec(f"h_gdf_{public_table} = h2o.h2o.H2OFrame(df_{public_table})", globals())
@@ -77,9 +77,9 @@ def create_dataframes(configs_obj):
         SET duration_seconds = {dfs_total_seconds} , files_processed = {len(public_tables)}
         , start_time = '{dfs_start}', end_time = '{dfs_end}'
         WHERE step_name = 'create_dataframes';"""
-    cur = configs_obj.pg_engine.cursor()
+    cur = configs_obj.database['pg_engine'].cursor()
     cur.execute(performance_query)
-    configs_obj.pg_engine.commit()
+    configs_obj.database['pg_engine'].commit()
     print(
         f"****************************\nDone Storing Public Tables in Dataframes Object 'dfs_obj' whose size is: {sys.getsizeof(dfs_obj)} Byes in {dfs_total_seconds} Seconds.\n****************************"
     )
@@ -94,12 +94,12 @@ def auto_ml(dfs_obj):
 
     # Part 1: Traffic Prediction
     print(
-        f"Starting Traffic AutoML with Runtime: {configs_obj.run_time_seconds} Seconds, "
-        f"Traffic Forecast Horizon: {configs_obj.forecast_horizon}, and Traffic Forecast Frequency: "
-        f"{configs_obj.forecast_description}.")
+        f"Starting Traffic AutoML with Runtime: {configs_obj.auto_ml['run_time_seconds']} Seconds, "
+        f"Traffic Forecast Horizon: {configs_obj.auto_ml['forecast_horizon']}, and Traffic Forecast Frequency: "
+        f"{configs_obj.auto_ml['forecast_description']}.")
     X = ['objectid', 'tcs__', 'main', 'latitude', 'longitude', 'count_date']
     y = 'f8hr_vehicle_volume'
-    aml = H2OAutoML(max_runtime_secs=configs_obj.run_time_seconds)
+    aml = H2OAutoML(max_runtime_secs=configs_obj.auto_ml['run_time_seconds'])
     dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['objectid'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['objectid'].asfactor()
     dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['tcs__'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['tcs__'].asfactor()
     dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['main'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['main'].asfactor()
@@ -112,7 +112,7 @@ def auto_ml(dfs_obj):
         df_location = dfs_obj.pandas_dfs['fact_gta_traffic_arcgis'][dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['objectid'] == objectid]
         df_location['count_date'] = pd.to_datetime(df_location['count_date'])
         start = pd.to_datetime(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['count_date'].max() + pd.offsets.DateOffset(years=9))
-        future_dates = pd.date_range(start=start, freq=configs_obj.forecast_frequency,periods=configs_obj.forecast_horizon)
+        future_dates = pd.date_range(start=start, freq=configs_obj.auto_ml['forecast_frequency'],periods=configs_obj.auto_ml['forecast_horizon'])
         df_preds['count_date'] = future_dates
         df_preds['objectid'] = objectid
         df_preds['tcs__'] = dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['tcs__'].unique()[0]
@@ -135,7 +135,7 @@ def auto_ml(dfs_obj):
 
     df_traffic_forecasts['last_inserted'] = datetime.datetime.now()
     dfs_obj.forecasts_dict['traffic_forecast'] = df_traffic_forecasts
-    df_traffic_forecasts.to_sql(name='fact_h2o_traffic_forecast', con=configs_obj.sqlalchemy_engine
+    df_traffic_forecasts.to_sql(name='fact_h2o_traffic_forecast', con=configs_obj.database['sqlalchemy_engine']
                                 , schema='public', if_exists='replace', index=False, index_label=False)
     print(f'Saved Traffic Forecast to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds')
     del df_traffic_forecasts
@@ -143,12 +143,12 @@ def auto_ml(dfs_obj):
 
     # Part 2: Pedestrians Prediction
     print(
-        f"Starting Pedestrians AutoML with Runtime: {configs_obj.run_time_seconds} Seconds, "
-        f"Pedestrians Forecast Horizon: {configs_obj.forecast_horizon}, and Pedestrians Forecast Frequency: "
-        f"{configs_obj.forecast_description}.")
+        f"Starting Pedestrians AutoML with Runtime: {configs_obj.auto_ml['run_time_seconds']} Seconds, "
+        f"Pedestrians Forecast Horizon: {configs_obj.auto_ml['forecast_horizon']}, and Pedestrians Forecast Frequency: "
+        f"{configs_obj.auto_ml['forecast_description']}.")
     X = ['objectid', 'tcs__', 'main', 'latitude', 'longitude', 'count_date']
     y = 'f8hr_pedestrian_volume'
-    aml = H2OAutoML(max_runtime_secs=configs_obj.run_time_seconds)
+    aml = H2OAutoML(max_runtime_secs=configs_obj.auto_ml['run_time_seconds'])
     dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['objectid'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['objectid'].asfactor()
     dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['tcs__'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['tcs__'].asfactor()
     dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['main'] = dfs_obj.h2o_dfs['fact_gta_traffic_arcgis']['main'].asfactor()
@@ -161,7 +161,7 @@ def auto_ml(dfs_obj):
         df_location = dfs_obj.pandas_dfs['fact_gta_traffic_arcgis'][dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['objectid'] == objectid]
         df_location['count_date'] = pd.to_datetime(df_location['count_date'])
         start = pd.to_datetime(dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['count_date'].max() + pd.offsets.DateOffset(years=9))
-        future_dates = pd.date_range(start=start, freq=configs_obj.forecast_frequency,periods=configs_obj.forecast_horizon)
+        future_dates = pd.date_range(start=start, freq=configs_obj.auto_ml['forecast_frequency'],periods=configs_obj.auto_ml['forecast_horizon'])
         df_preds['count_date'] = future_dates
         df_preds['objectid'] = objectid
         df_preds['tcs__'] = dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['tcs__'].unique()[0]
@@ -184,7 +184,7 @@ def auto_ml(dfs_obj):
 
     df_pedestrians_forecasts['last_inserted'] = datetime.datetime.now()
     dfs_obj.forecasts_dict['pedestrians_forecast'] = df_pedestrians_forecasts
-    df_pedestrians_forecasts.to_sql(name='fact_h2o_pedestrians_forecast', con=configs_obj.sqlalchemy_engine
+    df_pedestrians_forecasts.to_sql(name='fact_h2o_pedestrians_forecast', con=configs_obj.database['sqlalchemy_engine']
                                 , schema='public', if_exists='replace', index=False, index_label=False)
     print(f'Saved Pedestrians Forecasts to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds')
     del df_pedestrians_forecasts
@@ -192,16 +192,16 @@ def auto_ml(dfs_obj):
     gc.collect()
     h2o.cluster().shutdown()
     automl_end = datetime.datetime.now()
-    automl_duration = (automl_end - automl_start).total_seconds()
+    automl_function_duration = (automl_end - automl_start).total_seconds()
     performance_query = f"""UPDATE public.data_model_performance_tbl
-        SET duration_seconds = {automl_duration} , files_processed = {1}
+        SET duration_seconds = {automl_function_duration} , files_processed = {1}
         , start_time = '{automl_start}', end_time = '{automl_end}'
         WHERE step_name = 'auto_ml';"""
-    cur = configs_obj.pg_engine.cursor()
+    cur = configs_obj.database['pg_engine'].cursor()
     cur.execute(performance_query)
-    configs_obj.pg_engine.commit()
+    configs_obj.database['pg_engine'].commit()
     print(
-        f'****************************\nDone AutoML Using Configuration Runtime: {configs_obj.run_time_seconds} Seconds, Forecast '
-        f'Horizon: {configs_obj.forecast_horizon}, and Forecast Frequency: { configs_obj.forecast_description}.\n'
-        f'Objects Dataframe Size is now: {sys.getsizeof(dfs_obj)} Byes.  AutoML duration in realtime is: {automl_duration} Seconds.\n****************************')
+        f'****************************\nDone AutoML Using Configuration Runtime: {configs_obj.auto_ml['run_time_seconds']} Seconds, Forecast '
+        f'Horizon: {configs_obj.auto_ml['forecast_horizon']}, and Forecast Frequency: { configs_obj.auto_ml['forecast_description']}.\n'
+        f'Objects Dataframe Size is now: {sys.getsizeof(dfs_obj)} Byes.  AutoML duration in realtime is: {automl_function_duration} Seconds.\n****************************')
     return dfs_obj

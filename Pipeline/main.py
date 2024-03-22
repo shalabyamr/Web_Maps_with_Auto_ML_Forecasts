@@ -7,12 +7,8 @@ from dataframes_creator import dfs_obj
 import maps_creator
 import os
 
-# Configure the Run Conditions:
-# 1. create_tables: boolean : If the Tables are already created, then set create_tables = False
-# 2. show_maps: boolean : To display maps in the browser after maps are built.
-# 3. If AutoML to be skipped.
-configs_obj.run_conditions = {'create_tables': False, 'show_maps': False, 'run_auto_ml': True
-            , 'map_types': ['folium', 'mapbox', 'turf']}
+# Initial Step is to read run-time configurations.
+read_configs()
 
 # First Step is to create Staging and Production Data.  This can be bypassed if the Tables are created
 if configs_obj.run_conditions['create_tables']:
@@ -20,8 +16,8 @@ if configs_obj.run_conditions['create_tables']:
     initialize_database()
     start = datetime.datetime.now()
     print('Executing Pipeline as of ' + str(start))
-    staging_tables_list = data_loader.create_staging_tables(sqlalchemy_engine=configs_obj.sqlalchemy_engine)
-    production_tables_list = data_loader.create_production_tables()
+    staging_tables_list = data_loader.create_staging_tables(sqlalchemy_engine=configs_obj.database['sqlalchemy_engine'])
+    production_tables_list = data_loader.create_production_tables(pg_engine=configs_obj.database['pg_engine'])
     df_production = pd.DataFrame(production_tables_list,
                         columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
     df_production['phase'] = 'production'
@@ -34,14 +30,14 @@ if configs_obj.run_conditions['create_tables']:
     pipeline_df = pd.concat([df_production, df_stage])
     pipeline_df.drop(pipeline_df.tail(1).index, inplace=True)
     del df_stage, df_production
-    if configs_obj.save_locally:
+    if configs_obj.run_conditions['save_locally']:
         print('Saving Data Model Performance {} in: {}'.format('data_model_performance.csv',
-                                                               configs_obj.parent_dir + '/Analytics/'))
-        pipeline_df.to_csv(configs_obj.parent_dir + '/Analytics/data_model_performance.csv', index=False,
+                                                               configs_obj.run_conditions['parent_dir'] + '/Analytics/'))
+        pipeline_df.to_csv(configs_obj.run_conditions['parent_dir'] + '/Analytics/data_model_performance.csv', index=False,
                            index_label=False)
 
     pipeline_df['step_name'] = pipeline_df['step_name'].apply(lambda x: os.path.basename(x))
-    pipeline_df.to_sql(name='data_model_performance_tbl', con=configs_obj.sqlalchemy_engine, if_exists='replace',
+    pipeline_df.to_sql(name='data_model_performance_tbl', con=configs_obj.database['sqlalchemy_engine'], if_exists='replace',
                        schema='public', index_label=False, index=False)
 
     # Track Performance of WebMaps and AutoML Steps.
@@ -53,9 +49,9 @@ if configs_obj.run_conditions['create_tables']:
        , ('WebMaps', 'turf', -1, '2002-05-01 00:00:00.0000', '2002-03-15 13:59:12.498894', -1)
        , ('WebMaps', 'auto_ml', -1, '2002-05-01 00:00:00.0000', '2002-03-15 13:59:12.498894', -1)
        , ('WebMaps', 'create_dataframes', -1, '2002-05-01 00:00:00.0000', '2024-03-15 13:59:12.498894', -1);"""
-    cur = configs_obj.pg_engine.cursor()
+    cur = configs_obj.database['pg_engine'].cursor()
     cur.execute(webmaps_query)
-    configs_obj.pg_engine.commit()
+    configs_obj.database['pg_engine'].commit()
     end = datetime.datetime.now()
     total_seconds = (end - start).total_seconds()
     print('Done Executing Pipeline as of {} in {} Seconds'.format(end, str(total_seconds)))

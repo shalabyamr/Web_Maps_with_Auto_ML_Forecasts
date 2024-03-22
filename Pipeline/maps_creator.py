@@ -173,17 +173,17 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                               min_speed=1, position="topleft", auto_play=True, overlay=True
                               , display_index=False, show=True, control=True, name='Traffic Animation').add_to(animated_traffic_group).add_to(toronto_map)
             # End of Populating the Map ##
-            toronto_map.save(configs_obj.parent_dir+'/Maps/Folium_Toronto.html')
+            toronto_map.save(configs_obj.run_conditions['parent_dir']+'/Maps/Folium_Toronto.html')
             folium_end = datetime.datetime.now()
             folium_duration = (folium_end - folium_start).total_seconds()
             performance_query = f"""UPDATE public.data_model_performance_tbl
                 SET duration_seconds = {folium_duration} , files_processed = {9}
                 , start_time = '{folium_start}', end_time = '{folium_end}'
                 WHERE step_name = 'folium';"""
-            cur = configs_obj.pg_engine.cursor()
+            cur = configs_obj.database['pg_engine'].cursor()
             cur.execute(performance_query)
-            configs_obj.pg_engine.commit()
-            toronto_map.save(configs_obj.parent_dir + '/Maps/Folium_Toronto.html')
+            configs_obj.database['pg_engine'].commit()
+            toronto_map.save(configs_obj.run_conditions['parent_dir'] + '/Maps/Folium_Toronto.html')
             print(f'Done Generating the Folium Map in {folium_duration} Seconds')
             del folium_end, folium_duration, folium_start, performance_query
             gc.collect()
@@ -203,7 +203,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             if show:
                 fig_air_quality_values.show()
 
-            fig_air_quality_values.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Air_Quality.html')
+            fig_air_quality_values.write_html(configs_obj.run_conditions['parent_dir'] + '/Maps/Mapbox_Air_Quality.html')
 
             fig_vehicle_heatmap = px.density_mapbox(dfs_obj.geopandas_dfs['fact_gta_traffic_proj']
                                         , lat=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].geom.y
@@ -213,7 +213,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             if show:
                 fig_vehicle_heatmap.show()
 
-            fig_vehicle_heatmap.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Vehicle_HeatMap.html')
+            fig_vehicle_heatmap.write_html(configs_obj.run_conditions['parent_dir'] + '/Maps/Mapbox_Vehicle_HeatMap.html')
 
             fig_pedestrian_heatmap = px.density_mapbox(dfs_obj.geopandas_dfs['fact_gta_traffic_proj']
                                         , lat=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].geom.y
@@ -223,7 +223,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             if show:
                 fig_pedestrian_heatmap.show()
 
-            fig_pedestrian_heatmap.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Pedestrian_HeatMap.html')
+            fig_pedestrian_heatmap.write_html(configs_obj.run_conditions['parent_dir'] + '/Maps/Mapbox_Pedestrian_HeatMap.html')
 
             fig_traffic_volume = px.scatter_mapbox(dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].dropna()
                                             , lat=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].dropna().geom.y
@@ -233,7 +233,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             if show:
                 fig_traffic_volume.show()
 
-            fig_traffic_volume.write_html(configs_obj.parent_dir + '/Maps/Mapbox_Traffic_Volume.html')
+            fig_traffic_volume.write_html(configs_obj.run_conditions['parent_dir'] + '/Maps/Mapbox_Traffic_Volume.html')
 
             mapbox_end = datetime.datetime.now()
             mapbox_duration = (mapbox_end - mapbox_start).total_seconds()
@@ -241,9 +241,9 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 SET duration_seconds = {mapbox_duration} , files_processed = {9}
                 , start_time = '{mapbox_start}', end_time = '{mapbox_end}'
                 WHERE step_name = 'mapbox';"""
-            cur = configs_obj.pg_engine.cursor()
+            cur = configs_obj.database['pg_engine'].cursor()
             cur.execute(performance_query)
-            configs_obj.pg_engine.commit()
+            configs_obj.database['pg_engine'].commit()
             print(f'Done Generating the Mapbox Map in {mapbox_duration} Seconds')
             del mapbox_end, mapbox_duration, mapbox_start, performance_query
             gc.collect()
@@ -269,7 +269,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             for point in points:
                 marker = i_Marker(location=[point[1], point[0]])
                 m.add_layer(marker)
-            m.save(outfile=configs_obj.parent_dir+'/Maps/Turf_gta_traffic.html')
+            m.save(outfile=configs_obj.run_conditions['parent_dir']+'/Maps/Turf_gta_traffic.html')
             turf_end = datetime.datetime.now()
             turf_total_seconds = (turf_end - turf_start).total_seconds()
             print(f'Done Generating Turf Map in {turf_total_seconds} Seconds')
@@ -279,9 +279,9 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             SET duration_seconds = {turf_duration} , files_processed = {9}
             , start_time = '{turf_start}', end_time = '{turf_end}'
             WHERE step_name = 'turf';"""
-            cur = configs_obj.pg_engine.cursor()
+            cur = configs_obj.database['pg_engine'].cursor()
             cur.execute(performance_query)
-            configs_obj.pg_engine.commit()
+            configs_obj.database['pg_engine'].commit()
             del turf_start, turf_end, turf_duration, performance_query
             gc.collect()
 
