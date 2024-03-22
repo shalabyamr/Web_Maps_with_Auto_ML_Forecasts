@@ -6,6 +6,7 @@ from ipyleaflet import Map as i_Map, GeoJSON as i_GeoJSON, LayersControl as i_La
 import gc
 import pandas as pd
 import altair as alt
+import webbrowser
 
 # Creates the three map types (Mapbox, Turf, and Folium) using
 # the previously-created dataframes object.
@@ -272,6 +273,8 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 marker = i_Marker(location=[point[1], point[0]])
                 m.add_layer(marker)
             m.save(outfile=configs_obj.run_conditions['parent_dir']+'/Maps/Turf_gta_traffic.html')
+            if show:
+                webbrowser.open(url=configs_obj.run_conditions['parent_dir']+'/Maps/Turf_gta_traffic.html', new=2)
             turf_end = datetime.datetime.now()
             turf_total_seconds = (turf_end - turf_start).total_seconds()
             print(f'Done Generating Turf Map in {turf_total_seconds} Seconds')
