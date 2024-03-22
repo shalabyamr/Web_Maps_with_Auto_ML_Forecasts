@@ -186,6 +186,8 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             toronto_map.save(configs_obj.run_conditions['parent_dir'] + '/Maps/Folium_Toronto.html')
             print(f'Done Generating the Folium Map in {folium_duration} Seconds')
             del folium_end, folium_duration, folium_start, performance_query
+            if show:
+                toronto_map.show_in_browser()
             gc.collect()
 
         # Mapbox Specific Code
