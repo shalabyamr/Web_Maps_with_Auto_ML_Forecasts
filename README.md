@@ -1,11 +1,12 @@
 <!-- TOC -->
 * [Objective](#objective)
+* [§0.Setup:](#0setup-)
+  * [§0.1 Config.ini](#01-configini)
+  * [§0.2: Python Requirements](#02-python-requirements)
+  * [§0.3 Execution](#03-execution)
 * [Pipeline](#pipeline)
   * [§0.1 Flow](#01-flow)
   * [§0.2 Execution Time](#02-execution-time)
-  * [§1.Setup: Config.ini](#1setup-configini)
-  * [§2. Python Requirements](#2-python-requirements)
-  * [§3. Execution](#3-execution)
 * [Pipeline Design](#pipeline-design)
   * [1. Staging (Extraction) Layer](#1-staging-extraction-layer)
     * [§1. Monthly Data Web Scraping](#1-monthly-data-web-scraping)
@@ -30,7 +31,67 @@
 
 
 # Objective
-To complement Government of Canada Weather Stations Data, both actual and forecasted, with ArcGIS Traffic for a unified, geospatial analysis powered by a single, automated pipeline.
+To create interactive WebMaps embedded with Auto Machine Learning Layer with little to no user input from nearly-live data for a unified, geospatial analysis powered by one single, automated pipeline.
+
+# §0.Setup: 
+## §0.1 Config.ini
+The **ONLY** file that requires user input is _**Config.ini**_ in _**Pipeline**_ folder.  
+* **postgres_db**:
+   - Enter the database credentials without quotation marks 
+
+ 
+ - **auto_ml**:
+   * **run_time_seconds**: accepts an integer greater than or equal to 0. The default duration is 0 for unlimited execution time till models are constructed.<br/><br/>
+   * **forecast_horizon**: accepts an integer greater than 0 which is the 'unit' time needed to forecast ahead of the last reported date per weather, traffic, and pedestrian stations.<br/><br/>
+
+   * **forecast_frequency**: sets the forecast frequency to generate the number of 'units' of the forecast horizon.
+     - The values of Hour, Hourly, Day, Daily, Month, Monthly, Year, Yearly, Annual, Annually, Quarter, Quarterly.</br></br>
+
+ - **api_tokens**:
+   * follows the convention _platform_name_ = _token_ without quotation marks. The starting example mapbox = __token__ </br></br>
+
+ - **run_conditions**:
+   * **save_locally**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder.</br></br>
+   * **parent_dir**: The path of the root folder without quotation marks.</br></br>
+   * **create_tables**: Boolean Value _True_ or _False_.
+     * This creates the database tables from web scraping to ingestion. 
+     * If the database tables are already created, they get dropped and web scraping is initiated.</br></br>
+   * **show_maps**: Boolean Value _True_ or _False_. 
+     * Determines if the generated web to launch in the web browser as new tabs.</br></br>
+   * **run_auto_ml**: Boolean Value _True_ or _False_.
+     * Determines if the Predictions are to be embedded into the maps or skipped. If skipped, the maps will contain the web scraped data without the prediction layers.</br></br>
+   * **map_types**: comma-seperated values of Turf, Mapbox, Folium.
+     * The inputs are not case sensitive, without quotation marks, and specifies the desired map types.
+
+
+Congfig.ini Contents:
+
+| key   |    [postgres_db]     | [auto_ml]                  | [api_tokens] | [run_conditions]                                        |
+|-------|:--------------------:|----------------------------|--------------|---------------------------------------------------------|
+| value |   host = localhost   | run_time_seconds = 300     | mapbox = ... | save_locally = False                                    |
+| value | db_name   = postgres | forecast_horizon = 30      |              | parent_dir = /Users/amr/PycharmProjects/ggr_472_project |
+| value |   user = postgres    | forecast_frequency = Daily |              | create_tables = False                                   |
+| value | password = postgres  |                            |              | show_maps = False                                       |
+| value |     port = 5432      |                            |              | run_auto_ml = False                                     |
+| value |                      |                            |              | map_types = folium, mapbox, turf                        |
+
+## §0.2: Python Requirements
+You need to sync the enviroment python requirements to the following packages:
+* pandas~=2.1.3
+* requests~=2.31.0
+* SQLAlchemy~=2.0.23
+* rpy2~=3.5.14
+* wget~=3.2
+* beautifulsoup4~=4.12.2
+* geopandas~=0.14.1
+* locust~=2.24.0
+* h2o~=3.44.0.3
+* ipyleaflet~=0.18.2
+* altair~=5.2.0
+* h2o~=3.44.0.3
+
+## §0.3 Execution
+After modifying [Config.ini](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/config.ini), run the python script [main.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/main.py).
 
 # Pipeline
 ## §0.1 Flow
@@ -39,33 +100,6 @@ To complement Government of Canada Weather Stations Data, both actual and foreca
 ## §0.2 Execution Time
 ![Report](Report/pipeline_execution_time.png)
 
-## §1.Setup: Config.ini
-The only file that requires user input is _**Config.ini**_ in _**Pipeline**_ folder.  Update the database login credentials and the [parent_dir](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/config.ini) **_parent_dir_** without quotations as below.
-
-Congfig.ini Contents:
-
-|    [postgres_db]     |                  [save_files]                  |
-|:--------------------:|------------------------------------------------|
-|   host = localhost   |           save_locally_flag = False            |
-| db_name   = postgres | parent_dir = /Users/amr/PycharmProjects/ggr473 |
-|   user = postgres    |                                                |
-| password = postgres  |                                                |
-|     port = 5432      |                                                |
-
-## §2. Python Requirements
-
-You need to have the following packages installed.
-* pandas~=2.1.3
-* requests~=2.31.0
-* SQLAlchemy~=2.0.23
-* rpy2~=3.5.14
-* wget~=3.2
-* beautifulsoup4~=4.12.2
-* geopandas~=0.14.1
-
-
-## §3. Execution
-After modifying [Config.ini](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/config.ini), run the python script [execute_pipeline.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/execute_pipeline.py).
 
 # Pipeline Design
 
