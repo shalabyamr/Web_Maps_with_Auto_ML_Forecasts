@@ -91,7 +91,7 @@ You need to sync the enviroment python requirements to the following packages:
 * h2o~=3.44.0.3
 
 ## §0.3 Execution
-After modifying [Config.ini](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/config.ini), run the python script [main.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/main.py).
+After modifying [Config.ini](Pipeline/config.ini), run the python script [main.py](Pipeline/main.py).
 
 # Pipeline
 ## §0.1 Flow
@@ -401,7 +401,7 @@ The staging table _stg_geo_names_from the downloaded and extracted zip file of t
 
 
 ### §5. ArcGIS Toronto and Peel Traffic Count
-The staging table _stg_gta_traffic_arcgis_ obtained from ArcGIS Toronto and Peel Traffic Data(https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da) was ingested into the production table _FACT_GTA_TRAFFIC_ARCGIS_ in PUBLIC schema by [data_loader.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_loader.py) with the following two conditions:
+The staging table _stg_gta_traffic_arcgis_ obtained from ArcGIS Toronto and Peel Traffic Data(https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da) was ingested into the production table _FACT_GTA_TRAFFIC_ARCGIS_ in PUBLIC schema by [data_loader.py](Pipeline/data_loader.py) with the following two conditions:
 
 * Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
 * The condition _ROW_NUMBER() over (PARTITION BY objectid ORDER BY COUNT_DATE DESC) =1_ to eliminate the duplicated records within the provided dates.
@@ -429,7 +429,7 @@ The staging table _stg_gta_traffic_arcgis_ obtained from ArcGIS Toronto and Peel
 
 
 ### §6. Data Model Performance
-After all the staging tables, sql scripts, and hard extractions made, _data_model_performance_tbl_ in _PUBLIC_ Schema provides insight on duration, scope, and complexity of the execution steps within each of the Extraction, Transformation, and Loading Phases which are tracked by [execute_pipeline.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/execute_pipeline.py).
+After all the staging tables, sql scripts, and hard extractions made, _data_model_performance_tbl_ in _PUBLIC_ Schema provides insight on duration, scope, and complexity of the execution steps within each of the Extraction, Transformation, and Loading Phases which are tracked by [execute_pipeline.py](Pipeline/main.py).
 
 | Column           |    Data Type     |
 |------------------|:----------------:|
@@ -473,7 +473,7 @@ After all the staging tables, sql scripts, and hard extractions made, _data_mode
 | production |      combine_air_data.sql       |        0.521         |    23:48.8     |   23:49.3    |          1          |
 
 ### §7. fact_air_data_proj
-The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [data_transformer.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_transformer.py) with the inherited properties of the geolocation name identifiers from the curated table _dim_geo_names_.
+The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [data_transformer.py](Pipeline/data_transformer.py) with the inherited properties of the geolocation name identifiers from the curated table _dim_geo_names_.
 
 | Column                           |         Data Type          |
 |----------------------------------|:--------------------------:|
@@ -500,7 +500,7 @@ The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version 
 
 
 ### §8. fact_gta_traffic_proj
-The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_gta_traffic_arcgis via [data_transformer.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_transformer.py) with additional geometry column 'geom' created in Python via [data_transformer.py](Pipeline/data_transformer.py).
+The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_gta_traffic_arcgis via [data_transformer.py](Pipeline/data_transformer.py) with additional geometry column 'geom' created in Python via [data_transformer.py](Pipeline/data_transformer.py).
 
 |         Column         |         Data Type          |
 |:----------------------:|:--------------------------:|
@@ -539,7 +539,7 @@ The table _fact_hourly_avg_ contains the calculated means for the hourly segment
 | evening_avg |      double precision      |
 
 ### §10. fact_weekdays_avg
-The table _fact_weekdays_avg_ contains the calculated means for the weekdays per station and converted POSTGIS table via [data_loader.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_loader.py) that executes the query [create_post_proj_tbl.sql](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/SQL/create_postgis_proj_tbl.sql).
+The table _fact_weekdays_avg_ contains the calculated means for the weekdays per station and converted POSTGIS table via [data_loader.py](Pipeline/data_loader.py) that executes the query [create_post_proj_tbl.sql](Pipeline/data_transformer.sql).
 
 |    Column    |       Data Type        |
 |:------------:|:----------------------:|
