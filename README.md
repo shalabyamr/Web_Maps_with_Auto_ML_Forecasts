@@ -243,14 +243,14 @@ which ingests the Toronto and Peel Traffic Counts with latitude and longitude pr
 |  f8hr_vehicle_volume   | double precision |
 | f8hr_pedestrian_volume | double precision |
 |      last_updated      |    timestamp     |
-|     download_link     |       text       |
+|     download_link      |       text       |
 |      src_filename      |       text       |
 
 
 ## 2. Transformation Layer
 ### §1. Monthly Air Data Transpose
 The staging table _stg_monthly_air_data_transpose_ created from transposing the Ontario monthly air quality (https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/) to be ingested and converted 
-into the **second** production table "**FACT_MONTHLY_AIR_DATA_TRANSPOSE** in _**"PUBLIC"**_ Schema via the execution of [data_transformation.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_transformation.py) with the following two conditions:
+into the **second** production table "**FACT_MONTHLY_AIR_DATA_TRANSPOSE** in _**"PUBLIC"**_ Schema via the execution of [data_transformer.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_transformer.py) with the following two conditions:
 
 * Added column "_last_inserted_" converted from UTC to EST to capture the time of insertion into production schema
 * The condition _ROW_NUMBER() OVER(PARTITION BY "the_date","hours_utc" ORDER BY hours_utc DESC) = 1_to eliminate duplicate records within any given date.
@@ -473,7 +473,7 @@ After all the staging tables, sql scripts, and hard extractions made, _data_mode
 | production |      combine_air_data.sql       |        0.521         |    23:48.8     |   23:49.3    |          1          |
 
 ### §7. fact_air_data_proj
-The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [data_transformation.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_transformation.py) with the inherited properties of the geolocation name identifiers from the curated table _dim_geo_names_.
+The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_air_data with additional geometry column 'geom' created in Python via [data_transformer.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_transformer.py) with the inherited properties of the geolocation name identifiers from the curated table _dim_geo_names_.
 
 | Column                           |         Data Type          |
 |----------------------------------|:--------------------------:|
@@ -500,7 +500,7 @@ The table _fact_air_data_proj_ in _PUBLIC_ schema serves as the POSTGIS Version 
 
 
 ### §8. fact_gta_traffic_proj
-The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_gta_traffic_arcgis via [data_transformation.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_transformation.py) with additional geometry column 'geom' created in Python via [create_proj_tables.py](Pipeline/create_proj_tables.py).
+The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Version of fact_gta_traffic_arcgis via [data_transformer.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_transformer.py) with additional geometry column 'geom' created in Python via [data_transformer.py](Pipeline/data_transformer.py).
 
 |         Column         |         Data Type          |
 |:----------------------:|:--------------------------:|
@@ -525,7 +525,7 @@ The table _fact_gta_traffic_proj_ in _PUBLIC_ schema serves as the POSTGIS Versi
 |     last_inserted      |         timestamp          |
 
 ### §9. fact_hourly_avg
-The table _fact_hourly_avg_ contains the calculated means for the hourly segments per station and converted POSTGIS table via [create_proj_tables.py](Pipeline/Fcreate_proj_tables.py).
+The table _fact_hourly_avg_ contains the calculated means for the hourly segments per station and converted POSTGIS table via [data_transformer.py](Pipeline/data_transformer.py).
 
 |   Column    |         Data Type          |
 |:-----------:|:--------------------------:|
