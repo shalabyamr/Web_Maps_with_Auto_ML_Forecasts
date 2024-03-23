@@ -66,14 +66,14 @@ The **ONLY** file that requires user input is _**Config.ini**_ in _**Pipeline**_
 
 Congfig.ini Contents:
 
-| key   |    [postgres_db]     | [auto_ml]                  | [api_tokens] | [run_conditions]                                        |
-|-------|:--------------------:|----------------------------|--------------|---------------------------------------------------------|
-| value |   host = localhost   | run_time_seconds = 300     | mapbox = ... | save_locally = False                                    |
-| value | db_name   = postgres | forecast_horizon = 30      |              | parent_dir = /Users/amr/PycharmProjects/ggr_472_project |
-| value |   user = postgres    | forecast_frequency = Daily |              | create_tables = False                                   |
-| value | password = postgres  |                            |              | show_maps = False                                       |
-| value |     port = 5432      |                            |              | run_auto_ml = False                                     |
-| value |                      |                            |              | map_types = folium, mapbox, turf                        |
+|    [postgres_db]     | [auto_ml]                  | [api_tokens] | [run_conditions]                                        |
+|:--------------------:|----------------------------|--------------|---------------------------------------------------------|
+|   host = localhost   | run_time_seconds = 300     | mapbox = ... | save_locally = False                                    |
+| db_name   = postgres | forecast_horizon = 30      |              | parent_dir = /Users/amr/PycharmProjects/ggr_472_project |
+|   user = postgres    | forecast_frequency = Daily |              | create_tables = False                                   |
+| password = postgres  |                            |              | show_maps = False                                       |
+|     port = 5432      |                            |              | run_auto_ml = False                                     |
+|                      |                            |              | map_types = folium, mapbox, turf                        |
 
 ## §0.2: Python Requirements
 You need to sync the enviroment python requirements to the following packages:
