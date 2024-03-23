@@ -35,7 +35,7 @@ To create interactive WebMaps embedded with Auto Machine Learning Layer with lit
 
 # §0.Setup: 
 ## §0.1 Config.ini
-The **ONLY** file that requires user input is _**Config.ini**_ in _**Pipeline**_ folder.  
+The **ONLY** file that requires user input is [_**Config.ini**_](Pipeline/config.ini) in [_**Pipeline**_](Pipeline/) folder.  
 * **postgres_db**:
    - Enter the database credentials without quotation marks 
 
