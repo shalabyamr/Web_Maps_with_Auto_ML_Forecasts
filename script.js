@@ -1,21 +1,30 @@
 // Retrieve button and text display elements
-const yesButton = document.getElementById("btn-yes");
-const noButton = document.getElementById("btn-no");
-const yesCountDisplay = document.getElementById("count-yes");
-const noCountDisplay = document.getElementById("count-no");
+const foliumButton = document.getElementById("btn-folium");
+const mapboxButton = document.getElementById("btn-mapbox");
+const turfButton = document.getElementById("btn-turf");
+const foliumCountDisplay = document.getElementById("count-folium");
+const mapboxCountDisplay = document.getElementById("count-mapbox");
+const turfCountDisplay = document.getElementById("count-turf");
+
 
 // Initialize count variables
-let countYes = 0;
-let countNo = 0;
+let countFolium = 0;
+let countMapbox = 0;
+let countTurf = 0;
 
 // Use event listeners to track button clicks
 // Increment respective count variables and update corresponding display elements on webpage
-yesButton.addEventListener("click", function () {
-  countYes++;
-  yesCountDisplay.innerHTML = countYes;
+foliumButton.addEventListener("click", function () {
+  countFolium++;
+  foliumCountDisplay.innerHTML = countFolium;
 });
 
-noButton.addEventListener("click", function () {
-  countNo++;
-  noCountDisplay.innerHTML = countNo;
+mapboxButton.addEventListener("click", function () {
+  countMapbox++;
+  mapboxCountDisplay.innerHTML = countMapbox;
+});
+
+turfButton.addEventListener("click", function () {
+  countTurf++;
+  turfCountDisplay.innerHTML = countTurf;
 });
