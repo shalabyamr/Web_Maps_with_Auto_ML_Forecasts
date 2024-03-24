@@ -6,6 +6,8 @@ import dataframes_creator
 from dataframes_creator import dfs_obj
 import maps_creator
 import os
+import warnings
+warnings.filterwarnings("ignore")
 
 # Initial Step is to read run-time configurations.
 read_configs()

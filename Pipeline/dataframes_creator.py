@@ -129,7 +129,7 @@ def auto_ml(dfs_obj):
         h_df_preds['predicted_traffic'] = predicted_traffic
         df_preds = h_df_preds.as_data_frame()
         df_preds['future_date'] = pd.to_datetime(df_preds['count_date'], unit='ms').dt.date
-        df_preds['predicted_traffic'] = int(round(df_preds['predicted_traffic'],0))
+        df_preds['predicted_traffic'] = df_preds['predicted_traffic'].apply(lambda x: int(round(x,0)))
         df_preds = df_preds[['objectid', 'tcs__' , 'main', 'latitude', 'longitude', 'future_date', 'predicted_traffic']]
         df_traffic_forecasts = df_traffic_forecasts._append(df_preds)
 
@@ -178,7 +178,7 @@ def auto_ml(dfs_obj):
         h_df_preds['predicted_pedestrians'] = predicted_pedestrians
         df_preds = h_df_preds.as_data_frame()
         df_preds['future_date'] = pd.to_datetime(df_preds['count_date'], unit='ms').dt.date
-        df_preds['predicted_pedestrians'] = int(round(df_preds['predicted_pedestrians'],0))
+        df_preds['predicted_pedestrians'] = df_preds['predicted_pedestrians'].apply(lambda x: int(round(x,0)))
         df_preds = df_preds[['objectid', 'tcs__' , 'main', 'latitude', 'longitude', 'future_date', 'predicted_pedestrians']]
         df_pedestrians_forecasts = df_pedestrians_forecasts._append(df_preds)
 

@@ -220,8 +220,13 @@ def extract_monthly_data(sqlalchemy_engine):
             df['download_link'] = download_link
             df['src_filename'] = filename
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
+            if i == 1:
+                df.to_sql(name='stg_monthly_air_data', con=configs_obj.database['sqlalchemy_engine'], if_exists='replace',
+                      schema='stage', index_label=False, index=False)
+
             df.to_sql(name='stg_monthly_air_data', con=configs_obj.database['sqlalchemy_engine'], if_exists='append',
                       schema='stage', index_label=False, index=False)
+
             # Write content in CSV file
             if configs_obj.run_conditions['save_locally']:
                 if i == 1:
@@ -275,6 +280,13 @@ def extract_monthly_forecasts(sqlalchemy_engine):
             df["download_link"] = download_link
             df['src_filename'] = filename
             print('Run: , ', i, 'Inserting File: ', filename, 'Into Database.')
+            if i == 1:
+                df.to_sql(name='stg_monthly_forecasts', con=configs_obj.database['sqlalchemy_engine'],
+                          if_exists='replace',
+                          schema='stage', index_label=False, index=False)
+
+            df.to_sql(name='stg_monthly_forecasts', con=configs_obj.database['sqlalchemy_engine'], if_exists='append',
+                      schema='stage', index_label=False, index=False)
             df.to_sql(name='stg_monthly_forecasts', con=configs_obj.database['sqlalchemy_engine'], if_exists='append',
                       schema='stage', index_label=False, index=False)
             # Write ALL Forecasts into one file
@@ -350,7 +362,7 @@ def extract_geo_names_data(sqlalchemy_engine):
     df['last_updated'] = datetime.datetime.now()
     df['download_link'] = download_link
     df['src_filename'] = csv_filename
-    df.to_sql(name='stg_geo_names', con=configs_obj.database['sqlalchemy_engine'], if_exists='append', schema='stage',
+    df.to_sql(name='stg_geo_names', con=configs_obj.database['sqlalchemy_engine'], if_exists='replace', schema='stage',
               index_label=False, index=False)
     if not configs_obj.run_conditions['save_locally']:
         os.remove(csv_filename)
@@ -374,7 +386,7 @@ def extract_gta_traffic_arcgis(sqlalchemy_engine):
     df['last_updated'] = datetime.datetime.now()
     df['download_link'] = download_link
     df['src_filename'] = filename
-    df.to_sql(name='stg_gta_traffic_arcgis', con=configs_obj.database['sqlalchemy_engine'], if_exists='append', schema='stage',
+    df.to_sql(name='stg_gta_traffic_arcgis', con=configs_obj.database['sqlalchemy_engine'], if_exists='replace', schema='stage',
               index_label=False, index=False)
     if configs_obj.run_conditions['save_locally']:
         df.to_csv(configs_obj.run_conditions['parent_dir'] + '/Data/' + 'ArcGIS_Toronto_and_Peel_Traffic.csv', index=False,
