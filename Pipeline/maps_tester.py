@@ -1,4 +1,6 @@
 from locust import HttpUser, task
+import warnings
+warnings.filterwarnings("ignore")
 
 class HelloWorldUser(HttpUser):
     @task

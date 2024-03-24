@@ -1,7 +1,6 @@
 import datetime
 import gc
 import webbrowser
-
 import altair as alt
 import folium
 import pandas as pd
@@ -9,6 +8,8 @@ import plotly.express as px
 from folium.plugins import MarkerCluster as f_MarkerCluster, HeatMap as f_HeatMap, HeatMapWithTime as f_HeatMapWithTime
 from ipyleaflet import Map as i_Map, Marker as i_Marker, LayersControl as i_LayerControl, MeasureControl as i_MeasureControl
 from ipyleaflet import SearchControl as i_SearchControl, MarkerCluster as i_MarkerCluster, basemaps as i_basemaps
+import warnings
+warnings.filterwarnings("ignore")
 
 
 # Creates the three map types (Mapbox, Turf, and Folium) using

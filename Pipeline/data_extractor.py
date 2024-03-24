@@ -1,5 +1,4 @@
 import requests
-import warnings
 import pandas as pd
 import datetime
 import psycopg2 as pg
@@ -12,7 +11,7 @@ import sys
 from rpy2 import robjects as ro
 from bs4 import BeautifulSoup
 import rpy2.robjects.packages as rpackages
-
+import warnings
 warnings.filterwarnings("ignore")
 
 # Generic Class is used to instantiate the Configurations Object.

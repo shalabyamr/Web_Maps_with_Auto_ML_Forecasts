@@ -7,6 +7,8 @@ from h2o.automl import H2OAutoML
 from data_extractor import configs_obj
 import sys
 h2o.init()
+import warnings
+warnings.filterwarnings("ignore")
 
 
 # A Generic Class to store the needed dataframes of three main types:
