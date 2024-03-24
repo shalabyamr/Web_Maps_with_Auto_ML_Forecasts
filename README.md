@@ -100,6 +100,9 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [main.p
 ## §0.2 Execution Time
 ![Report](Report/pipeline_execution_time.jpg)
 
+## §0.3 Auto Machine Learning Layer
+![Report](Report/auto_ml_layer.jpg)
+
 
 # Pipeline Design
 
