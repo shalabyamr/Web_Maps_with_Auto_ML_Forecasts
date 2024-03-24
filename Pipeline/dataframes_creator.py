@@ -24,7 +24,7 @@ class GenericClass():
 dfs_obj = GenericClass()
 
 # Initiate H2O Cluster
-h2o.init(max_mem_size_GB=configs_obj.auto_ml['max_mem_size_GB'], )
+h2o.init()
 
 def create_dataframes(configs_obj):
     dfs_start = datetime.datetime.now()

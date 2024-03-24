@@ -41,7 +41,6 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
 
  
  - **auto_ml**:
-   * **min_mem_size_GB**: accepts an Integer value for memory allocated to H2O Virtual Cluster.</br></br>
    * **run_time_seconds**: accepts an integer greater than or equal to 0. The default duration is 0 for unlimited execution time till models are constructed.<br/><br/>
    * **forecast_horizon**: accepts an integer greater than 0 which is the 'unit' time needed to forecast ahead of the last reported date per weather, traffic, and pedestrian stations.<br/><br/>
 
@@ -72,7 +71,7 @@ Congfig.ini Contents:
 |   host = localhost   | run_time_seconds = 300     | mapbox = ... | save_locally = False                                    |
 | db_name   = postgres | forecast_horizon = 30      |              | parent_dir = /Users/amr/PycharmProjects/ggr_472_project |
 |   user = postgres    | forecast_frequency = Daily |              | create_tables = False                                   |
-| password = postgres  | min_mem_size_GB = 4        |              | show_maps = False                                       |
+| password = postgres  |                            |              | show_maps = False                                       |
 |     port = 5432      |                            |              | run_auto_ml = False                                     |
 |                      |                            |              | map_types = folium, mapbox, turf                        |
 
