@@ -58,13 +58,13 @@ def read_configs():
     # that can be hourly, daily, monthly, quarterly, or yearly.
 # here
     try:
-        configs_obj.auto_ml['min_mem_size_GB'] = int(config['auto_ml']['min_mem_size_GB'])
+        configs_obj.auto_ml['min_mem_size_GB'] = int(config['auto_ml']['max_mem_size_GB'])
         if configs_obj.auto_ml['min_mem_size_GB'] < 1:
-            print(f'Error! Config.ini min_mem_size_GB needs to be >= 1. The value given is {config['auto_ml']['min_mem_size_GB']}')
+            print(f'Error! Config.ini max_mem_size_GB needs to be >= 1. The value given is {config['auto_ml']['max_mem_size_GB']}')
             SystemExit(1)
     except Exception as e:
         print(f'Config.ini Error Reading H2O Memory Size Settings: {e}')
-        print(f"['auto_ml']['min_mem_size_GB'] Needs to be an Integer >= 1 instead of {config['auto_ml']['min_mem_size_GB']}.")
+        print(f"['auto_ml']['max_mem_size_GB'] Needs to be an Integer >= 1 instead of {config['auto_ml']['max_mem_size_GB']}.")
         sys.exit(1)
     try:
         configs_obj.auto_ml['run_time_seconds'] = int(config['auto_ml']['run_time_seconds'])
