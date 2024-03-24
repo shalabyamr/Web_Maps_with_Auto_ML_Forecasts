@@ -6,7 +6,6 @@ import geopandas as gpd
 from h2o.automl import H2OAutoML
 from data_extractor import configs_obj
 import sys
-h2o.init()
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -24,7 +23,9 @@ class GenericClass():
 
 dfs_obj = GenericClass()
 
-#
+# Initiate H2O Cluster
+h2o.init(min_mem_size_GB=configs_obj.auto_ml['min_mem_size_GB'])
+
 def create_dataframes(configs_obj):
     dfs_start = datetime.datetime.now()
     query_get_tables = """SELECT table_name FROM information_schema.tables
