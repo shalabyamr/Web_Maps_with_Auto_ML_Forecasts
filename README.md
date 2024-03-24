@@ -98,7 +98,7 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [main.p
 ![Report](Report/pipeline_steps.png)
 
 ## §0.2 Execution Time
-![Report](Report/pipeline_execution_time.png)
+![Report](Report/pipeline_execution_time.jpg)
 
 
 # Pipeline Design
