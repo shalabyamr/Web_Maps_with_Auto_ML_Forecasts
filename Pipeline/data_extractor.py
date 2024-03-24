@@ -69,8 +69,7 @@ def read_configs():
         configs_obj.auto_ml['forecast_horizon'] = int(config['auto_ml']['forecast_horizon'])
     except Exception as e:
         print('Config.ini Error Reading H2O Runtime Settings: {}'.format(e))
-        print("['auto_ml']['forecast_horizon'] Needs to be an Integer > 0 instead of {}.".format(
-            config['auto_ml']['forecast_horizon']))
+        print(f"['auto_ml']['forecast_horizon'] Needs to be an Integer > 0 instead of {config['auto_ml']['forecast_horizon']}.")
         sys.exit(1)
     try:
         configs_obj.auto_ml['forecast_frequency'] = str(config['auto_ml']['forecast_frequency']).upper()
@@ -178,11 +177,12 @@ def initialize_database():
             print('*****************************\nDone Initializing Database and Created Schema Stage.\n*****************************')
         except BaseException as exception:
             print('Failed to create schema!', exception)
-            sys.exit()
-        return configs_obj.database['sqlalchemy_engine'], configs_obj.database['pg_engine']
+            sys.exit(1)
+        return configs_obj
     except BaseException as exception:
         print('Error thrown by initialize_database()!, {} '.format(exception))
-        return exception
+        sys.exit(1)
+
 
 # Reads the monthly Air Quality Data from Government of Canada.
 def extract_monthly_data(sqlalchemy_engine):
