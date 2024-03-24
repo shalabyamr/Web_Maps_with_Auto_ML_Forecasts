@@ -128,6 +128,8 @@ def auto_ml(dfs_obj):
         predicted_traffic = leader_model.predict(h_df_preds)
         h_df_preds['predicted_traffic'] = predicted_traffic
         df_preds = h_df_preds.as_data_frame()
+        if configs_obj.auto_ml['forecast_description'] == 'HOURLY':
+            configs_obj.df_preds['future_date'] = pd.to_datetime(df_preds['count_date'], unit='ms')
         df_preds['future_date'] = pd.to_datetime(df_preds['count_date'], unit='ms').dt.date
         df_preds['predicted_traffic'] = df_preds['predicted_traffic'].apply(lambda x: int(round(x,0)))
         df_preds = df_preds[['objectid', 'tcs__' , 'main', 'latitude', 'longitude', 'future_date', 'predicted_traffic']]
@@ -177,6 +179,8 @@ def auto_ml(dfs_obj):
         predicted_pedestrians = leader_model.predict(h_df_preds)
         h_df_preds['predicted_pedestrians'] = predicted_pedestrians
         df_preds = h_df_preds.as_data_frame()
+        if configs_obj.auto_ml['forecast_description'] == 'HOURLY':
+            df_preds['future_date'] = pd.to_datetime(df_preds['count_date'], unit='ms')
         df_preds['future_date'] = pd.to_datetime(df_preds['count_date'], unit='ms').dt.date
         df_preds['predicted_pedestrians'] = df_preds['predicted_pedestrians'].apply(lambda x: int(round(x,0)))
         df_preds = df_preds[['objectid', 'tcs__' , 'main', 'latitude', 'longitude', 'future_date', 'predicted_pedestrians']]
@@ -189,7 +193,6 @@ def auto_ml(dfs_obj):
     print(f'Saved Pedestrians Forecasts to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds')
     del df_pedestrians_forecasts
     # End of Part 2 Pedestrians forecast
-    gc.collect()
     h2o.cluster().shutdown()
     automl_end = datetime.datetime.now()
     automl_function_duration = (automl_end - automl_start).total_seconds()
@@ -200,6 +203,7 @@ def auto_ml(dfs_obj):
     cur = configs_obj.database['pg_engine'].cursor()
     cur.execute(performance_query)
     configs_obj.database['pg_engine'].commit()
+    gc.collect()
     print(
         f'****************************\nDone AutoML Using Configuration Runtime: {configs_obj.auto_ml['run_time_seconds']} Seconds, Forecast '
         f'Horizon: {configs_obj.auto_ml['forecast_horizon']}, and Forecast Frequency: { configs_obj.auto_ml['forecast_description']}.\n'
