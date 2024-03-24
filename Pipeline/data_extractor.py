@@ -59,10 +59,12 @@ def read_configs():
     # that can be hourly, daily, monthly, quarterly, or yearly.
     try:
         configs_obj.auto_ml['run_time_seconds'] = int(config['auto_ml']['run_time_seconds'])
+        if configs_obj.auto_ml['run_time_seconds'] < 0:
+            print(f'Error! Config.ini run_time_seconds needs to be >= 0. The value given is {config['auto_ml']['run_time_seconds']}')
+            SystemExit(1)
     except Exception as e:
         print('Config.ini Error Reading H2O Runtime Settings: {}'.format(e))
-        print("['auto_ml']['run_time_seconds'] Needs to be an Integer > 0 instead of {}.".format(
-            config['auto_ml']['run_time_seconds']))
+        print(f"['auto_ml']['run_time_seconds'] Needs to be an Integer >= 0 instead of {config['auto_ml']['run_time_seconds']}.")
         sys.exit(1)
     try:
         configs_obj.auto_ml['forecast_horizon'] = int(config['auto_ml']['forecast_horizon'])
