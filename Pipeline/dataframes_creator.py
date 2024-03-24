@@ -206,9 +206,9 @@ def auto_ml(dfs_obj):
     cur = configs_obj.database['pg_engine'].cursor()
     cur.execute(performance_query)
     configs_obj.database['pg_engine'].commit()
-    gc.collect()
     print(
         f'****************************\nDone AutoML Using Configuration Runtime: {configs_obj.auto_ml['run_time_seconds']} Seconds, Forecast '
         f'Horizon: {configs_obj.auto_ml['forecast_horizon']}, and Forecast Frequency: { configs_obj.auto_ml['forecast_description']}.\n'
         f'Objects Dataframe Size is now: {sys.getsizeof(dfs_obj)} Byes.  AutoML duration in realtime is: {automl_function_duration} Seconds.\n****************************')
+    gc.collect()
     return dfs_obj
