@@ -5,6 +5,7 @@ import pandas as pd
 import dataframes_creator
 from dataframes_creator import dfs_obj
 import maps_creator
+from maps_tester import test_maps
 import os
 import warnings
 warnings.filterwarnings("ignore")
@@ -50,7 +51,8 @@ if configs_obj.run_conditions['create_tables']:
        , ('WebMaps', 'mapbox', -1, '2002-05-01 00:00:00.0000', '2002-03-15 13:59:12.498894', -1)
        , ('WebMaps', 'turf', -1, '2002-05-01 00:00:00.0000', '2002-03-15 13:59:12.498894', -1)
        , ('WebMaps', 'auto_ml', -1, '2002-05-01 00:00:00.0000', '2002-03-15 13:59:12.498894', -1)
-       , ('WebMaps', 'create_dataframes', -1, '2002-05-01 00:00:00.0000', '2024-03-15 13:59:12.498894', -1);"""
+       , ('WebMaps', 'create_dataframes', -1, '2002-05-01 00:00:00.0000', '2024-03-15 13:59:12.498894', -1)
+       , ('WebMaps', 'test_maps', -1, '2002-05-01 00:00:', '2024-03-15 13:59:12.498894',-1);"""
     cur = configs_obj.database['pg_engine'].cursor()
     cur.execute(webmaps_query)
     configs_obj.database['pg_engine'].commit()
@@ -79,4 +81,5 @@ maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj
                     , show=configs_obj.run_conditions['show_maps']
                     , add_auto_ml=configs_obj.run_conditions['run_auto_ml'])
 
-# Fourth Step: Test Load the Created HTML Maps
+# Fourth and Last Step: Test Load the Created HTML Maps
+test_maps(configs_obj=configs_obj)

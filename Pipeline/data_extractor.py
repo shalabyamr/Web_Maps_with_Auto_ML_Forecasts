@@ -21,6 +21,7 @@ class GenericClass:
         self.database = {}
         self.run_conditions = {}
         self.access_tokens = {}
+        self.parent_dir = str
     pass
 
 
