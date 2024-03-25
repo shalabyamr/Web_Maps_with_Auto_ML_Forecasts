@@ -64,7 +64,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                     , icon=folium.Icon(color=color, icon="info-sign")).add_to(mc)
             mc.add_to(air_quality_group)
 
-            # Here. Adding Graph for Air Quality Measures.
+            # Adding Graph for Air Quality Measures.
             for index, row in dfs_obj.pandas_dfs['fact_weekdays_avg'].iterrows():
                 df = dfs_obj.pandas_dfs['fact_weekdays_avg'][
                     dfs_obj.pandas_dfs['fact_weekdays_avg']['cgndb_id'] == row['cgndb_id']]
@@ -194,7 +194,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 # End of Part 2.
                 # end of AutoML Insertion
             f_HeatMapWithTime(dfs_obj.lists['traffic'], index=dfs_obj.lists['traffic'],
-                              min_speed=1, position="topleft", auto_play=True, overlay=True
+                              min_speed=1, position="topleft", auto_play=False, overlay=True
                               , display_index=False, show=True, control=True, name='Traffic Animation').add_to(
                 animated_traffic_group).add_to(toronto_map)
             # End of Populating the Map ##
