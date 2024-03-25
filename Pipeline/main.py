@@ -78,8 +78,9 @@ if configs_obj.run_conditions['run_auto_ml']:
 # layer will not be added to the map.
 maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj
                     , map_types=configs_obj.run_conditions['map_types']
-                    , show=configs_obj.run_conditions['show_maps']
                     , add_auto_ml=configs_obj.run_conditions['run_auto_ml'])
 
 # Fourth and Last Step: Test Load the Created HTML Maps
-test_maps(configs_obj=configs_obj)
+# Depending on Show: Boolean Value it each map type will launch in its own optimal
+# browser with the minimum loading time.
+test_maps(configs_obj=configs_obj, show_maps=configs_obj.run_conditions['show_maps'])

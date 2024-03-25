@@ -1,6 +1,5 @@
 import datetime
 import gc
-import webbrowser
 import altair as alt
 import folium
 import pandas as pd
@@ -15,7 +14,7 @@ warnings.filterwarnings("ignore")
 # Creates the three map types (Mapbox, Turf, and Folium) using
 # the previously-created dataframes object.
 # Also needs the configuration and dataframes objects.
-def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: []):
+def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
     # For tracking function performance and later stored in public.data_model_performance_tbl
     maps_start = datetime.datetime.now()
     for map_type in map_types:
@@ -211,8 +210,6 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
             toronto_map.save(configs_obj.run_conditions['parent_dir'] + '/Maps/Folium_Toronto.html')
             print(f'Done Generating the Folium Map in {folium_duration} Seconds')
             del folium_end, folium_duration, folium_start, performance_query
-            if show:
-                toronto_map.show_in_browser()
             gc.collect()
 
         # Mapbox Specific Code
@@ -226,21 +223,13 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                                                        , height=500, zoom=10)
             fig_air_quality_values.update_layout(mapbox_style="open-street-map")
             fig_air_quality_values.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-
-            if show:
-                fig_air_quality_values.show()
-
             fig_air_quality_values.write_html(
                 configs_obj.run_conditions['parent_dir'] + '/Maps/Mapbox_Air_Quality.html')
-
             fig_vehicle_heatmap = px.density_mapbox(dfs_obj.geopandas_dfs['fact_gta_traffic_proj']
                                                     , lat=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].geom.y
                                                     , lon=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].geom.x
                                                     , z='f8hr_vehicle_volume'
                                                     , mapbox_style="open-street-map")
-            if show:
-                fig_vehicle_heatmap.show()
-
             fig_vehicle_heatmap.write_html(
                 configs_obj.run_conditions['parent_dir'] + '/Maps/Mapbox_Vehicle_HeatMap.html')
             fig_pedestrian_heatmap = px.density_mapbox(dfs_obj.geopandas_dfs['fact_gta_traffic_proj']
@@ -248,9 +237,6 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                                                        , lon=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].geom.x
                                                        , z='f8hr_pedestrian_volume'
                                                        , mapbox_style="open-street-map")
-            if show:
-                fig_pedestrian_heatmap.show()
-
             fig_pedestrian_heatmap.write_html(
                 configs_obj.run_conditions['parent_dir'] + '/Maps/Mapbox_Pedestrian_HeatMap.html')
 
@@ -259,12 +245,7 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                                                    , lon=dfs_obj.geopandas_dfs['fact_gta_traffic_proj'].dropna().geom.x
                                                    , hover_name='f8hr_vehicle_volume'
                                                    , height=500, zoom=10)
-
-            if show:
-                fig_traffic_volume.show()
-
             fig_traffic_volume.write_html(configs_obj.run_conditions['parent_dir'] + '/Maps/Mapbox_Traffic_Volume.html')
-
             mapbox_end = datetime.datetime.now()
             mapbox_duration = (mapbox_end - mapbox_start).total_seconds()
             performance_query = f"""UPDATE public.data_model_performance_tbl
@@ -290,7 +271,6 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['latitude'].min()
                 , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['longitude'].max()
                 , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['latitude'].max()]
-
             m = i_Map(scroll_wheel_zoom=True
                       , center=[dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['latitude'].mean()
                       , dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['longitude'].mean()]
@@ -301,8 +281,6 @@ def create_maps(dfs_obj, configs_obj, show: bool, add_auto_ml: bool, map_types: 
                 marker = i_Marker(location=[point[1], point[0]])
                 m.add(marker)
             m.save(outfile=configs_obj.run_conditions['parent_dir'] + '/Maps/Turf_gta_traffic.html')
-            if show:
-                webbrowser.open(url=configs_obj.run_conditions['parent_dir'] + '/Maps/Turf_gta_traffic.html', new=2)
             turf_end = datetime.datetime.now()
             turf_total_seconds = (turf_end - turf_start).total_seconds()
             print(f'Done Generating Turf Map in {turf_total_seconds} Seconds')
