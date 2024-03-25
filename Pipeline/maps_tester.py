@@ -1,6 +1,5 @@
 import datetime
 from selenium import webdriver
-from data_extractor import read_configs, initialize_database
 import glob
 import pandas as pd
 import gc
@@ -28,58 +27,49 @@ def test_maps(configs_obj):
         firefox_driver = webdriver.Firefox()
         safari_driver = webdriver.Safari()
         if 'FOLIUM' in map.upper():
-            map_type = 'folium'
             test_start = datetime.datetime.now()
             try:
-                chrome_load_time = launch_browser(driver=chrome_driver, url=f"file:///{map}")
-                firefox_load_time = launch_browser(driver=firefox_driver, url=f"file:///{map}")
-                safari_load_time = launch_browser(driver=safari_driver, url=f"file:///{map}")
-                test_end = datetime.datetime.now()
-                data.append({'map': map.split('/')[-1], 'map_type': map_type, 'test_start': test_start, 'test_end': test_end
-                              , 'chrome_load_time': chrome_load_time , 'firefox_load_time': firefox_load_time, 'safari_load_time':safari_load_time})
+                data.append({'map': map.split('/')[-1], 'map_type': 'folium', 'test_start': test_start
+                              , 'chrome_load_time': launch_browser(driver=chrome_driver, url=f"file:///{map}")
+                              , 'firefox_load_time': launch_browser(driver=firefox_driver, url=f"file:///{map}")
+                              , 'safari_load_time':launch_browser(driver=safari_driver, url=f"file:///{map}")
+                              , 'test_end': datetime.datetime.now()})
             finally:
                 chrome_driver.close()
                 firefox_driver.close()
                 safari_driver.close()
-
         elif 'TURF' in map.upper():
-            map_type = 'turf'
             test_start = datetime.datetime.now()
             try:
-                chrome_load_time = launch_browser(driver=chrome_driver, url=f"file:///{map}")
-                firefox_load_time = launch_browser(driver=firefox_driver, url=f"file:///{map}")
-                safari_load_time = launch_browser(driver=safari_driver, url=f"file:///{map}")
-                test_end = datetime.datetime.now()
-                data.append({'map': map.split('/')[-1], 'map_type': map_type, 'test_start': test_start, 'test_end': test_end
-                              , 'chrome_load_time': chrome_load_time , 'firefox_load_time': firefox_load_time, 'safari_load_time':safari_load_time})
+                data.append({'map': map.split('/')[-1], 'map_type': 'turf', 'test_start': test_start
+                              , 'chrome_load_time': launch_browser(driver=chrome_driver, url=f"file:///{map}")
+                              , 'firefox_load_time': launch_browser(driver=firefox_driver, url=f"file:///{map}")
+                              , 'safari_load_time':launch_browser(driver=safari_driver, url=f"file:///{map}")
+                              , 'test_end': datetime.datetime.now()})
             finally:
                 chrome_driver.close()
                 firefox_driver.close()
                 safari_driver.close()
         elif 'MAPBOX' in map.upper():
-            map_type = 'mapbox'
             test_start = datetime.datetime.now()
             try:
-                chrome_load_time = launch_browser(driver=chrome_driver, url=f"file:///{map}")
-                firefox_load_time = launch_browser(driver=firefox_driver, url=f"file:///{map}")
-                safari_load_time = launch_browser(driver=safari_driver, url=f"file:///{map}")
-                test_end = datetime.datetime.now()
-                data.append({'map': map.split('/')[-1], 'map_type': map_type, 'test_start': test_start, 'test_end': test_end
-                              , 'chrome_load_time': chrome_load_time , 'firefox_load_time': firefox_load_time, 'safari_load_time':safari_load_time})
+                data.append({'map': map.split('/')[-1], 'map_type': 'mapbox', 'test_start': test_start
+                              , 'chrome_load_time': launch_browser(driver=chrome_driver, url=f"file:///{map}")
+                              , 'firefox_load_time': launch_browser(driver=firefox_driver, url=f"file:///{map}")
+                              , 'safari_load_time':launch_browser(driver=safari_driver, url=f"file:///{map}")
+                              ,  'test_end': datetime.datetime.now()})
             finally:
                 chrome_driver.close()
                 firefox_driver.close()
                 safari_driver.close()
         else:
-            map_type = 'unknown'
             test_start = datetime.datetime.now()
             try:
-                chrome_load_time = launch_browser(driver=chrome_driver, url=f"file:///{map}")
-                firefox_load_time = launch_browser(driver=firefox_driver, url=f"file:///{map}")
-                safari_load_time = launch_browser(driver=safari_driver, url=f"file:///{map}")
-                test_end = datetime.datetime.now()
-                data.append({'map': map.split('/')[-1], 'map_type': map_type, 'test_start': test_start, 'test_end': test_end
-                              , 'chrome_load_time': chrome_load_time , 'firefox_load_time': firefox_load_time, 'safari_load_time':safari_load_time})
+                data.append({'map': map.split('/')[-1], 'map_type': 'unknown', 'test_start': test_start
+                              , 'chrome_load_time': launch_browser(driver=chrome_driver, url=f"file:///{map}")
+                              , 'firefox_load_time': launch_browser(driver=firefox_driver, url=f"file:///{map}")
+                              , 'safari_load_time':launch_browser(driver=safari_driver, url=f"file:///{map}")
+                              , 'test_end': datetime.datetime.now()})
             finally:
                 chrome_driver.close()
                 firefox_driver.close()

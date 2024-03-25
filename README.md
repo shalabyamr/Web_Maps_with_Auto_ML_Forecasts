@@ -106,6 +106,10 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [main.p
 ## §0.4 Execution Steps
 ![Report](Report/execution_flow_chart.jpg)
 
+## §0.5 Performance Testing
+The optimal browser is Safari across all map types.
+![Report](Report/load_testing.jpg)
+
 
 # Pipeline Design
 
