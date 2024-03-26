@@ -41,27 +41,31 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
 
  
  - **auto_ml**:
-   * **run_time_seconds**: accepts an integer greater than or equal to 0. The default duration is 0 for unlimited execution time till models are constructed.<br/><br/>
-   * **forecast_horizon**: accepts an integer greater than 0 which is the 'unit' time needed to forecast ahead of the last reported date per weather, traffic, and pedestrian stations.<br/><br/>
-
+   * **run_time_seconds**: accepts an integer greater than or equal to 0. The default duration is 0 for unlimited execution time till models are constructed.
+   * **forecast_horizon**: accepts an integer greater than 0 which is the 'unit' time needed to forecast ahead of the last reported date per weather, traffic, and pedestrian stations.
    * **forecast_frequency**: sets the forecast frequency to generate the number of 'units' of the forecast horizon.
      - The values of Hour, Hourly, Day, Daily, Month, Monthly, Year, Yearly, Annual, Annually, Quarter, Quarterly.</br></br>
-
  - **api_tokens**:
    * follows the convention _platform_name_ = _token_ without quotation marks. The starting example mapbox = __token__ </br></br>
 
  - **run_conditions**:
-   * **save_locally**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder.</br></br>
-   * **parent_dir**: The path of the root folder without quotation marks.</br></br>
-   * **create_tables**: Boolean Value _True_ or _False_.
+   * **save_locally**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder. Default is False.
+   * If **save_locally** is set to True, copies of both the staging and public tables will be stored to [/Data/](Data Folder).
+   * **parent_dir**: The path of the root folder without quotation marks.
+   * **create_tables**: Boolean Value _True_ or _False_. Default is True.
      * This creates the database tables from web scraping to ingestion. 
-     * If the database tables are already created, they get dropped and web scraping is initiated.</br></br>
-   * **show_maps**: Boolean Value _True_ or _False_. 
-     * Determines if the generated web to launch in the web browser as new tabs.</br></br>
+     * If the database tables are already created, they get dropped and web scraping is initiated.
+     * If **create_tables** is set to False, all the tables in Public Schema will be used to generate the maps.</br></br>
+   * **show_maps**: Boolean Value _True_ or _False_. Default is True. 
+     * runs [/Pipeline/map_tester.py](map_tester.py) to determine optimal browser (Firefox, Google Chrome, or Safari) with the lowest loading time per generated HTML file [/Maps/](Maps Folder).
+     * Only MacOS is supported by runs [/Pipeline/map_tester.py](map_tester.py).
+     * If show_maps is set to False, HTML files will be generated but not displayed in the optimal browser and not tested.</br></br>
    * **run_auto_ml**: Boolean Value _True_ or _False_.
-     * Determines if the Predictions are to be embedded into the maps or skipped. If skipped, the maps will contain the web scraped data without the prediction layers.</br></br>
+     * Determines if the Predictions are to be embedded into the maps or skipped. 
+     * If run_auto_ml is set to False, the maps will contain only the web scraped data without the prediction layers.</br></br>
    * **map_types**: comma-seperated values of Turf, Mapbox, Folium.
      * The inputs are not case sensitive, without quotation marks, and specifies the desired map types.
+     * Acceptable values are Turf, Mapbox, and Folium.
 
 
 Congfig.ini Contents:
@@ -70,9 +74,9 @@ Congfig.ini Contents:
 |:--------------------:|----------------------------|--------------|---------------------------------------------------------|
 |   host = localhost   | run_time_seconds = 300     | mapbox = ... | save_locally = False                                    |
 | db_name   = postgres | forecast_horizon = 30      |              | parent_dir = /Users/amr/PycharmProjects/ggr_472_project |
-|   user = postgres    | forecast_frequency = Daily |              | create_tables = False                                   |
-| password = postgres  |                            |              | show_maps = False                                       |
-|     port = 5432      |                            |              | run_auto_ml = False                                     |
+|   user = postgres    | forecast_frequency = Daily |              | create_tables = True                                    |
+| password = postgres  |                            |              | show_maps = True                                        |
+|     port = 5432      |                            |              | run_auto_ml = True                                      |
 |                      |                            |              | map_types = folium, mapbox, turf                        |
 
 ## §0.2: Python Requirements
