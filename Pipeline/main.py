@@ -1,3 +1,5 @@
+import sys
+import platform
 from data_extractor import configs_obj, read_configs, initialize_database
 import data_loader
 import datetime
@@ -22,7 +24,7 @@ if configs_obj.run_conditions['create_tables']:
     staging_tables_list = data_loader.create_staging_tables(sqlalchemy_engine=configs_obj.database['sqlalchemy_engine'])
     production_tables_list = data_loader.create_production_tables(pg_engine=configs_obj.database['pg_engine'])
     df_production = pd.DataFrame(production_tables_list,
-                        columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
+                                 columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
     df_production['phase'] = 'production'
     df_production = df_production[
         ['phase', 'step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed']]
@@ -35,12 +37,15 @@ if configs_obj.run_conditions['create_tables']:
     del df_stage, df_production
     if configs_obj.run_conditions['save_locally']:
         print('Saving Data Model Performance {} in: {}'.format('data_model_performance.csv',
-                                                               configs_obj.run_conditions['parent_dir'] + '/Analytics/'))
-        pipeline_df.to_csv(configs_obj.run_conditions['parent_dir'] + '/Analytics/data_model_performance.csv', index=False,
+                                                               configs_obj.run_conditions[
+                                                                   'parent_dir'] + '/Analytics/'))
+        pipeline_df.to_csv(configs_obj.run_conditions['parent_dir'] + '/Analytics/data_model_performance.csv',
+                           index=False,
                            index_label=False)
 
     pipeline_df['step_name'] = pipeline_df['step_name'].apply(lambda x: os.path.basename(x))
-    pipeline_df.to_sql(name='data_model_performance_tbl', con=configs_obj.database['sqlalchemy_engine'], if_exists='replace',
+    pipeline_df.to_sql(name='data_model_performance_tbl', con=configs_obj.database['sqlalchemy_engine'],
+                       if_exists='replace',
                        schema='public', index_label=False, index=False)
 
     # Track Performance of WebMaps and AutoML Steps.
@@ -77,10 +82,14 @@ if configs_obj.run_conditions['run_auto_ml']:
 # Third Step: Create HTML Maps.  It Cannot be skipped. If AutoML was skipped, the forecast
 # layer will not be added to the map.
 maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj
-                    , map_types=configs_obj.run_conditions['map_types']
-                    , add_auto_ml=configs_obj.run_conditions['run_auto_ml'])
+                         , map_types=configs_obj.run_conditions['map_types']
+                         , add_auto_ml=configs_obj.run_conditions['run_auto_ml'])
 
 # Fourth and Last Step: Test Load the Created HTML Maps
 # Depending on Show: Boolean Value it each map type will launch in its own optimal
 # browser with the minimum loading time.
-test_maps(configs_obj=configs_obj, show_maps=configs_obj.run_conditions['show_maps'])
+if 'MACOS' in platform.platform().upper():
+    test_maps(configs_obj=configs_obj, show_maps=configs_obj.run_conditions['show_maps'])
+else:
+    print('Sorry Map Tester is only supported on MacOS.')
+    sys.exit(0)
