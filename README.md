@@ -65,10 +65,10 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
      * If run_auto_ml is set to False, the maps will contain only the web scraped data without the prediction layers.</br></br>
    * **map_types**: comma-seperated values of Turf, Mapbox, Folium.
      * The inputs are not case sensitive, without quotation marks, and specifies the desired map types.
-     * Acceptable values are Turf, Mapbox, and Folium.
+     * Acceptable values are Turf, Mapbox, and Folium.</br></br>
 
 
-Congfig.ini Contents:
+[**Config.ini**](Pipeline/config.ini) Contents:
 
 |    [postgres_db]     | [auto_ml]                  | [api_tokens] | [run_conditions]                                        |
 |:--------------------:|----------------------------|--------------|---------------------------------------------------------|
