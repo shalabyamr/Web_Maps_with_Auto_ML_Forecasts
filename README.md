@@ -99,20 +99,20 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [main.p
 
 # Pipeline
 ## §0.1 Flow
-![Report](Report/pipeline_steps.png)
+![Report](Reports/pipeline_steps.png)
 
 ## §0.2 Execution Time
-![Report](Report/pipeline_execution_time.jpg)
+![Report](Reports/pipeline_execution_time.jpg)
 
 ## §0.3 Auto Machine Learning Layer
-![Report](Report/auto_ml_layer.jpg)
+![Report](Reports/auto_ml_layer.jpg)
 
 ## §0.4 Execution Steps
-![Report](Report/execution_flow_chart.jpg)
+![Report](Reports/execution_flow_chart.jpg)
 
 ## §0.5 Performance Testing
 The optimal browser is Safari across all map types.
-![Report](Report/load_testing.jpg)
+![Report](Reports/load_testing.jpg)
 
 
 # Pipeline Design
