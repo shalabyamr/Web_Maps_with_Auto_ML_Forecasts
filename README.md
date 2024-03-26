@@ -57,8 +57,8 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
      * If the database tables are already created, they get dropped and web scraping is initiated.
      * If **create_tables** is set to False, all the tables in Public Schema will be used to generate the maps.</br></br>
    * **show_maps**: Boolean Value _True_ or _False_. Default is True. 
-     * runs [/Pipeline/map_tester.py](map_tester.py) to determine optimal browser (Firefox, Google Chrome, or Safari) with the lowest loading time per generated HTML file [/Maps/](Maps Folder).
-     * Only MacOS is supported by runs [/Pipeline/map_tester.py](map_tester.py).
+     * runs [map_tester.py](Pipeline/map_tester.py) to determine optimal browser (Firefox, Google Chrome, or Safari) with the lowest loading time per generated HTML file [Maps/](Maps Folder).
+     * Only MacOS is supported by runs [map_tester.py](Pipeline/map_tester.py).
      * If show_maps is set to False, HTML files will be generated but not displayed in the optimal browser and not tested.</br></br>
    * **run_auto_ml**: Boolean Value _True_ or _False_.
      * Determines if the Predictions are to be embedded into the maps or skipped. 
@@ -80,7 +80,7 @@ Congfig.ini Contents:
 |                      |                            |              | map_types = folium, mapbox, turf                        |
 
 ## §0.2: Python Requirements
-You need to sync the enviroment python requirements to the following packages:
+You need to sync the environment python requirements to the following packages:
 * pandas~=2.1.3
 * requests~=2.31.0
 * SQLAlchemy~=2.0.23
