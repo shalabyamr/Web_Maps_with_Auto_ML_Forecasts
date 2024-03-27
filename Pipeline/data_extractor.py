@@ -60,7 +60,7 @@ def read_configs():
     try:
         configs_obj.auto_ml['run_time_seconds'] = int(config['auto_ml']['run_time_seconds'])
         if configs_obj.auto_ml['run_time_seconds'] < 0:
-            print(f'Error! Config.ini run_time_seconds needs to be >= 0. The value given is {config['auto_ml']['run_time_seconds']}')
+            print(f"Error! Config.ini run_time_seconds needs to be >= 0. The value given is {config['auto_ml']['run_time_seconds']}")
             SystemExit(1)
     except Exception as e:
         print('Config.ini Error Reading H2O Runtime Settings: {}'.format(e))
