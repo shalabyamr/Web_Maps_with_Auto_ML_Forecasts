@@ -86,7 +86,8 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
 ## §0.2: R Base Installation
 R Base needs to be installed.  
 * [R-Base for Mac](https://cran.r-project.org/bin/macosx/big-sur-arm64/base/R-4.3.3-arm64.pkg)
-* [R-Base for Windws](https://cran.r-project.org/bin/windows/base/R-4.3.3-win.exe) </br></br>
+* [R-Base for Windws](https://cran.r-project.org/bin/windows/base/R-4.3.3-win.exe)
+* [R-Base for Linux](https://cran.r-project.org/bin/linux/ubuntu/fullREADME.html)</br></br>
 
 
 ## §0.3: Python Requirements
