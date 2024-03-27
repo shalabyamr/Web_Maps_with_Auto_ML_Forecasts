@@ -79,7 +79,13 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
 |     port = 5432      |                            |              | run_auto_ml = True                                      |
 |                      |                            |              | map_types = folium, mapbox, turf                        |
 
-## §0.2: Python Requirements
+## 0.2: R Base Installation
+R Base needs to be installed.  
+* [R-Base for Mac] (https://cran.r-project.org/bin/macosx/big-sur-arm64/base/R-4.3.3-arm64.pkg)
+* [R-Base for Windws]:(https://cran.r-project.org/bin/windows/base/R-4.3.3-win.exe) </br></br>
+
+
+## §0.3: Python Requirements
 You need to sync the environment python requirements to the following packages:
 * pandas~=2.1.3
 * requests~=2.31.0
