@@ -63,7 +63,7 @@ if configs_obj.run_conditions['create_tables']:
     configs_obj.database['pg_engine'].commit()
     end = datetime.datetime.now()
     total_seconds = (end - start).total_seconds()
-    print('Done Executing Pipeline as of {} in {} Seconds'.format(end, str(total_seconds)))
+    print(f"Done Executing Pipeline as of {end} in {total_seconds} Seconds")
     print('*****************************\n')
 # End of the First Step #
 
