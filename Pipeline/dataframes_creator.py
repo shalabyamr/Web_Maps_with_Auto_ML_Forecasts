@@ -142,7 +142,7 @@ def auto_ml(dfs_obj):
     dfs_obj.forecasts_dict['traffic_forecast'] = df_traffic_forecasts
     df_traffic_forecasts.to_sql(name='fact_h2o_traffic_forecast', con=configs_obj.database['sqlalchemy_engine']
                                 , schema='public', if_exists='replace', index=False, index_label=False)
-    print(f'Saved Traffic Forecast to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds')
+    print(f"Saved Traffic Forecast to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds")
     del df_traffic_forecasts
     # End of Part 1 Traffic Prediction.
 
@@ -193,7 +193,7 @@ def auto_ml(dfs_obj):
     dfs_obj.forecasts_dict['pedestrians_forecast'] = df_pedestrians_forecasts
     df_pedestrians_forecasts.to_sql(name='fact_h2o_pedestrians_forecast', con=configs_obj.database['sqlalchemy_engine']
                                 , schema='public', if_exists='replace', index=False, index_label=False)
-    print(f'Saved Pedestrians Forecasts to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds')
+    print(f"Saved Pedestrians Forecasts to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds")
     del df_pedestrians_forecasts
     # End of Part 2 Pedestrians forecast
     h2o.cluster().shutdown()
@@ -207,8 +207,8 @@ def auto_ml(dfs_obj):
     cur.execute(performance_query)
     configs_obj.database['pg_engine'].commit()
     print(
-        f'****************************\nDone AutoML Using Configuration Runtime: {configs_obj.auto_ml['run_time_seconds']} Seconds, Forecast '
-        f'Horizon: {configs_obj.auto_ml['forecast_horizon']}, and Forecast Frequency: { configs_obj.auto_ml['forecast_description']}.\n'
-        f'Objects Dataframe Size is now: {sys.getsizeof(dfs_obj)} Byes.  AutoML duration in realtime is: {automl_function_duration} Seconds.\n****************************')
+        f"****************************\nDone AutoML Using Configuration Runtime: {configs_obj.auto_ml['run_time_seconds']} Seconds, Forecast "
+        f"Horizon: {configs_obj.auto_ml['forecast_horizon']}, and Forecast Frequency: { configs_obj.auto_ml['forecast_description']}.\n"
+        f"Objects Dataframe Size is now: {sys.getsizeof(dfs_obj)} Byes.  AutoML duration in realtime is: {automl_function_duration} Seconds.\n****************************")
     gc.collect()
     return dfs_obj
