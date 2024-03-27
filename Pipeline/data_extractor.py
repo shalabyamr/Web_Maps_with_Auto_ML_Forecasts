@@ -335,16 +335,14 @@ def extract_traffic_volumes():
 
     b = datetime.datetime.now()
     delta_seconds = (b - a).total_seconds()
-    print("********************************\n",
-          'Loaded Toronto Traffic Volume Done in {} Seconds'.format(delta_seconds),
-          "\n********************************\n")
+    print(f"********************************\n'Loaded Toronto Traffic Volume Done in {delta_seconds} Seconds.\n********************************\n")
     return 'extract_traffic_volumes', delta_seconds, a, b, 1
 
 # Prior Government of Canada Weather Source does not provide any information
 # on the weather stations coordinates, locations, activation, or decommission dates.
 def extract_geo_names_data(sqlalchemy_engine):
     a = datetime.datetime.now()
-    print('Downloading Geographical Names Data as of: ', a)
+    print(f"Downloading Geographical Names Data as of: {a}")
     # URL from which pdfs to be downloaded
     download_link = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/vector/geobase_cgn_toponyme/prov_csv_eng/cgn_canada_csv_eng.zip"
     csv_filename = configs_obj.run_conditions['parent_dir'] + '/Data/' + 'cgn_canada_csv_eng.csv'
