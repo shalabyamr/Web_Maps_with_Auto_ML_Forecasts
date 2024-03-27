@@ -208,7 +208,7 @@ def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
             cur.execute(performance_query)
             configs_obj.database['pg_engine'].commit()
             toronto_map.save(configs_obj.run_conditions['parent_dir'] + '/Maps/Folium_Toronto.html')
-            print(f'Done Generating the Folium Map in {folium_duration} Seconds')
+            print(f"Done Generating the Folium Map in {folium_duration} Seconds")
             del folium_end, folium_duration, folium_start, performance_query
             gc.collect()
 
@@ -255,7 +255,7 @@ def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
             cur = configs_obj.database['pg_engine'].cursor()
             cur.execute(performance_query)
             configs_obj.database['pg_engine'].commit()
-            print(f'Done Generating the Mapbox Map in {mapbox_duration} Seconds')
+            print(f"Done Generating the Mapbox Map in {mapbox_duration} Seconds")
             del mapbox_end, mapbox_duration, mapbox_start, performance_query
             gc.collect()
 
@@ -283,7 +283,7 @@ def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
             m.save(outfile=configs_obj.run_conditions['parent_dir'] + '/Maps/Turf_gta_traffic.html')
             turf_end = datetime.datetime.now()
             turf_total_seconds = (turf_end - turf_start).total_seconds()
-            print(f'Done Generating Turf Map in {turf_total_seconds} Seconds')
+            print(f"Done Generating Turf Map in {turf_total_seconds} Seconds")
             turf_end = datetime.datetime.now()
             turf_duration = (turf_end - turf_start).total_seconds()
             performance_query = f"""UPDATE public.data_model_performance_tbl
@@ -299,6 +299,6 @@ def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
     maps_end = datetime.datetime.now()
     maps_duration = (maps_end - maps_start).total_seconds()
     print(
-        f'****************************\nDone Generating All Maps in {maps_duration} Seconds\n****************************')
+        f"****************************\nDone Generating All Maps in {maps_duration} Seconds\n****************************")
     del maps_start, maps_end
     gc.collect()
