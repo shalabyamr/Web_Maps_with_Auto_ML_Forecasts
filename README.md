@@ -93,6 +93,10 @@ You need to sync the environment python requirements to the following packages:
 * ipyleaflet~=0.18.2
 * altair~=5.2.0
 * h2o~=3.44.0.3
+* ipyleaflet~=0.18.2
+* altair~=5.2.0
+* selenium~=4.18.1
+* psycopg2-binary~=2.9.9
 
 ## §0.3 Execution
 After modifying [Config.ini](Pipeline/config.ini), run the python script [main.py](Pipeline/main.py).
