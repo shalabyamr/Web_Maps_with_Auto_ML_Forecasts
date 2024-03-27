@@ -2,11 +2,15 @@
 * [Objective](#objective)
 * [§0.Setup:](#0setup-)
   * [§0.1 Config.ini](#01-configini)
-  * [§0.2: Python Requirements](#02-python-requirements)
-  * [§0.3 Execution](#03-execution)
+  * [§0.2: R Base Installation](#02-r-base-installation)
+  * [§0.3: Python Requirements](#03-python-requirements)
+  * [§0.4 Execution](#04-execution)
 * [Pipeline](#pipeline)
   * [§0.1 Flow](#01-flow)
   * [§0.2 Execution Time](#02-execution-time)
+  * [§0.3 Auto Machine Learning Layer](#03-auto-machine-learning-layer)
+  * [§0.4 Execution Steps](#04-execution-steps)
+  * [§0.5 Performance Testing](#05-performance-testing)
 * [Pipeline Design](#pipeline-design)
   * [1. Staging (Extraction) Layer](#1-staging-extraction-layer)
     * [§1. Monthly Data Web Scraping](#1-monthly-data-web-scraping)
@@ -79,7 +83,7 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
 |     port = 5432      |                            |              | run_auto_ml = True                                      |
 |                      |                            |              | map_types = folium, mapbox, turf                        |
 
-## 0.2: R Base Installation
+## §0.2: R Base Installation
 R Base needs to be installed.  
 * [R-Base for Mac] (https://cran.r-project.org/bin/macosx/big-sur-arm64/base/R-4.3.3-arm64.pkg)
 * [R-Base for Windws]:(https://cran.r-project.org/bin/windows/base/R-4.3.3-win.exe) </br></br>
@@ -105,7 +109,7 @@ You need to sync the environment python requirements to the following packages:
 * psycopg2-binary~=2.9.9
 * plotly~=5.20.0
 
-## §0.3 Execution
+## §0.4 Execution
 After modifying [Config.ini](Pipeline/config.ini), run the python script [main.py](Pipeline/main.py).
 
 # Pipeline
