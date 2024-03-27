@@ -96,8 +96,7 @@ def read_configs():
     except Exception as e:
         print('Config.ini Error Reading H2O Runtime Settings: {}'.format(e))
         print(
-            "['auto_ml']['forecast_frequency'] Needs to be Daily, Monthly, Yearly, or Quarterly instead of {}.".format(
-                config['auto_ml']['forecast_frequency']))
+            f"['auto_ml']['forecast_frequency'] Needs to be Daily, Monthly, Yearly, or Quarterly instead of {config['auto_ml']['forecast_frequency']}.")
         sys.exit(1)
 
     for platform, token in configs_obj.access_tokens.items(): print(f'Platform: {platform}: Token: {token}')
@@ -111,26 +110,26 @@ def read_configs():
     try:
         configs_obj.run_conditions['create_tables'] = eval(config['run_conditions']['create_tables'].title())
     except Exception as e:
-        print('Config.ini: Error Runtime Condition create_tables: {}'.format(e))
-        print(f'Config.ini: create_tables needs to be a boolean instead of : {config['run_conditions']['create_tables']}')
+        print(f"Config.ini: Error Runtime Condition create_tables: {e}")
+        print(f"Config.ini: create_tables needs to be a boolean instead of : {config['run_conditions']['create_tables']}")
         sys.exit(1)
     try:
         configs_obj.run_conditions['run_auto_ml'] = eval(config['run_conditions']['run_auto_ml'].title())
     except Exception as e:
-        print('Config.ini: Error Runtime Condition run_auto_ml: {}'.format(e))
-        print(f'Config.ini: run_auto_ml needs to be a boolean instead of : {config['run_conditions']['run_auto_ml']}')
+        print(f"Config.ini: Error Runtime Condition run_auto_ml: {e}")
+        print(f"Config.ini: run_auto_ml needs to be a boolean instead of : {config['run_conditions']['run_auto_ml']}")
         sys.exit(1)
     try:
         configs_obj.run_conditions['show_maps'] = eval(config['run_conditions']['show_maps'].title())
     except Exception as e:
-        print('Config.ini: Error Runtime Condition show_maps: {}'.format(e))
-        print(f'Config.ini: show_maps needs to be a boolean instead of : {config['run_conditions']['show_maps']}')
+        print(f"Config.ini: Error Runtime Condition show_maps: {e}")
+        print(f"Config.ini: show_maps needs to be a boolean instead of : {config['run_conditions']['show_maps']}")
         sys.exit(1)
     try:
         configs_obj.run_conditions['map_types'] = list(config['run_conditions']['map_types'].replace(' ','').split(','))
     except Exception as e:
-        print('Config.ini: Error Runtime Condition map_types: {}'.format(e))
-        print(f'Config.ini: map_types needs to be a list instead of : {config['run_conditions']['map_types']}')
+        print(f"Config.ini: Error Runtime Condition map_types: {e}")
+        print(f"Config.ini: map_types needs to be a list instead of : {config['run_conditions']['map_types']}")
         sys.exit(1)
 
     print(f"Done Configuring Run Conditions with create_tables: '{configs_obj.run_conditions['create_tables']}' - "
@@ -141,8 +140,7 @@ def read_configs():
     end = datetime.datetime.now()
     read_configs_total_seconds = (end - start).total_seconds()
     print(
-        '*****************************\nDone Reading Configuration File in: {} seconds'.format(
-            read_configs_total_seconds), '\n*****************************')
+        f"*****************************\nDone Reading Configuration File in: {read_configs_total_seconds} Seconds.\n*****************************")
     return configs_obj
 
 # Creates the database connectors and stores the needed engines
@@ -191,7 +189,7 @@ def initialize_database():
 def extract_monthly_data(sqlalchemy_engine):
     a = datetime.datetime.now()
     # URL from which pdfs to be downloaded
-    print('Started Downloading Monthly Data as of {}'.format(a))
+    print(f"Started Downloading Monthly Data as of {a}")
     url = "https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/"
 
     # Requests URL and get response object
@@ -398,6 +396,5 @@ def extract_gta_traffic_arcgis(sqlalchemy_engine):
 
     b = datetime.datetime.now()
     delta_seconds = (b - a).total_seconds()
-    print('Loaded ArcGIS Toronto and Peel Traffic Count Done in {} Seconds'.format(delta_seconds),
-          "\n********************************\n")
+    print(f"Loaded ArcGIS Toronto and Peel Traffic Count Done in {delta_seconds} Seconds.\n********************************\n")
     return 'extract_gta_traffic_arcgis', delta_seconds, a, b, 1
