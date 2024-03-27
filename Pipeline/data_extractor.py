@@ -40,7 +40,7 @@ def read_configs():
     check_save_locally = str(config['run_conditions']['save_locally']).title()
     if check_save_locally not in ['True', 'False']:
         raise Exception(
-            "save_locally_flag in Config.ini is set as {}. Only True or False is accepted.".format(check_save_locally))
+            f"save_locally_flag in Config.ini is set as {check_save_locally}. Only True or False is accepted.")
     del check_save_locally
     configs_obj.run_conditions['save_locally'] = eval(config['run_conditions']['save_locally'])
     configs_obj.run_conditions['parent_dir'] = str(config['run_conditions']['parent_dir'])
@@ -63,7 +63,7 @@ def read_configs():
             print(f"Error! Config.ini run_time_seconds needs to be >= 0. The value given is {config['auto_ml']['run_time_seconds']}")
             SystemExit(1)
     except Exception as e:
-        print('Config.ini Error Reading H2O Runtime Settings: {}'.format(e))
+        print(f"Config.ini Error Reading H2O Runtime Settings: {e}")
         print(f"['auto_ml']['run_time_seconds'] Needs to be an Integer >= 0 instead of {config['auto_ml']['run_time_seconds']}.")
         sys.exit(1)
     try:
