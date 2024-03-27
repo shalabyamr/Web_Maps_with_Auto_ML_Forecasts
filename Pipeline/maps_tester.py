@@ -123,6 +123,6 @@ def test_maps(configs_obj, show_maps: bool):
                     print('You need to enable Safari Automation in Developer Tools. For Instructions Please Visit: \nhttps://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari')
                     sys.exit(1)
     print(
-        f'****************************\nDone Testing Maps.  Maps Tester took {(maps_tester_end - test_maps_start).total_seconds()} Seconds.\n****************************')
+        f"****************************\nDone Testing Maps.  Maps Tester took {(maps_tester_end - test_maps_start).total_seconds()} Seconds.\n****************************")
     gc.collect()
     return maps_performance
