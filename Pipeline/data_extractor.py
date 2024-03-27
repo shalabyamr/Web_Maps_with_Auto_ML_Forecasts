@@ -94,7 +94,7 @@ def read_configs():
                 config['auto_ml']['forecast_frequency']))
 
     except Exception as e:
-        print('Config.ini Error Reading H2O Runtime Settings: {}'.format(e))
+        print(f"Config.ini Error Reading H2O Runtime Settings: {e}")
         print(
             f"['auto_ml']['forecast_frequency'] Needs to be Daily, Monthly, Yearly, or Quarterly instead of {config['auto_ml']['forecast_frequency']}.")
         sys.exit(1)
@@ -102,8 +102,8 @@ def read_configs():
     for platform, token in configs_obj.access_tokens.items(): print(f'Platform: {platform}: Token: {token}')
     print(f"Parent Directory: {configs_obj.run_conditions['parent_dir']}")
     print(f"Save Locally Flag is set to: {configs_obj.run_conditions['save_locally']}")
-    print(f'AutoML Runtime is set to: {configs_obj.auto_ml['run_time_seconds']} Seconds')
-    print(f'AutoML Forecast Horizon is set to: {configs_obj.auto_ml['forecast_horizon']}')
+    print(f"AutoML Runtime is set to: {configs_obj.auto_ml['run_time_seconds']} Seconds")
+    print(f"AutoML Forecast Horizon is set to: {configs_obj.auto_ml['forecast_horizon']}")
     print(f"AutoML Forecast Frequency is set to: '{configs_obj.auto_ml['forecast_frequency']}' - {configs_obj.auto_ml['forecast_description']}")
 
     # Run Conditions to be used in Maion() to execute the program.
@@ -181,7 +181,7 @@ def initialize_database():
             sys.exit(1)
         return configs_obj
     except BaseException as exception:
-        print('Error thrown by initialize_database()!, {} '.format(exception))
+        print(f"Error thrown by initialize_database()!, {exception}")
         sys.exit(1)
 
 
