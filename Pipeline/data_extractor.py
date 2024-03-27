@@ -171,11 +171,13 @@ def initialize_database():
                                                  configs_obj.database['port'], configs_obj.database['dbname']))
         cursor = configs_obj.database['pg_engine'].cursor()
         try:
-            stage_query = "CREATE SCHEMA IF NOT EXISTS stage;"
+            stage_query = """CREATE SCHEMA IF NOT EXISTS stage; 
+               CREATE SCHEMA IF NOT EXISTS public; 
+               CREATE EXTENSION IF NOT EXISTS postgis;"""
             cursor.execute(stage_query)
             configs_obj.database['pg_engine'].commit()
             del stage_query
-            print('*****************************\nDone Initializing Database and Created Schema Stage.\n*****************************')
+            print('*****************************\nDone. Initialized Database and Created Publilc and Stage Schemas. Installed PostGIS Extension.\n*****************************')
         except BaseException as exception:
             print('Failed to create schema!', exception)
             sys.exit(1)
