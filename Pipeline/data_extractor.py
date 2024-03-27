@@ -176,11 +176,11 @@ def initialize_database():
             configs_obj.database['pg_engine'].commit()
             del stage_query
             print('*****************************\nDone. Initialized Database and Created Publilc and Stage Schemas. Installed PostGIS Extension.\n*****************************')
-        except BaseException as exception:
+        except Exception as exception:
             print('Failed to create schema!', exception)
             sys.exit(1)
         return configs_obj
-    except BaseException as exception:
+    except Exception as exception:
         print(f"Error thrown by initialize_database()!, {exception}")
         sys.exit(1)
 

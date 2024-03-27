@@ -64,7 +64,7 @@ def create_postgis_proj_tables(sqlalchemy_engine, pg_engine):
         print('Executing Query: {}'.format(query))
         cur.execute(query)
         pg_engine.commit()
-    except BaseException as exception:
+    except Exception as exception:
         print('!!failed to execute query!!')
         print(exception)
     df_air_data = pd.read_sql_table(table_name='fact_combined_air_data', con=configs_obj.database['sqlalchemy_engine'], schema='public', parse_dates=True)
@@ -84,7 +84,7 @@ def create_postgis_proj_tables(sqlalchemy_engine, pg_engine):
         print('Executing Query: {}'.format(query_create_fact_air_data_proj))
         cur.execute(query_create_fact_air_data_proj)
         pg_engine.commit()
-    except BaseException as exception:
+    except Exception as exception:
         print('!!failed to execute query!!')
         print(exception)
     b = datetime.datetime.now()
