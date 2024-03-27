@@ -99,7 +99,7 @@ def read_configs():
             f"['auto_ml']['forecast_frequency'] Needs to be Daily, Monthly, Yearly, or Quarterly instead of {config['auto_ml']['forecast_frequency']}.")
         sys.exit(1)
 
-    for platform, token in configs_obj.access_tokens.items(): print(f'Platform: {platform}: Token: {token}')
+    for platform, token in configs_obj.access_tokens.items(): print(f"Platform: {platform}: Token: {token}")
     print(f"Parent Directory: {configs_obj.run_conditions['parent_dir']}")
     print(f"Save Locally Flag is set to: {configs_obj.run_conditions['save_locally']}")
     print(f"AutoML Runtime is set to: {configs_obj.auto_ml['run_time_seconds']} Seconds")
@@ -159,7 +159,7 @@ def initialize_database():
         configs_obj.database['user'] = config['postgres_db']['user']
         configs_obj.database['password'] = config['postgres_db']['password']
         print(
-            f'Database Configuration: Host: {configs_obj.database["host"]}\nPort: {configs_obj.database["port"]}\nDatabase Name: {configs_obj.database["dbname"]}\nUser: {configs_obj.database["user"]}\nPassword: {configs_obj.database["password"]}')
+            f"Database Configuration: Host: {configs_obj.database["host"]}\nPort: {configs_obj.database["port"]}\nDatabase Name: {configs_obj.database["dbname"]}\nUser: {configs_obj.database["user"]}\nPassword: {configs_obj.database["password"]}")
         configs_obj.database['pg_engine'] = pg.connect(host=configs_obj.database['host'], port=configs_obj.database['port']
                                            , dbname=configs_obj.database['dbname']
                                            , user=configs_obj.database['user'], password=configs_obj.database['password'])
