@@ -101,8 +101,8 @@ def read_configs():
         sys.exit(1)
 
     for platform, token in configs_obj.access_tokens.items(): print(f'Platform: {platform}: Token: {token}')
-    print(f'Parent Directory: {configs_obj.run_conditions['parent_dir']}')
-    print(f'Save Locally Flag is set to: {configs_obj.run_conditions['save_locally']}')
+    print(f"Parent Directory: {configs_obj.run_conditions['parent_dir']}")
+    print(f"Save Locally Flag is set to: {configs_obj.run_conditions['save_locally']}")
     print(f'AutoML Runtime is set to: {configs_obj.auto_ml['run_time_seconds']} Seconds')
     print(f'AutoML Forecast Horizon is set to: {configs_obj.auto_ml['forecast_horizon']}')
     print(f"AutoML Forecast Frequency is set to: '{configs_obj.auto_ml['forecast_frequency']}' - {configs_obj.auto_ml['forecast_description']}")
