@@ -86,8 +86,14 @@ maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj)
 # Fourth and Last Step: Test Load the Created HTML Maps
 # Depending on Show: Boolean Value it each map type will launch in its own optimal
 # browser with the minimum loading time.
-if 'MACOS' in platform.platform().upper():
-    test_maps(configs_obj=configs_obj)
-else:
-    print('Sorry. Map Tester is only supported on MacOS.')
+try:
+    if 'MACOS' in platform.platform().upper():
+        print(f"Running on Platform: {platform.platform().upper()}")
+        test_maps(configs_obj=configs_obj)
+    else:
+        print('Sorry. Map Tester is only supported on MacOS.')
+        sys.exit(0)
+except Exception as e:
+    print(f"Failed to Launch Safari in Test Automation Mode. Error {e}")
+    print('Maps were created without testing.  \nPlease enable Safari Test Automation: https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari')
     sys.exit(0)
