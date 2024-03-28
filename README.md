@@ -109,6 +109,8 @@ You need to sync the environment python requirements to the following packages:
 * selenium~=4.18.1
 * psycopg2-binary~=2.9.9
 * plotly~=5.20.0
+* GeoAlchemy2~=0.14.6
+
 
 ## §0.4 Execution
 After modifying [Config.ini](Pipeline/config.ini), run the python script [main.py](Pipeline/main.py).
