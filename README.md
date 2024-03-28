@@ -111,9 +111,13 @@ You need to sync the environment python requirements to the following packages:
 * psycopg2-binary~=2.9.9
 * plotly~=5.20.0
 * GeoAlchemy2~=0.14.6
+* googledrivedownloader~=0.4
 
+## §0.5 Safari Remote Automation
+To measure maps loading times, Safari needs to have the option 'Allow Remote Automation' enabled in 'Developer' menu.
+![Safari Remote Automation](Reports/safari_allow_remote_automation.jpg)
 
-## §0.4 Execution
+## §0.6 Execution
 After modifying [Config.ini](Pipeline/config.ini), run the python script [main.py](Pipeline/main.py).
 
 # Pipeline
@@ -212,7 +216,7 @@ which ingests the public data into the **third** staging table "**stg_monthly_fo
 
 
 ### §3. Traffic Volume
-Using the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, the function _extract_traffic_volumes()_ in the [data_extractor.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_extractor.py) File.
+Using the REST API provided for Toronto Traffic Volume https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/, the function _extract_traffic_volume()_ in the [data_extractor.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_extractor.py) File.
 which ingests the traffic volume data into the **fourth** staging table "**stg_traffic_volume**" with the option to locally save the CSV file to _['./Data/traffic_volume.csv'](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Data/traffic_volume.csv).
 
 |      Column       |    Data Type     |

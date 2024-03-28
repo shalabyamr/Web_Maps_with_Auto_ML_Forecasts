@@ -10,38 +10,38 @@ warnings.filterwarnings("ignore")
 # This function creates the staging layer of the extracted data. There are no
 # data filters injected into Staging Layer as it only grabs the scraped data from
 # the web.
-def create_staging_tables(sqlalchemy_engine):
+def create_staging_tables(configs_obj):
     master_list = []
     # to execute loading the monthly data into staging layer
     monthly_date_step = data_extractor.extract_monthly_data(sqlalchemy_engine=configs_obj.database['sqlalchemy_engine'])
     master_list.append(monthly_date_step)
 
     # to execute loading the monthly forecasts into the staging layer
-    monthly_forecasts_step = data_extractor.extract_monthly_forecasts(sqlalchemy_engine=configs_obj.database['sqlalchemy_engine'])
+    monthly_forecasts_step = data_extractor.extract_monthly_forecasts(configs_obj=configs_obj)
     master_list.append(monthly_forecasts_step)
 
     # to execute loading the traffic volume dataset into the staging layer
-    traffic_volume_step = data_extractor.extract_traffic_volumes()
+    traffic_volume_step = data_extractor.extract_traffic_volume(configs_obj=configs_obj)
     master_list.append(traffic_volume_step)
 
     # to execute loading the geographical database names  into the staging layer
-    geo_names_step = data_extractor.extract_geo_names_data(sqlalchemy_engine=configs_obj.database['sqlalchemy_engine'])
+    geo_names_step = data_extractor.extract_geo_names_data(configs_obj=configs_obj)
     master_list.append(geo_names_step)
 
 
     # to execute loading the loading ArcGIS Toronto and Peel Traffic into the staging layer
-    traffic_arcgis_step = data_extractor.extract_gta_traffic_arcgis(sqlalchemy_engine=configs_obj.database['sqlalchemy_engine'])
+    traffic_arcgis_step = data_extractor.extract_gta_traffic_arcgis(configs_obj=configs_obj)
     master_list.append(traffic_arcgis_step)
 
     # Transposes monthly Air Data from Column Names to Rows
-    transform_monthly_step = transform_monthly_data(sqlalchemy_engine=configs_obj.database['sqlalchemy_engine'])
+    transform_monthly_step = transform_monthly_data(configs_obj=configs_obj)
     master_list.append(transform_monthly_step)
     return master_list
 
 # Processes the intermediate SQL Queries that eliminate data redundacy and 3:1 duplication
 # rate (3 duplicated rows to 1 unique record) as there are 4 measures taken
 # per UTC Hour from the web sources.
-def create_production_tables(pg_engine):
+def create_production_tables(configs_obj):
     master_list = []
     a1 = datetime.datetime.now()
     sql_files = glob.glob(configs_obj.run_conditions['parent_dir'] + '/SQL/*.sql')

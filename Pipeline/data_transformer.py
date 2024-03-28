@@ -7,7 +7,7 @@ warnings.filterwarnings("ignore")
 
 
 # Transposing the Monthly Air Quality Data #
-def transform_monthly_data(sqlalchemy_engine):
+def transform_monthly_data(configs_obj):
     a = datetime.datetime.now()
     print('*** Transposing the Monthly Air Quality Data as of: {}***'.format(a))
     df = pd.read_sql_table(table_name='stg_monthly_air_data', con=configs_obj.database['sqlalchemy_engine'], schema='stage', parse_dates=True)

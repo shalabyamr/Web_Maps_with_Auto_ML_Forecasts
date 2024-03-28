@@ -21,8 +21,8 @@ if configs_obj.run_conditions['create_tables']:
     initialize_database()
     start = datetime.datetime.now()
     print('Executing Pipeline as of ' + str(start))
-    staging_tables_list = data_loader.create_staging_tables(sqlalchemy_engine=configs_obj.database['sqlalchemy_engine'])
-    production_tables_list = data_loader.create_production_tables(pg_engine=configs_obj.database['pg_engine'])
+    staging_tables_list = data_loader.create_staging_tables(configs_obj=configs_obj)
+    production_tables_list = data_loader.create_production_tables(configs_obj=configs_obj)
     df_production = pd.DataFrame(production_tables_list,
                                  columns=['step_name', 'duration_seconds', 'start_time', 'end_time', 'files_processed'])
     df_production['phase'] = 'production'

@@ -11,6 +11,7 @@ import sys
 from rpy2 import robjects as ro
 from bs4 import BeautifulSoup
 import rpy2.robjects.packages as rpackages
+from google_drive_downloader import GoogleDriveDownloader as gdd
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -245,7 +246,7 @@ def extract_monthly_data(sqlalchemy_engine):
 
 # This is the official one-year weather forecast.  However, there is no reported
 # prediction error associated with the forecasts.
-def extract_monthly_forecasts(sqlalchemy_engine):
+def extract_monthly_forecasts(configs_obj):
     a = datetime.datetime.now()
     print('Loading Monthly Forecasts as of: {}'.format(a))
     # URL from which pdfs to be downloaded
@@ -307,7 +308,7 @@ def extract_monthly_forecasts(sqlalchemy_engine):
 
 # Extracts the Traffic Data from Toronto Open Data Portal.  Due to issues with the official
 # Python Connector, this spins up an R-thread to extract the traffic data from OpenDataToronot R Library.
-def extract_traffic_volumes():
+def extract_traffic_volume(configs_obj):
     a = datetime.datetime.now()
     print('Loading Traffic Data as of: {}'.format(a))
     download_link = 'https://open.toronto.ca/dataset/traffic-volumes-at-intersections-for-all-modes/'
@@ -336,11 +337,11 @@ def extract_traffic_volumes():
     b = datetime.datetime.now()
     delta_seconds = (b - a).total_seconds()
     print(f"********************************\n'Loaded Toronto Traffic Volume Done in {delta_seconds} Seconds.\n********************************\n")
-    return 'extract_traffic_volumes', delta_seconds, a, b, 1
+    return 'extract_traffic_volume', delta_seconds, a, b, 1
 
 # Prior Government of Canada Weather Source does not provide any information
 # on the weather stations coordinates, locations, activation, or decommission dates.
-def extract_geo_names_data(sqlalchemy_engine):
+def extract_geo_names_data(configs_obj):
     a = datetime.datetime.now()
     print(f"Downloading Geographical Names Data as of: {a}")
     # URL from which pdfs to be downloaded
@@ -374,11 +375,14 @@ def extract_geo_names_data(sqlalchemy_engine):
     return 'extract_geo_names_data', delta_seconds, a, b, 2
 
 
-def extract_gta_traffic_arcgis(sqlalchemy_engine):
+def extract_gta_traffic_arcgis(configs_obj):
     a = datetime.datetime.now()
     print('Loading ArcGIS Traffic from ArcGIS as of: ', a)
-    download_link = 'https://www.arcgis.com/home/item.html?id=4964801ff5de475a80c51c5d54a9c8da'
     filename = configs_obj.run_conditions['parent_dir'] + '/Data/' + 'ArcGIS_Toronto_and_Peel_Traffic.txt'
+    download_link = 'https://drive.google.com/file/d/1knjCNxRDIXqqF1gq9TB0yjBNP75BFQK9/view?usp=drive_link'
+    gdd.download_file_from_google_drive(file_id='1knjCNxRDIXqqF1gq9TB0yjBNP75BFQK9',
+                                        dest_path=filename,
+                                        unzip=False, showsize=True, overwrite=True)
     df = pd.read_csv(filename, sep=',', parse_dates=True)
     df.columns = map(str.lower, df.columns)
     df['activation_date'] = pd.to_datetime(df['activation_date']).dt.date
@@ -391,7 +395,7 @@ def extract_gta_traffic_arcgis(sqlalchemy_engine):
     if configs_obj.run_conditions['save_locally']:
         df.to_csv(configs_obj.run_conditions['parent_dir'] + '/Data/' + 'ArcGIS_Toronto_and_Peel_Traffic.csv', index=False,
                   index_label=False)
-
+    os.remove(filename)
     b = datetime.datetime.now()
     delta_seconds = (b - a).total_seconds()
     print(f"Loaded ArcGIS Toronto and Peel Traffic Count Done in {delta_seconds} Seconds.\n********************************\n")
