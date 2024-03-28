@@ -81,15 +81,13 @@ if configs_obj.run_conditions['run_auto_ml']:
 
 # Third Step: Create HTML Maps.  It Cannot be skipped. If AutoML was skipped, the forecast
 # layer will not be added to the map.
-maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj
-                         , map_types=configs_obj.run_conditions['map_types']
-                         , add_auto_ml=configs_obj.run_conditions['run_auto_ml'])
+maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj)
 
 # Fourth and Last Step: Test Load the Created HTML Maps
 # Depending on Show: Boolean Value it each map type will launch in its own optimal
 # browser with the minimum loading time.
 if 'MACOS' in platform.platform().upper():
-    test_maps(configs_obj=configs_obj, show_maps=configs_obj.run_conditions['show_maps'])
+    test_maps(configs_obj=configs_obj)
 else:
-    print('Sorry Map Tester is only supported on MacOS.')
+    print('Sorry. Map Tester is only supported on MacOS.')
     sys.exit(0)

@@ -5,7 +5,8 @@ import pandas as pd
 import gc
 import os
 import sys
-
+import warnings
+warnings.filterwarnings("ignore")
 
 def launch_browser(driver, url):
     driver.get(url)
@@ -17,7 +18,7 @@ def launch_browser(driver, url):
     return total_time
 
 
-def test_maps(configs_obj, show_maps: bool):
+def test_maps(configs_obj):
     test_maps_start = datetime.datetime.now()
     print('Started Testing Maps.....')
     maps_paths = glob.glob(f"{configs_obj.run_conditions['parent_dir']}/Maps/*.html")
@@ -81,6 +82,10 @@ def test_maps(configs_obj, show_maps: bool):
     maps_performance = pd.concat([maps_performance, pd.DataFrame(data)])
     maps_performance.to_sql('data_maps_performance_tbl', con=configs_obj.database['sqlalchemy_engine'],
                             if_exists='replace', index=False, schema='public')
+    if configs_obj.run_conditions['save_locally']:
+        data_model_performance_df = pd.read_sql_table('data_maps_performance_tbl', con=configs_obj.database['sqlalchemy_engine'], schema='public')
+        data_model_performance_df.to_csv(configs_obj.run_conditions['parent_dir']+'/Data/data_maps_performance_tbl.csv', index=False, index_label=False, mode='w')
+        del data_model_performance_df
     maps_tester_end = datetime.datetime.now()
     performance_query = f"""UPDATE public.data_model_performance_tbl
         SET duration_seconds = {(maps_tester_end - test_maps_start).total_seconds()} , files_processed = {len(maps_paths)}
@@ -93,7 +98,7 @@ def test_maps(configs_obj, show_maps: bool):
         data_model_performance_df = pd.read_sql_table('data_model_performance_tbl', con=configs_obj.database['sqlalchemy_engine'], schema='public')
         data_model_performance_df.to_csv(configs_obj.run_conditions['parent_dir']+'/Data/data_model_performance_tbl.csv', index=False, index_label=False, mode='w')
         del data_model_performance_df
-    if show_maps:
+    if configs_obj.run_conditions['show_maps']:
         print('Launching Maps in their Respective Optimal Browser...')
         for index, row in maps_performance.iterrows():
             if row['chrome_load_time'] == \

@@ -14,10 +14,10 @@ warnings.filterwarnings("ignore")
 # Creates the three map types (Mapbox, Turf, and Folium) using
 # the previously-created dataframes object.
 # Also needs the configuration and dataframes objects.
-def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
+def create_maps(dfs_obj, configs_obj):
     # For tracking function performance and later stored in public.data_model_performance_tbl
     maps_start = datetime.datetime.now()
-    for map_type in map_types:
+    for map_type in configs_obj.run_conditions['map_types']:
         # Folium-Specific Code
         if map_type.upper() == 'FOLIUM':
             # Load map centred
@@ -32,12 +32,12 @@ def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
             traffic_volume_group = folium.FeatureGroup(name='Traffic Volume').add_to(toronto_map)
             traffic_heatmap_group = folium.FeatureGroup(name='Traffic HeatMap').add_to(toronto_map)
             animated_traffic_group = folium.FeatureGroup(name='Traffic Animation').add_to(toronto_map)
-            if add_auto_ml:
+            if configs_obj.run_conditions['run_auto_ml']:
                 predicted_traffic_group = folium.FeatureGroup(name='Predicted Traffic').add_to(toronto_map)
                 predicted_traffic_hm_group = folium.FeatureGroup(name='Predicted Traffic HeatMap').add_to(toronto_map)
             pedestrians_group = folium.FeatureGroup(name='Pedestrians').add_to(toronto_map)
             pedestrians_heatmap_group = folium.FeatureGroup(name='Pedestrians HeatMap').add_to(toronto_map)
-            if add_auto_ml:
+            if configs_obj.run_conditions['run_auto_ml']:
                 predicted_pedestrians_group = folium.FeatureGroup(name='Predicted Pedestrians').add_to(toronto_map)
                 predicted_pedestrians_hm_group = folium.FeatureGroup(name='Predicted Pedestrians HeatMap').add_to(
                     toronto_map)
@@ -147,7 +147,7 @@ def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
                       , min_opacity=0.4, overlay=True, blur=18).add_to(traffic_heatmap_group)
 
             # Insert another Feature Group from H2O AutoML Predictions.
-            if add_auto_ml:
+            if configs_obj.run_conditions['run_auto_ml']:
                 # Part 1: Add Predicted Traffic
                 f_HeatMap(data=zip(dfs_obj.forecasts_dict['traffic_forecast']['latitude'],
                                    dfs_obj.forecasts_dict['traffic_forecast']['longitude']
