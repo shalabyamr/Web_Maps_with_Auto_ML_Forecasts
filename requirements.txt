@@ -16,3 +16,4 @@ psycopg2-binary~=2.9.9
 plotly~=5.18.0
 GeoAlchemy2~=0.14.6
 googledrivedownloader~=0.4
+setuptools~=69.2.0

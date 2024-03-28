@@ -112,6 +112,8 @@ You need to sync the environment python requirements to the following packages:
 * plotly~=5.20.0
 * GeoAlchemy2~=0.14.6
 * googledrivedownloader~=0.4
+* setuptools~=69.2.0
+
 
 ## §0.5 Safari Remote Automation
 To measure maps loading times, Safari needs to have the option 'Allow Remote Automation' enabled in 'Developer' menu.
