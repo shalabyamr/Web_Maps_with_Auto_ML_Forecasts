@@ -83,6 +83,10 @@ def create_dataframes(configs_obj):
     cur = configs_obj.database['pg_engine'].cursor()
     cur.execute(performance_query)
     configs_obj.database['pg_engine'].commit()
+    if configs_obj.run_conditions['save_locally']:
+        data_model_performance_df = pd.read_sql_table('data_model_performance_tbl', con=configs_obj.database['sqlalchemy_engine'], schema='public')
+        data_model_performance_df.to_csv(configs_obj.run_conditions['parent_dir']+'/Data/data_model_performance_tbl.csv', index=False, index_label=False, mode='w')
+        del data_model_performance_df
     print(
         f"****************************\nDone Storing Public Tables in Dataframes Object 'dfs_obj' whose size is: {sys.getsizeof(dfs_obj)} Byes in {dfs_total_seconds} Seconds.\n****************************"
     )
@@ -206,6 +210,10 @@ def auto_ml(dfs_obj):
     cur = configs_obj.database['pg_engine'].cursor()
     cur.execute(performance_query)
     configs_obj.database['pg_engine'].commit()
+    if configs_obj.run_conditions['save_locally']:
+        data_model_performance_df = pd.read_sql_table('data_model_performance_tbl', con=configs_obj.database['sqlalchemy_engine'], schema='public')
+        data_model_performance_df.to_csv(configs_obj.run_conditions['parent_dir']+'/Data/data_model_performance_tbl.csv', index=False, index_label=False, mode='w')
+        del data_model_performance_df
     print(
         f"****************************\nDone AutoML Using Configuration Runtime: {configs_obj.auto_ml['run_time_seconds']} Seconds, Forecast "
         f"Horizon: {configs_obj.auto_ml['forecast_horizon']}, and Forecast Frequency: { configs_obj.auto_ml['forecast_description']}.\n"

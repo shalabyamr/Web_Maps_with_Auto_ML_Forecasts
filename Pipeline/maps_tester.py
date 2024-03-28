@@ -89,6 +89,10 @@ def test_maps(configs_obj, show_maps: bool):
     cur = configs_obj.database['pg_engine'].cursor()
     cur.execute(performance_query)
     configs_obj.database['pg_engine'].commit()
+    if configs_obj.run_conditions['save_locally']:
+        data_model_performance_df = pd.read_sql_table('data_model_performance_tbl', con=configs_obj.database['sqlalchemy_engine'], schema='public')
+        data_model_performance_df.to_csv(configs_obj.run_conditions['parent_dir']+'/Data/data_model_performance_tbl.csv', index=False, index_label=False, mode='w')
+        del data_model_performance_df
     if show_maps:
         print('Launching Maps in their Respective Optimal Browser...')
         for index, row in maps_performance.iterrows():

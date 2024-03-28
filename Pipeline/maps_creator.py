@@ -208,6 +208,14 @@ def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
             cur.execute(performance_query)
             configs_obj.database['pg_engine'].commit()
             toronto_map.save(configs_obj.run_conditions['parent_dir'] + '/Maps/Folium_Toronto.html')
+            if configs_obj.run_conditions['save_locally']:
+                data_model_performance_df = pd.read_sql_table('data_model_performance_tbl',
+                                                              con=configs_obj.database['sqlalchemy_engine'],
+                                                              schema='public')
+                data_model_performance_df.to_csv(
+                    configs_obj.run_conditions['parent_dir'] + '/Data/data_model_performance_tbl.csv', index=False,
+                    index_label=False, mode='w')
+                del data_model_performance_df
             print(f"Done Generating the Folium Map in {folium_duration} Seconds")
             del folium_end, folium_duration, folium_start, performance_query
             gc.collect()
@@ -255,6 +263,14 @@ def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
             cur = configs_obj.database['pg_engine'].cursor()
             cur.execute(performance_query)
             configs_obj.database['pg_engine'].commit()
+            if configs_obj.run_conditions['save_locally']:
+                data_model_performance_df = pd.read_sql_table('data_model_performance_tbl',
+                                                              con=configs_obj.database['sqlalchemy_engine'],
+                                                              schema='public')
+                data_model_performance_df.to_csv(
+                    configs_obj.run_conditions['parent_dir'] + '/Data/data_model_performance_tbl.csv', index=False,
+                    index_label=False, mode='w')
+                del data_model_performance_df
             print(f"Done Generating the Mapbox Map in {mapbox_duration} Seconds")
             del mapbox_end, mapbox_duration, mapbox_start, performance_query
             gc.collect()
@@ -293,6 +309,14 @@ def create_maps(dfs_obj, configs_obj, add_auto_ml: bool, map_types: []):
             cur = configs_obj.database['pg_engine'].cursor()
             cur.execute(performance_query)
             configs_obj.database['pg_engine'].commit()
+            if configs_obj.run_conditions['save_locally']:
+                data_model_performance_df = pd.read_sql_table('data_model_performance_tbl',
+                                                              con=configs_obj.database['sqlalchemy_engine'],
+                                                              schema='public')
+                data_model_performance_df.to_csv(
+                    configs_obj.run_conditions['parent_dir'] + '/Data/data_model_performance_tbl.csv', index=False,
+                    index_label=False, mode='w')
+                del data_model_performance_df
             del turf_start, turf_end, turf_duration, performance_query
             gc.collect()
 
