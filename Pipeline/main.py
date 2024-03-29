@@ -38,8 +38,8 @@ if configs_obj.run_conditions['create_tables']:
     if configs_obj.run_conditions['save_locally']:
         print('Saving Data Model Performance {} in: {}'.format('data_model_performance.csv',
                                                                configs_obj.run_conditions[
-                                                                   'parent_dir'] + '/Analytics/'))
-        pipeline_df.to_csv(configs_obj.run_conditions['parent_dir'] + '/Analytics/data_model_performance.csv',
+                                                                   'parent_dir'] + '/Data/'))
+        pipeline_df.to_csv(configs_obj.run_conditions['parent_dir'] + '/Data/data_model_performance.csv',
                            index=False,
                            index_label=False)
 
