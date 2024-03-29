@@ -147,6 +147,10 @@ def auto_ml(dfs_obj):
     df_traffic_forecasts.to_sql(name='fact_h2o_traffic_forecast', con=configs_obj.database['sqlalchemy_engine']
                                 , schema='public', if_exists='replace', index=False, index_label=False)
     print(f"Saved Traffic Forecast to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds")
+    if configs_obj.database['save_locally']:
+        df_traffic_forecasts.to_csv(configs_obj.run_conditions['parent_dir']+'/Data/fact_h2o_traffic_forecast.csv'
+                        , index=False, index_label=False)
+        print(f"Saved Traffic Forecast Locally to: {configs_obj.run_conditions['parent_dir']}/Data/fact_h2o_traffic_forecast.csv")
     del df_traffic_forecasts
     # End of Part 1 Traffic Prediction.
 
@@ -198,6 +202,10 @@ def auto_ml(dfs_obj):
     df_pedestrians_forecasts.to_sql(name='fact_h2o_pedestrians_forecast', con=configs_obj.database['sqlalchemy_engine']
                                 , schema='public', if_exists='replace', index=False, index_label=False)
     print(f"Saved Pedestrians Forecasts to Database in {(datetime.datetime.now()-automl_start).total_seconds()} Seconds")
+    if configs_obj.database['save_locally']:
+        df_pedestrians_forecasts.to_csv(configs_obj.run_conditions['parent_dir']+'/Data/fact_h2o_pedestrians_forecast.csv'
+                        , index=False, index_label=False)
+        print(f"Saved Pedestrian Forecasts Locally to: {configs_obj.run_conditions['parent_dir']}/Data/fact_h2o_pedestrians_forecast.csv")
     del df_pedestrians_forecasts
     # End of Part 2 Pedestrians forecast
     h2o.cluster().shutdown()
