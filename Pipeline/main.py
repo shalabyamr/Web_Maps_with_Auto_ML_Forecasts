@@ -94,4 +94,5 @@ if ('MACOS' not in platform.platform().upper()) and (configs_obj.run_conditions[
     print('Sorry. Map Tester is only supported on MacOS.')
     sys.exit(0)
 
-print('Maps were created without testing.  To enable Safari Test Automation: https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari')
+else:
+    print('Maps were created without testing.  To enable Safari Test Automation: https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari')
