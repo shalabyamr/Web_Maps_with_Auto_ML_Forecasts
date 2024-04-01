@@ -162,7 +162,7 @@ The parsed configurations from [Config.ini](Pipeline/config.ini) is stored in a 
 * configs_obj._**auto_ml**_ dictionary contains the dictionary of the _**auto_ml**_ segment in [Config.ini](Pipeline/config.ini#L8-L11)
   * configs_obj.**auto_ml**['**run_time_seconds**'] is the processed [run_time_seconds integer](Pipeline/config.ini#L9-L9)
   * configs_obj.**auto_ml**['**forecast_horizon**'] is the processed [forecast_horizon integer](Pipeline/config.ini#L10-L10)
-  * configs_obj.**auto_ml**['**forecast_frequency**'] is the processed  [forecast_frequency integer](Pipeline/config.ini#L11-L11)
+  * configs_obj.**auto_ml**['**forecast_frequency**'] is the processed  [forecast_frequency](Pipeline/config.ini#L11-L11)
 
 * configs_obj._**database**_ is the dictionary of the _**database**_ segment in [Config.ini](Pipeline/config.ini#L1-L6)
   * configs_obj.**database**['**host**'] is the processed [host server](Pipeline/config.ini#L2-L2)
