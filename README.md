@@ -71,7 +71,8 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
      * If run_auto_ml is set to **False**, the maps will contain only the web scraped data without the prediction layers.</br></br>
    * **map_types**: comma-seperated values of Turf, Mapbox, Folium.
      * The inputs are not case-sensitive, without quotation marks, and specifies the desired map types.
-     * Acceptable values are _Turf_, _Mapbox_, and _Folium_.</br></br>
+     * Acceptable values are:
+       * _Turf_, _Mapbox_, and _Folium_.</br></br>
 
 
 [**Config.ini**](Pipeline/config.ini) Contents:
@@ -136,8 +137,22 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [main.p
 ## §0.4 Execution Steps
 ![Report](Reports/execution_flow_chart.jpg)
 
-## §0.5 Performance Testing
-The optimal browser is Safari across all map types.
+## §0.5 Data Frames Object
+The Data Frames are stored in a single object and accessible via a dictionary that follows the following naming convention:
+* dfs_obj.**pandas_dfs**: contains the Pandas data frames of all the tables in Public Schema. It follows the naming convention of dfs_obj.pandas_dfs['public_table_'name'].
+  * For example, if the public table name is _fact_combined_air_data_ then it can be accessed by dfs_obj.pandas_dfs['fact_combined_air_data']</br></br>
+* dfs_obj.**geopandas_dfs**: contains the GeoPandas data frames of only the **projected** tables in Public Schema with a geometry column. It follows the naming convention of dfs_obj.geo_pandas_dfs['public_table_'name'].
+  * For example, if the projected public table name is _fact_gta_traffic_proj_ then it can be accessed by dfs_obj.geopandas_dfs['fact_gta_traffic_proj']</br></br>
+* dfs_obj.**h2o_dfs**: contains the H2O data frames of all the tables in Public Schema. It follows the naming convention of dfs_obj.h2o_dfs['public_table_'name'].
+  * For example, if the public table name is _fact_traffic_volume_ then it can be accessed by dfs_obj.h2o_dfs['fact_traffic_volume']</br></br>
+
+## §0.6 Configurations Object
+The parsed configurations from [Config.ini](Pipeline/config.ini) is stored in a single object **configs_obj** that has the following the attributes:
+* configs_obj._run_conditions_: contains the dictionary of the run_conditions segment in [Config.ini](Pipeline/config.ini#L16-L22)
+* 
+
+## §0.7 Performance Testing
+The optimal browser is Safari across all map types. Should a specific HTML file loads faster in a specific browser other than Safari, that HTML file will be loaded in its respective fastest browser.
 ![Report](Reports/load_testing.jpg)
 
 
