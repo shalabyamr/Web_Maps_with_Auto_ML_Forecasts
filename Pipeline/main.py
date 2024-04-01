@@ -13,6 +13,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # Initial Step is to read run-time configurations.
+main_start_time = datetime.datetime.now()
 read_configs()
 
 # First Step is to create Staging and Production Data.  This can be bypassed if the Tables are created
@@ -87,12 +88,14 @@ maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj)
 # Depending on Show: Boolean Value it each map type will launch in its own optimal
 # browser with the minimum loading time.
 if ('MACOS' in platform.platform().upper()) and (configs_obj.run_conditions['show_maps']):
-    print(f"Running on Platform: {platform.platform().upper()}")
+    print(f"Running on Platform: {platform.platform().upper()}. Make sure Safari Test Automation is Enabled: https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari")
     test_maps(configs_obj=configs_obj)
 
-if ('MACOS' not in platform.platform().upper()) and (configs_obj.run_conditions['show_maps']):
+elif ('MACOS' not in platform.platform().upper()) and (configs_obj.run_conditions['show_maps']):
     print('Sorry. Map Tester is only supported on MacOS.')
     sys.exit(0)
 
-else:
-    print('Maps were created without testing.  To enable Safari Test Automation: https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari')
+elif not configs_obj.run_conditions['show_maps']:
+    print('Show Maps Disabled. Maps were created without testing.')
+
+print(f"*****************************\nDone Executing Pipeline as in {(datetime.datetime.now()-main_start_time).total_seconds()} Seconds.\n*****************************")

@@ -44,7 +44,7 @@ def read_configs():
             f"save_locally_flag in Config.ini is set as {check_save_locally}. Only True or False is accepted.")
     del check_save_locally
     configs_obj.run_conditions['save_locally'] = eval(config['run_conditions']['save_locally'])
-    configs_obj.run_conditions['parent_dir'] = str(config['run_conditions']['parent_dir'])
+    configs_obj.run_conditions['parent_dir'] = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 
     # Access Tokens needed for Mapbox. Here Access Tokens are a dictionary to allow for more
     # Tokens to be added later with better readability. It is stored as
@@ -270,7 +270,7 @@ def extract_monthly_forecasts(configs_obj):
             print('Download Link: ', download_link)
             filename = configs_obj.run_conditions['parent_dir'] + '/Data/Forecast_' + link.get('href')
             if configs_obj.run_conditions['save_locally']:
-                print("Filename to be Written: ", filename)
+                print("Filename to be Appended to: ", configs_obj.run_conditions['parent_dir'] + '/Data/monthly_forecasts.csv')
             i += 1
             # Get response object for link
             response = requests.get(download_link)
