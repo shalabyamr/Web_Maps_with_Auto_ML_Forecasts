@@ -60,7 +60,6 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
    * **save_locally**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder. Default is _True_.
    * If **save_locally** is set to True, copies of both the staging and public tables will be stored to [/Data/](Data Folder).
    * Data Model Performance and Maps Creation Performance Tables are saved locally.
-   * **parent_dir**: The path of the root folder without quotation marks.
    * **create_tables**: Boolean Value _True_ or _False_. Default is _True_.
      * This creates the database tables from web scraping to ingestion. 
      * If the database tables are already created, they get dropped and web scraping is initiated.
@@ -80,14 +79,13 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
 
 [**Config.ini**](Pipeline/config.ini) Contents:
 
-|    [postgres_db]     | [auto_ml]                  | [api_tokens] | [run_conditions]                                        |
-|:--------------------:|----------------------------|--------------|---------------------------------------------------------|
-|   host = localhost   | run_time_seconds = 300     | mapbox = ... | save_locally = False                                    |
-| db_name   = postgres | forecast_horizon = 30      |              | parent_dir = /Users/amr/PycharmProjects/ggr_472_project |
-|   user = postgres    | forecast_frequency = Daily |              | create_tables = True                                    |
-| password = postgres  |                            |              | show_maps = True                                        |
-|     port = 5432      |                            |              | run_auto_ml = True                                      |
-|                      |                            |              | map_types = folium, mapbox, turf                        |
+|    [postgres_db]     | [auto_ml]                  | [api_tokens] | [run_conditions]                 |
+|:--------------------:|----------------------------|--------------|----------------------------------|
+|   host = localhost   | run_time_seconds = 300     | mapbox = ... | save_locally = False             |
+| db_name   = postgres | forecast_horizon = 30      |              | create_tables = True             |
+|   user = postgres    | forecast_frequency = Daily |              | show_maps = True                 |
+| password = postgres  |                            |              | run_auto_ml = True               |
+|     port = 5432      |                            |              | map_types = folium, mapbox, turf |
 
 ## §0.2: R Base Installation
 R Base needs to be installed.  
@@ -124,7 +122,11 @@ You need to sync the environment python requirements to the following packages:
 To measure maps loading times, Safari needs to have the option 'Allow Remote Automation' enabled in 'Developer' menu.
 ![Safari Remote Automation](Reports/safari_allow_remote_automation.jpg)
 
-## §0.6 Execution
+## §0.6 PostGresSQL Server
+* To setup PostGresSQL Server using dockers please [refer to this guide](https://trevorstanley.medium.com/setup-postgresql-with-postgis-on-docker-8801637a766c).
+* The needed schemas, _Public_ and _Stage_, as well as the PostGIS Extension are handled internally in [database configurations](Pipeline/data_extractor.py#L172-L179)
+
+## §0.7 Execution
 After modifying [Config.ini](Pipeline/config.ini), run the python script [main.py](Pipeline/main.py).
 
 # Pipeline
@@ -140,7 +142,16 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [main.p
 ## §0.4 Execution Steps
 ![Report](Reports/execution_flow_chart.jpg)
 
-## §0.5 Data Frames Object
+    
+## §0.7 Performance Testing
+The optimal browser is Safari across all map types. Should a specific HTML file loads faster in a specific browser other than Safari, that HTML file will be loaded in its respective fastest browser.
+![Report](Reports/load_testing.jpg)
+
+
+# Pipeline Design
+
+## 1. Staging (Extraction) Layer
+### §0.1 Data Frames Object
 The Data Frames are stored in a single object and accessible via a dictionary that follows the following naming convention:
 * dfs_obj.**pandas_dfs**: contains the Pandas data frames of all the tables in Public Schema. It follows the naming convention of dfs_obj.**pandas_dfs**['**public_table_name**'].
   * For example, if the public table name is _**fact_combined_air_data**_ then it can be accessed by dfs_obj.pandas_dfs['**fact_combined_air_data**']</br></br>
@@ -149,15 +160,15 @@ The Data Frames are stored in a single object and accessible via a dictionary th
 * dfs_obj.**h2o_dfs**: contains the H2O data frames of all the tables in Public Schema. It follows the naming convention of dfs_obj.h2o_dfs['**public_table_name**'].
   * For example, if the public table name is _**fact_traffic_volume**_ then it can be accessed by dfs_obj.h2o_dfs['**fact_traffic_volume**']</br></br>
 
-## §0.6 Configurations Object
+### §0.2 Configurations Object
 The parsed configurations from [Config.ini](Pipeline/config.ini) is stored in a single object **configs_obj** that has the following the attributes:
 * configs_obj._**run_conditions_dictionary** contains the dictionary of the _**run_conditions**_ segment in [Config.ini](Pipeline/config.ini#L16-L22)
   * configs_obj.**run_conditions**['**save_locally**'] is the processed [save_locally flag](Pipeline/config.ini#L17-L17)
-  * configs_obj.**run_conditions**['**parent_dir**'] is the processed [parent_directory](Pipeline/config.ini#L18-L18)
-  * configs_obj.**run_conditions**['**create_tables**'] is the processed  [create_tables flag](Pipeline/config.ini#L19-L19)
-  * configs_obj.**run_conditions**['**show_maps**'] is the processed  [show_maps flag](Pipeline/config.ini#L20-L20)
-  * configs_obj.**run_conditions**['**run_auto_ml**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L21-L21)
-  * configs_obj.**run_conditions**['**map_types**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L22-L22)</br></br>
+  * configs_obj.**run_conditions**['**parent_dir**'] is the processed [parent_directory](Pipeline/data_extractor.py#L47-L47)
+  * configs_obj.**run_conditions**['**create_tables**'] is the processed  [create_tables flag](Pipeline/config.ini#L18-L18)
+  * configs_obj.**run_conditions**['**show_maps**'] is the processed  [show_maps flag](Pipeline/config.ini#L19-L19)
+  * configs_obj.**run_conditions**['**run_auto_ml**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L20-L20)
+  * configs_obj.**run_conditions**['**map_types**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L21-L21)</br></br>
   
 * configs_obj._**auto_ml**_ dictionary contains the dictionary of the _**auto_ml**_ segment in [Config.ini](Pipeline/config.ini#L8-L11)
   * configs_obj.**auto_ml**['**run_time_seconds**'] is the processed [run_time_seconds integer](Pipeline/config.ini#L9-L9)
@@ -174,15 +185,7 @@ The parsed configurations from [Config.ini](Pipeline/config.ini) is stored in a 
     * configs_obj.**database**['**pg_engine**] is the [PostgreSQL database adapter](https://pypi.org/project/psycopg2/)
     * configs_obj.**database**['**sqlalchemy_engine**'] is the [SQLAlchemy is the Python SQL toolkit and Object Relational Mapper](https://www.sqlalchemy.org/)</br></br>
 
-    
-## §0.7 Performance Testing
-The optimal browser is Safari across all map types. Should a specific HTML file loads faster in a specific browser other than Safari, that HTML file will be loaded in its respective fastest browser.
-![Report](Reports/load_testing.jpg)
 
-
-# Pipeline Design
-
-## 1. Staging (Extraction) Layer
 ### §1. Monthly Data Web Scraping
 To download the Ontario monthly air quality data from https://dd.weather.gc.ca/air_quality/aqhi/ont/observation/monthly/csv/, function _extract_monthly_data()_in the Data Extractor [data_extractor.py](https://github.com/amr-y-shalaby/GGR473_Project/blob/main/Pipeline/data_extractor.py) File.
 which ingests the public data into the **first** staging table "**stg_monthly_air_data**."
