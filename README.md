@@ -48,7 +48,8 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
    * **run_time_seconds**: accepts an integer greater than or equal to 0. The default duration is 0 for unlimited execution time till models are constructed.
    * **forecast_horizon**: accepts an integer greater than 0 which is the 'unit' time needed to forecast ahead of the last reported date per weather, traffic, and pedestrian stations.
    * **forecast_frequency**: sets the forecast frequency to generate the number of 'units' of the forecast horizon.
-     - The values of _Hour_, _Hourly_, _Day_, _Daily_, _Month_, _Monthly_, _Year_, _Yearly_, _Annual_, _Annually_, _Quarter_, _Quarterly_.</br></br>
+     - Acceptable values are: 
+       - _Hour_, _Hourly_, _Day_, _Daily_, _Month_, _Monthly_, _Year_, _Yearly_, _Annual_, _Annually_, _Quarter_, _Quarterly_.</br></br>
  - **api_tokens**:
    * follows the convention _platform_name_ = _token_ without quotation marks. The starting example mapbox = __token__ </br></br>
 
