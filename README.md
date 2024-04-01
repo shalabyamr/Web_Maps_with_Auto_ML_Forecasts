@@ -142,37 +142,37 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [main.p
 
 ## §0.5 Data Frames Object
 The Data Frames are stored in a single object and accessible via a dictionary that follows the following naming convention:
-* dfs_obj.**pandas_dfs**: contains the Pandas data frames of all the tables in Public Schema. It follows the naming convention of dfs_obj.pandas_dfs['public_table_'name'].
+* dfs_obj.**pandas_dfs**: contains the Pandas data frames of all the tables in Public Schema. It follows the naming convention of dfs_obj.**pandas_dfs**['**public_table_name**'].
   * For example, if the public table name is _**fact_combined_air_data**_ then it can be accessed by dfs_obj.pandas_dfs['**fact_combined_air_data**']</br></br>
 * dfs_obj.**geopandas_dfs**: contains the GeoPandas data frames of only the **projected** tables in Public Schema with a geometry column. It follows the naming convention of dfs_obj.geo_pandas_dfs['public_table_'name'].
   * For example, if the projected public table name is _**fact_gta_traffic_proj**_ then it can be accessed by dfs_obj.geopandas_dfs['**fact_gta_traffic_proj**']</br></br>
-* dfs_obj.**h2o_dfs**: contains the H2O data frames of all the tables in Public Schema. It follows the naming convention of dfs_obj.h2o_dfs['public_table_'name'].
+* dfs_obj.**h2o_dfs**: contains the H2O data frames of all the tables in Public Schema. It follows the naming convention of dfs_obj.h2o_dfs['**public_table_name**'].
   * For example, if the public table name is _**fact_traffic_volume**_ then it can be accessed by dfs_obj.h2o_dfs['**fact_traffic_volume**']</br></br>
 
 ## §0.6 Configurations Object
 The parsed configurations from [Config.ini](Pipeline/config.ini) is stored in a single object **configs_obj** that has the following the attributes:
 * configs_obj._**run_conditions_dictionary** contains the dictionary of the _**run_conditions**_ segment in [Config.ini](Pipeline/config.ini#L16-L22)
-  * configs_obj.run_conditions['**save_locally**'] is the processed [save_locally flag](Pipeline/config.ini#L17-L17)
-  * configs_obj.run_conditions['**parent_dir**'] is the processed [parent_directory](Pipeline/config.ini#L18-L18)
-  * configs_obj.run_conditions['**create_tables**'] is the processed  [creat_tables flag](Pipeline/config.ini#L19-L19)
-  * configs_obj.run_conditions['**show_maps**'] is the processed  [show_maps flag](Pipeline/config.ini#L20-L20)
-  * configs_obj.run_conditions['**run_auto_ml**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L21-L21)
-  * configs_obj.run_conditions['**map_types**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L22-L22)</br></br>
+  * configs_obj.**run_conditions**['**save_locally**'] is the processed [save_locally flag](Pipeline/config.ini#L17-L17)
+  * configs_obj.**run_conditions**['**parent_dir**'] is the processed [parent_directory](Pipeline/config.ini#L18-L18)
+  * configs_obj.**run_conditions**['**create_tables**'] is the processed  [creat_tables flag](Pipeline/config.ini#L19-L19)
+  * configs_obj.**run_conditions**['**show_maps**'] is the processed  [show_maps flag](Pipeline/config.ini#L20-L20)
+  * configs_obj.**run_conditions**['**run_auto_ml**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L21-L21)
+  * configs_obj.**run_conditions**['**map_types**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L22-L22)</br></br>
   
 * configs_obj._**auto_ml**_ dictionary contains the dictionary of the _**auto_ml**_ segment in [Config.ini](Pipeline/config.ini#L8-L11)
-  * configs_obj.auto_ml['**run_time_seconds**'] is the processed [run_time_seconds integer](Pipeline/config.ini#L9-L9)
-  * configs_obj.auto_ml['**forecast_horizon**'] is the processed [forecast_horizon integer](Pipeline/config.ini#L10-L10)
-  * configs_obj.auto_ml['**forecast_frequency**'] is the processed  [forecast_frequency integer](Pipeline/config.ini#L11-L11)
+  * configs_obj.**auto_ml**['**run_time_seconds**'] is the processed [run_time_seconds integer](Pipeline/config.ini#L9-L9)
+  * configs_obj.**auto_ml**['**forecast_horizon**'] is the processed [forecast_horizon integer](Pipeline/config.ini#L10-L10)
+  * configs_obj.**auto_ml**['**forecast_frequency**'] is the processed  [forecast_frequency integer](Pipeline/config.ini#L11-L11)
 
 * configs_obj._**database**_ is the dictionary of the _**database**_ segment in [Config.ini](Pipeline/config.ini#L1-L6)
-  * configs_obj.database['**host**'] is the processed [host server](Pipeline/config.ini#L2-L2)
-  * configs_obj.database['**db_name**'] is the processed [db_name database name](Pipeline/config.ini#L3-L3)
-  * configs_obj.database['**user**'] is the processed  [user name](Pipeline/config.ini#L4-L4)
-  * configs_obj.database['**password**'] is the processed  [the user's password](Pipeline/config.ini#L5-L5)
-  * configs_obj.database['**port**'] is the processed  [port integer](Pipeline/config.ini#L6-L6)
-  * configs_obj.database dictionary also holds the **database** **connectors** which are initialized only **once** throughout execution phase to avoid slow database authentications at every step.
-    * configs_obj.database['pg_engine] is the [PostgreSQL database adapter](https://pypi.org/project/psycopg2/)
-    * configs_obj.database['sqlalchemy_engine'] is the [SQLAlchemy is the Python SQL toolkit and Object Relational Mapper](https://www.sqlalchemy.org/)</br</br>
+  * configs_obj.**database**['**host**'] is the processed [host server](Pipeline/config.ini#L2-L2)
+  * configs_obj.**database**['**db_name**'] is the processed [db_name database name](Pipeline/config.ini#L3-L3)
+  * configs_obj.**database**['**user**'] is the processed  [user name](Pipeline/config.ini#L4-L4)
+  * configs_obj.**database**['**password**'] is the processed  [the user's password](Pipeline/config.ini#L5-L5)
+  * configs_obj.**database**['**port**'] is the processed  [port integer](Pipeline/config.ini#L6-L6)
+  * configs_obj.**database** dictionary also holds the **database** **connectors** which are initialized only **once** throughout execution phase to avoid slow database authentications at every step.
+    * configs_obj.database['**pg_engine**] is the [PostgreSQL database adapter](https://pypi.org/project/psycopg2/)
+    * configs_obj.database['**sqlalchemy_engine**'] is the [SQLAlchemy is the Python SQL toolkit and Object Relational Mapper](https://www.sqlalchemy.org/)</br></br>
 
     
 ## §0.7 Performance Testing
