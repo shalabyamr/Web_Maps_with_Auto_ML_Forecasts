@@ -183,12 +183,11 @@ def create_maps(dfs_obj, configs_obj):
                     if row['predicted_pedestrians'] < int(
                             dfs_obj.pandas_dfs['fact_gta_traffic_arcgis']['f8hr_pedestrian_volume'].mean()):
                         color = 'green'
-
                     folium.Marker(location=[row['latitude'], row['longitude']],
                                   popup=folium.Popup(
                                       f"<font color={color}>Predicted Pedestrians: <b>{row['predicted_pedestrians']}</b><br>Future Date: <b>{row['future_date']}</b><br>Location Name:<br><b>{row['main']}</b></font>"
                                       , min_width=200, max_width=200)
-                                  , icon=folium.Icon(color="green", icon="flag")).add_to(mc)
+                                  , icon=folium.Icon(color=color, icon="flag")).add_to(mc)
                 mc.add_to(predicted_pedestrians_group)
                 # End of Part 2.
                 # end of AutoML Insertion
