@@ -56,7 +56,7 @@ WITH GEO_NAMES AS(
   , G.generic_category
   , G.generic_term
   , G.geographical_name
-  , ROUND(EXTRACT('SECOND' FROM G.last_inserted - G.last_updated),1)     GEO_NAMES_SECOND_FROM_EXTRACTION
+  , EXTRACT('SECOND' FROM G.last_inserted - G.last_updated)     GEO_NAMES_SECOND_FROM_EXTRACTION
   , DATE(M.the_date) AS "the_date"
   , EXTRACT('Year' FROM M.the_date) AS "year"
   , EXTRACT('Month' FROM M.the_date) AS "month"
