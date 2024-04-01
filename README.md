@@ -154,7 +154,7 @@ The parsed configurations from [Config.ini](Pipeline/config.ini) is stored in a 
 * configs_obj._**run_conditions_dictionary** contains the dictionary of the _**run_conditions**_ segment in [Config.ini](Pipeline/config.ini#L16-L22)
   * configs_obj.**run_conditions**['**save_locally**'] is the processed [save_locally flag](Pipeline/config.ini#L17-L17)
   * configs_obj.**run_conditions**['**parent_dir**'] is the processed [parent_directory](Pipeline/config.ini#L18-L18)
-  * configs_obj.**run_conditions**['**create_tables**'] is the processed  [creat_tables flag](Pipeline/config.ini#L19-L19)
+  * configs_obj.**run_conditions**['**create_tables**'] is the processed  [create_tables flag](Pipeline/config.ini#L19-L19)
   * configs_obj.**run_conditions**['**show_maps**'] is the processed  [show_maps flag](Pipeline/config.ini#L20-L20)
   * configs_obj.**run_conditions**['**run_auto_ml**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L21-L21)
   * configs_obj.**run_conditions**['**map_types**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L22-L22)</br></br>
