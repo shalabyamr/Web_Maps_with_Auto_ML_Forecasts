@@ -70,7 +70,7 @@ WITH GEO_NAMES AS(
          WHEN hours_utc BETWEEN 18 AND 23 THEN 'EVENING_18_TO_23'
          ELSE 'Unknown' END          AS PHASE_HOUR_UTC
   , M.air_quality_value
-  , ROUND(EXTRACT('SECOND' FROM M.last_inserted - M.last_updated),1)   AS AIR_DATA_SECONDS_FROM_EXTRACTION
+  , EXTRACT('SECOND' FROM M.last_inserted - M.last_updated)   AS AIR_DATA_SECONDS_FROM_EXTRACTION
   , M.last_updated
   , M.last_inserted
   , M.src_filename
