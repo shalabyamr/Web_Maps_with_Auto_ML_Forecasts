@@ -171,8 +171,8 @@ The parsed configurations from [Config.ini](Pipeline/config.ini) is stored in a 
   * configs_obj.**database**['**password**'] is the processed  [the user's password](Pipeline/config.ini#L5-L5)
   * configs_obj.**database**['**port**'] is the processed  [port integer](Pipeline/config.ini#L6-L6)
   * configs_obj.**database** dictionary also holds the **database** **connectors** which are initialized only **once** throughout execution phase to avoid slow database authentications at every step.
-    * configs_obj.database['**pg_engine**] is the [PostgreSQL database adapter](https://pypi.org/project/psycopg2/)
-    * configs_obj.database['**sqlalchemy_engine**'] is the [SQLAlchemy is the Python SQL toolkit and Object Relational Mapper](https://www.sqlalchemy.org/)</br></br>
+    * configs_obj.**database**['**pg_engine**] is the [PostgreSQL database adapter](https://pypi.org/project/psycopg2/)
+    * configs_obj.**database**['**sqlalchemy_engine**'] is the [SQLAlchemy is the Python SQL toolkit and Object Relational Mapper](https://www.sqlalchemy.org/)</br></br>
 
     
 ## §0.7 Performance Testing
