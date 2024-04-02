@@ -152,6 +152,7 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [Main.p
 * The optimal browser is **Safari** across _all_ map types. 
 * Should a specific HTML file loads faster in a specific browser other than Safari, that HTML file will be loaded in its **respective** fastest browser.
 * Only **MacOS** is supported.
+
 ![Optimal Browsers](Images/load_testing.jpg)
 
 
