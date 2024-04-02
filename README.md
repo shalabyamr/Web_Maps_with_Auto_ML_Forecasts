@@ -54,25 +54,25 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
    * **forecast_frequency**: sets the forecast frequency to generate the number of 'units' of the forecast horizon.
      - Acceptable values are: 
        - _Hour_, _Hourly_, _Day_, _Daily_, _Month_, _Monthly_, _Year_, _Yearly_, _Annual_, _Annually_, _Quarter_, _Quarterly_.</br></br>
- - **api_tokens**:
+ - **[api_tokens](Pipeline/config.ini#L13-L14)**:
    * follows the convention _platform_name_ = _token_ without quotation marks. The starting example mapbox = __token__ </br></br>
 
  - **[run_conditions](Pipeline/config.ini#L16-L21)**:
-   * **save_locally**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder. Default is _True_.
+   * **[save_locally](Pipeline/config.ini#L14)**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder. Default is _True_.
    * If **save_locally** is set to True, copies of both the staging and public tables will be stored to [/Data/](Data Folder).
    * Data Model Performance and Maps Creation Performance Tables are saved locally.
-   * **create_tables**: Boolean Value _True_ or _False_. Default is _True_.
+   * **[create_tables](Pipeline/config.ini#L18)**: Boolean Value _True_ or _False_. Default is _True_.
      * This creates the database tables from web scraping to ingestion. 
      * If the database tables are already created, they get dropped and web scraping is initiated.
      * If **create_tables** is set to _False_, no web scraping and data refresh.  All the tables in Public Schema will be used to generate the maps.</br></br>
-   * **show_maps**: Boolean Value _True_ or _False_. Default is _True_. 
+   * **[show_maps](Pipeline/config.ini#L19)**: Boolean Value _True_ or _False_. Default is _True_. 
      * runs [maps_tester.py](Pipeline/maps_tester.py) to determine optimal browser (Firefox, Google Chrome, or Safari) with the lowest loading time per generated HTML file in [Maps Folder](Maps).
      * Only MacOS is supported by runs [maps_tester.py](Pipeline/maps_tester.py).
      * If show_maps is set to _False_, HTML files will be generated but **not** displayed in the optimal browser and **not** tested.</br></br>
-   * **run_auto_ml**: Boolean Value _True_ or _False_.
+   * **[run_auto_ml](Pipeline/config.ini#L20)**: Boolean Value _True_ or _False_.
      * Determines if the Predictions are to be embedded into the maps or skipped. 
      * If run_auto_ml is set to **False**, the maps will contain only the web scraped data without the prediction layers.</br></br>
-   * **map_types**: comma-seperated values of Turf, Mapbox, Folium.
+   * **[map_types](Pipeline/config.ini#L21)**: comma-seperated values of Turf, Mapbox, Folium.
      * The inputs are not case-sensitive, without quotation marks, and specifies the desired map types.
      * Acceptable values are:
        * _Turf_, _Mapbox_, and _Folium_.</br></br>
