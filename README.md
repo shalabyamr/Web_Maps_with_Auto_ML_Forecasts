@@ -4,15 +4,15 @@
   * [§0.1 Config.ini](#01-configini)
   * [§0.2: R Base Installation](#02-r-base-installation)
   * [§0.3: Python Requirements](#03-python-requirements)
-  * [§0.5 Safari Remote Automation](#05-safari-remote-automation)
-  * [§0.6 PostGresSQL Server](#06-postgressql-server)
-  * [§0.7 Execution](#07-execution)
+  * [§0.4 Safari Remote Automation](#04-safari-remote-automation)
+  * [§0.5 PostGresSQL Server](#05-postgressql-server)
+  * [§0.6 Execution](#06-execution)
 * [Pipeline](#pipeline)
   * [§0.1 Flow](#01-flow)
   * [§0.2 Execution Time](#02-execution-time)
   * [§0.3 Auto Machine Learning Layer](#03-auto-machine-learning-layer)
   * [§0.4 Execution Steps](#04-execution-steps)
-  * [§0.7 Performance Testing](#07-performance-testing)
+  * [§0.4 Performance Testing](#04-performance-testing)
 * [Pipeline Design](#pipeline-design)
   * [1. Staging (Extraction) Layer](#1-staging-extraction-layer)
     * [§0.1 Data Frames Object](#01-data-frames-object)
@@ -147,8 +147,7 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [Main.p
 ## §0.4 Execution Steps
 ![Report](Images/execution_flow_chart.jpg)
 
-    
-## §0.7 Performance Testing
+## §0.4 Performance Testing
 The optimal browser is Safari across all map types. Should a specific HTML file loads faster in a specific browser other than Safari, that HTML file will be loaded in its respective fastest browser.
 ![Report](Images/load_testing.jpg)
 
