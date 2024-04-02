@@ -140,16 +140,16 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [Main.p
 
 
 ## §0.2 Execution Time
-![Report](Images/pipeline_execution_time.jpg)
+![Execution Time Per Phase](Images/pipeline_execution_time.jpg)
 
 ## §0.3 Auto Machine Learning Layer
 ![](Images/h2o_automl_flowchart.png)
 ## §0.4 Execution Steps
-![Report](Images/execution_flow_chart.jpg)
+![Execution Steps](Images/execution_flow_chart.jpg)
 
 ## §0.4 Performance Testing
 The optimal browser is Safari across all map types. Should a specific HTML file loads faster in a specific browser other than Safari, that HTML file will be loaded in its respective fastest browser.
-![Report](Images/load_testing.jpg)
+![Optimal Browsers](Images/load_testing.jpg)
 
 
 # Pipeline Design
