@@ -133,7 +133,7 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [main.p
 
 # Pipeline
 ## §0.1 Flow
-**Data Curation:**
+**Data Curation:**</br></br>
 ![Report](Reports/pipeline_steps.png)</br></br>
 **Web Maps Data Preparation**:</br></br>
 ![Report](Reports/auto_ml_layer.jpg)
