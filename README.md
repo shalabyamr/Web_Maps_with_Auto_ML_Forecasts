@@ -148,7 +148,8 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [Main.p
 ![Execution Steps](Images/execution_flow_chart.jpg)
 
 ## §0.4 Performance Testing
-The optimal browser is Safari across all map types. Should a specific HTML file loads faster in a specific browser other than Safari, that HTML file will be loaded in its respective fastest browser.
+* The optimal browser is **Safari** across _all_ map types. Should a specific HTML file loads faster in a specific browser other than Safari, that HTML file will be loaded in its **respective** fastest browser.
+* Performance Testing is only supported on MacOS.
 ![Optimal Browsers](Images/load_testing.jpg)
 
 
