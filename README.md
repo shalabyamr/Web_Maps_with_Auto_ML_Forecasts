@@ -156,7 +156,7 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [Main.p
 ![Optimal Browsers](Images/load_testing.jpg)
 
 
-# Pipeline Design
+# Data Curation Phases
 
 ## 1. Staging (Extraction) Layer
 ### §0.1 Data Frames Object
