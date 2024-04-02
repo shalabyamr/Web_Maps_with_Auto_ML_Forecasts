@@ -132,7 +132,7 @@ To measure maps loading times, Safari needs to have the option 'Allow Remote Aut
 After modifying [Config.ini](Pipeline/config.ini), run the python script [Main.py](Pipeline/main.py).
 
 # Pipeline
-## §0.1 Flow
+## §0.1 Data Curation
 **Data Curation:**</br></br>
 ![Report](Images/pipeline_steps.png)</br></br>
 **Web Maps Data Preparation**:</br></br>
