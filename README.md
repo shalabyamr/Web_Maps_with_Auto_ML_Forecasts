@@ -135,7 +135,7 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [Main.p
 ## §0.1 Data Curation
 **Data Curation:**</br></br>
 ![Report](Images/pipeline_steps.png)</br></br>
-**Web Maps Data Preparation**:</br></br>
+**Data Augmentation for Web Maps**:</br></br>
 ![Report](Images/auto_ml_layer.jpg)
 
 
