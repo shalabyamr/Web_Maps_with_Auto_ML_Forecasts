@@ -133,14 +133,17 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [main.p
 
 # Pipeline
 ## §0.1 Flow
-![Report](Reports/pipeline_steps.png)
+**Data Curation:**
+![Report](Reports/pipeline_steps.png)</br>
+**Web Maps Data Prepartion**:
+![Report](Reports/auto_ml_layer.jpg)
+
 
 ## §0.2 Execution Time
 ![Report](Reports/pipeline_execution_time.jpg)
 
 ## §0.3 Auto Machine Learning Layer
-![Report](Reports/auto_ml_layer.jpg)
-
+![](Reports/h2o_automl_flowchart.png)
 ## §0.4 Execution Steps
 ![Report](Reports/execution_flow_chart.jpg)
 
