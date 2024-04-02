@@ -121,7 +121,7 @@ You need to sync the environment python requirements to the following packages:
 
 ## §0.4 Safari Remote Automation
 To measure maps loading times, Safari needs to have the option 'Allow Remote Automation' enabled in 'Developer' menu.
-![Safari Remote Automation](Reports/safari_allow_remote_automation.jpg)
+![Safari Remote Automation](Images/safari_allow_remote_automation.jpg)
 
 ## §0.5 PostGresSQL Server
 <img src="https://miro.medium.com/v2/resize:fit:1358/format:webp/1*Z_zqyvst2R2YehYM2piUfA.png" alt="PostGres SQL on Dockers" width="350" height="200"/></br>
@@ -134,23 +134,23 @@ After modifying [Config.ini](Pipeline/config.ini), run the python script [main.p
 # Pipeline
 ## §0.1 Flow
 **Data Curation:**</br></br>
-![Report](Reports/pipeline_steps.png)</br></br>
+![Report](Images/pipeline_steps.png)</br></br>
 **Web Maps Data Preparation**:</br></br>
-![Report](Reports/auto_ml_layer.jpg)
+![Report](Images/auto_ml_layer.jpg)
 
 
 ## §0.2 Execution Time
-![Report](Reports/pipeline_execution_time.jpg)
+![Report](Images/pipeline_execution_time.jpg)
 
 ## §0.3 Auto Machine Learning Layer
-![](Reports/h2o_automl_flowchart.png)
+![](Images/h2o_automl_flowchart.png)
 ## §0.4 Execution Steps
-![Report](Reports/execution_flow_chart.jpg)
+![Report](Images/execution_flow_chart.jpg)
 
     
 ## §0.7 Performance Testing
 The optimal browser is Safari across all map types. Should a specific HTML file loads faster in a specific browser other than Safari, that HTML file will be loaded in its respective fastest browser.
-![Report](Reports/load_testing.jpg)
+![Report](Images/load_testing.jpg)
 
 
 # Pipeline Design
