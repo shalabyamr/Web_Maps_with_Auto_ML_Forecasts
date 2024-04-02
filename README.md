@@ -44,11 +44,11 @@ To create interactive WebMaps embedded with Auto Machine Learning Layer with lit
 # §0.Setup: 
 ## §0.1 Config.ini
 The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.ini) in [**Pipeline**](Pipeline/) folder.  
-* **postgres_db**:
+* **[postgres_db](Pipeline/config.ini#L1-L6)**:
    - Enter the database credentials without quotation marks 
 
  
- - **auto_ml**:
+ - **[auto_ml](Pipeline/config.ini#L8-L11)**:
    * **run_time_seconds**: accepts an integer greater than or equal to 0. The default duration is 0 for unlimited execution time till models are constructed.
    * **forecast_horizon**: accepts an integer greater than 0 which is the 'unit' time needed to forecast ahead of the last reported date per weather, traffic, and pedestrian stations.
    * **forecast_frequency**: sets the forecast frequency to generate the number of 'units' of the forecast horizon.
@@ -57,7 +57,7 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
  - **api_tokens**:
    * follows the convention _platform_name_ = _token_ without quotation marks. The starting example mapbox = __token__ </br></br>
 
- - **run_conditions**:
+ - **[run_conditions](Pipeline/config.ini#L16-L21)**:
    * **save_locally**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder. Default is _True_.
    * If **save_locally** is set to True, copies of both the staging and public tables will be stored to [/Data/](Data Folder).
    * Data Model Performance and Maps Creation Performance Tables are saved locally.
