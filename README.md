@@ -119,16 +119,16 @@ You need to sync the environment python requirements to the following packages:
 * setuptools~=69.2.0
 
 
-## §0.5 Safari Remote Automation
+## §0.4 Safari Remote Automation
 To measure maps loading times, Safari needs to have the option 'Allow Remote Automation' enabled in 'Developer' menu.
 ![Safari Remote Automation](Reports/safari_allow_remote_automation.jpg)
 
-## §0.6 PostGresSQL Server
+## §0.5 PostGresSQL Server
 <img src="https://miro.medium.com/v2/resize:fit:1358/format:webp/1*Z_zqyvst2R2YehYM2piUfA.png" alt="PostGres SQL on Dockers" width="350" height="200"/></br>
 * To setup PostGresSQL Server using dockers please [refer to this guide](https://trevorstanley.medium.com/setup-postgresql-with-postgis-on-docker-8801637a766c).
 * The needed schemas, _Public_ and _Stage_, as well as the PostGIS Extension are handled internally in [database configurations](Pipeline/data_extractor.py#L172-L179)
 
-## §0.7 Execution
+## §0.6 Execution
 After modifying [Config.ini](Pipeline/config.ini), run the python script [main.py](Pipeline/main.py).
 
 # Pipeline
