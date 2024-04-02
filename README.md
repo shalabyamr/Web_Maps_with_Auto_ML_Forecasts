@@ -126,7 +126,7 @@ To measure maps loading times, Safari needs to have the option 'Allow Remote Aut
 ## §0.5 PostGresSQL Server
 <img src="https://miro.medium.com/v2/resize:fit:1358/format:webp/1*Z_zqyvst2R2YehYM2piUfA.png" alt="PostGres SQL on Dockers" width="350" height="200"/></br>
 * To setup PostGresSQL Server using dockers please [refer to this guide](https://trevorstanley.medium.com/setup-postgresql-with-postgis-on-docker-8801637a766c).
-* The needed schemas, _Public_ and _Stage_, as well as the PostGIS Extension are handled internally in [database initialization function](Pipeline/data_extractor.py#L172-L179)
+* The needed schemas, _Public_ and _Stage_, as well as the PostGIS Extension are handled internally in [database initialization function](Pipeline/data_extractor.py#L172-L179).
 
 ## §0.6 Execution
 After modifying [Config.ini](Pipeline/config.ini), run the python script [Main.py](Pipeline/main.py).
