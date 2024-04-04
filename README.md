@@ -58,7 +58,7 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
    * follows the convention _platform_name_ = _token_ without quotation marks. The starting example mapbox = __token__ </br></br>
 
  - **[run_conditions](Pipeline/config.ini#L16-L21)**:
-   * **[save_locally](Pipeline/config.ini#L14)**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder. Default is _True_.
+   * **[save_locally](Pipeline/config.ini#L17)**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder. Default is _True_.
    * If **save_locally** is set to True, copies of both the staging and public tables will be stored to [/Data/](Data Folder).
    * Data Model Performance and Maps Creation Performance Tables are saved locally.
    * **[create_tables](Pipeline/config.ini#L18)**: Boolean Value _True_ or _False_. Default is _True_.
