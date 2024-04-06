@@ -176,7 +176,7 @@ The parsed configurations from [Config.ini](Pipeline/config.ini) is stored in a 
   * configs_obj.**run_conditions**['**create_tables**'] is the processed  [create_tables flag](Pipeline/config.ini#L18-L18)
   * configs_obj.**run_conditions**['**show_maps**'] is the processed  [show_maps flag](Pipeline/config.ini#L19-L19)
   * configs_obj.**run_conditions**['**run_auto_ml**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L20-L20)
-  * configs_obj.**run_conditions**['**map_types**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L21-L21)</br></br>
+  * configs_obj.**run_conditions**['**map_types**'] is the processed  [map_types](Pipeline/config.ini#L21-L21)</br></br>
   
 * configs_obj._**auto_ml**_ dictionary contains the dictionary of the _**auto_ml**_ segment in [Config.ini](Pipeline/config.ini#L8-L11)
   * configs_obj.**auto_ml**['**run_time_seconds**'] is the processed [run_time_seconds integer](Pipeline/config.ini#L9-L9)
