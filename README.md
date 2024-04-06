@@ -170,7 +170,7 @@ The Data Frames are stored in a single object and accessible via a dictionary th
 
 ### §0.2 Configurations Object
 The parsed configurations from [Config.ini](Pipeline/config.ini) is stored in a single object **configs_obj** that has the following the attributes:
-* configs_obj._**run_conditions_dictionary** contains the dictionary of the _**run_conditions**_ segment in [Config.ini](Pipeline/config.ini#L16-L22)
+* configs_obj._**run_conditions_dictionary_** contains the dictionary of the _**run_conditions**_ segment in [Config.ini](Pipeline/config.ini#L16-L22)
   * configs_obj.**run_conditions**['**save_locally**'] is the processed [save_locally flag](Pipeline/config.ini#L17-L17)
   * configs_obj.**run_conditions**['**parent_dir**'] is the processed [parent_directory](Pipeline/data_extractor.py#L47-L47)
   * configs_obj.**run_conditions**['**create_tables**'] is the processed  [create_tables flag](Pipeline/config.ini#L18-L18)
