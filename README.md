@@ -58,7 +58,7 @@ The **ONLY** file that requires user input is [**Config.ini**](Pipeline/config.i
    * follows the convention _platform_name_ = _token_ without quotation marks. The starting example mapbox = __token__ </br></br>
 
  - **[run_conditions](Pipeline/config.ini#L16-L21)**:
-   * **[save_locally](Pipeline/config.ini#L14)**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder. Default is _True_.
+   * **[save_locally](Pipeline/config.ini#L17)**: Boolean Value _True_ or _False_ to store local copies of the database tables as csv files in [/Data/](https://github.com/amr-y-shalaby/ggr_472_project/blob/1de42fae911463b23a1b6c9294f05cf5e2ab7fa3/Data) Folder. Default is _True_.
    * If **save_locally** is set to True, copies of both the staging and public tables will be stored to [/Data/](Data Folder).
    * Data Model Performance and Maps Creation Performance Tables are saved locally.
    * **[create_tables](Pipeline/config.ini#L18)**: Boolean Value _True_ or _False_. Default is _True_.
@@ -170,13 +170,13 @@ The Data Frames are stored in a single object and accessible via a dictionary th
 
 ### §0.2 Configurations Object
 The parsed configurations from [Config.ini](Pipeline/config.ini) is stored in a single object **configs_obj** that has the following the attributes:
-* configs_obj._**run_conditions_dictionary** contains the dictionary of the _**run_conditions**_ segment in [Config.ini](Pipeline/config.ini#L16-L22)
+* configs_obj._**run_conditions_dictionary_** contains the dictionary of the _**run_conditions**_ segment in [Config.ini](Pipeline/config.ini#L16-L22)
   * configs_obj.**run_conditions**['**save_locally**'] is the processed [save_locally flag](Pipeline/config.ini#L17-L17)
   * configs_obj.**run_conditions**['**parent_dir**'] is the processed [parent_directory](Pipeline/data_extractor.py#L47-L47)
   * configs_obj.**run_conditions**['**create_tables**'] is the processed  [create_tables flag](Pipeline/config.ini#L18-L18)
   * configs_obj.**run_conditions**['**show_maps**'] is the processed  [show_maps flag](Pipeline/config.ini#L19-L19)
   * configs_obj.**run_conditions**['**run_auto_ml**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L20-L20)
-  * configs_obj.**run_conditions**['**map_types**'] is the processed  [run_auto_ml flag](Pipeline/config.ini#L21-L21)</br></br>
+  * configs_obj.**run_conditions**['**map_types**'] is the processed  [map_types](Pipeline/config.ini#L21-L21)</br></br>
   
 * configs_obj._**auto_ml**_ dictionary contains the dictionary of the _**auto_ml**_ segment in [Config.ini](Pipeline/config.ini#L8-L11)
   * configs_obj.**auto_ml**['**run_time_seconds**'] is the processed [run_time_seconds integer](Pipeline/config.ini#L9-L9)
