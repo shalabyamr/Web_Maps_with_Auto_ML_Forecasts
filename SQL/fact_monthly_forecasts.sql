@@ -30,7 +30,7 @@ WITH GEO_NAMES AS(
 ), MONTHLY_FORECASTS_FILETERED AS(
   SELECT
     validity_date as "the_date",
-    validity_time_utc as hours_utc,
+    EXTRACT(HOUR FROM TO_TIMESTAMP(validity_time_utc,'HH24:MI:SS')) as hours_utc,
     cgndb_code as cgndb_id,
     "value" as air_quality_value,
     download_link,
