@@ -80,13 +80,14 @@ dataframes_creator.create_dataframes(configs_obj)
 if configs_obj.run_conditions['run_auto_ml']:
     dataframes_creator.auto_ml(dfs_obj)
 
-# Third Step: Create HTML Maps.  It Cannot be skipped. If AutoML was skipped, the forecast
-# layer will not be added to the map.
+# Third Step: Create HTML Maps.  It Cannot be skipped.
+# If AutoML was requested, the forecast layer will not be added to the map.
+# If AutoML was skipped, only the descriptive (actual) are added to the map without any forecasts.
 maps_creator.create_maps(dfs_obj=dfs_obj, configs_obj=configs_obj)
 
 # Fourth and Last Step: Test Load the Created HTML Maps
-# Depending on Show: Boolean Value it each map type will launch in its own optimal
-# browser with the minimum loading time.
+# Depending on run_conditions['show_maps'] attributed Boolean Value
+# Each map type will launch in its own optimal browser with the minimum loading time.
 if ('MACOS' in platform.platform().upper()) and (configs_obj.run_conditions['show_maps']):
     print(f"Running on Platform: {platform.platform().upper()}. Make sure Safari Test Automation is Enabled: https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari")
     test_maps(configs_obj=configs_obj)
